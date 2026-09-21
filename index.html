@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>SIRIUS 週報・月報・出力ビュー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f5f8fc;--card:#fff;--line:#dce4ee;--ink:#102033;--muted:#64748b;--sky:#0284c7;--indigo:#4f46e5;--rose:#e11d48;--green:#059669;--amber:#d97706;--shadow:0 10px 30px rgba(15,23,42,.07);--r:18px}
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:linear-gradient(135deg,#f7fbff,#eef4ff 55%,#f7f4ff);color:var(--ink);font-family:'Noto Sans JP','Plus Jakarta Sans',sans-serif}body{padding:20px}.wrap{max-width:1320px;margin:auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0 20px;border-bottom:1px solid var(--line);margin-bottom:18px}.brand h1{font-size:21px;margin:0 0 5px;font-weight:800}.brand p{margin:0;color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:#fff;color:#334155;border-radius:11px;padding:10px 13px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 5px #00000008}.btn:hover{transform:translateY(-1px);box-shadow:0 7px 18px #00000012}.btn.primary{color:#fff;border-color:transparent;background:linear-gradient(135deg,var(--sky),var(--indigo))}.btn.green{color:#fff;border-color:transparent;background:linear-gradient(135deg,#059669,#0d9488)}.btn.rose{color:#fff;border-color:transparent;background:linear-gradient(135deg,#e11d48,#f43f5e)}
+.nav{display:flex;gap:8px;background:#e9eef5;padding:6px;border-radius:14px;margin-bottom:18px}.nav button{flex:1;border:0;background:transparent;border-radius:10px;padding:11px;font-weight:800;color:#64748b;cursor:pointer}.nav button.active{background:#fff;color:var(--sky);box-shadow:0 5px 15px #0000000b}
+.status{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:12px;margin-bottom:16px;font-size:11px}.status .ok{color:var(--green);font-weight:800}.status .note{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}.metric-label{font-size:11px;color:var(--muted);font-weight:800}.metric{font-family:'Plus Jakarta Sans';font-size:27px;font-weight:800;margin-top:7px;color:var(--sky)}.metric small{font-family:inherit;font-size:12px;color:var(--muted)}.metric.rose{color:var(--rose)}.metric.green{color:var(--green)}.metric.indigo{color:var(--indigo)}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-bottom:16px}.section{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}.section h2{font-size:14px;margin:0 0 14px}.section h2 i{color:var(--sky);margin-right:7px}.muted{color:var(--muted);font-size:11px}.bars{display:flex;flex-direction:column;gap:11px}.barrow{display:grid;grid-template-columns:150px 1fr 55px;align-items:center;gap:8px;font-size:11px}.barbg{height:9px;background:#e8eef5;border-radius:10px;overflow:hidden}.barfill{height:100%;background:linear-gradient(90deg,#e11d48,#fb7185);border-radius:10px}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:11px}.table th,.table td{padding:9px;border-bottom:1px solid #e8edf3;text-align:left;white-space:nowrap}.table th{background:#f8fafc;color:#64748b;font-size:10px}.pill{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800;background:#eff6ff;color:#0369a1}.pill.ng{background:#fff1f2;color:#be123c}.empty{text-align:center;padding:30px;color:#94a3b8;font-size:12px}.period-info{font-size:12px;font-weight:800;color:#334155;margin-bottom:12px}.chart-shell{padding:10px 8px;background:linear-gradient(180deg,#f8fbff,#fff);border:1px solid #e6edf5;border-radius:14px}.barfill{box-shadow:0 2px 8px #e11d4826}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;color:#64748b}.legend span:before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:#0284c7;margin-right:5px}.legend .r:before{background:#e11d48}.print-only{display:none}.repaint-section{margin-bottom:16px}.repaint-timeline{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.repaint-day{border:1px solid #e5eaf1;background:linear-gradient(180deg,#fff,#fff7f8);border-radius:11px;padding:8px;min-height:58px}.repaint-day .date{font-size:10px;font-weight:800;color:#475569}.repaint-day .count{font-size:16px;font-weight:900;color:var(--rose);margin-top:2px}.repaint-day .items{font-size:8px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.repaint-month{border:1px solid #e5eaf1;background:#fff7f8;border-radius:11px;padding:8px;text-align:center}.repaint-month .date{font-size:10px;font-weight:800;color:#475569}.repaint-month .count{font-size:18px;font-weight:900;color:var(--rose);margin-top:2px}.repaint-empty{padding:12px;border:1px dashed #d7dee8;border-radius:10px;color:#94a3b8;text-align:center;font-size:11px}.repaint-section .muted{margin-top:7px}
+.modal{display:none;position:fixed;inset:0;background:#0f172acc;z-index:50;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{background:#fff;width:min(680px,100%);max-height:90vh;overflow:auto;border-radius:20px;padding:20px}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.modalhead h3{margin:0;font-size:16px}.close{border:0;background:#f1f5f9;border-radius:8px;padding:7px 10px;cursor:pointer}.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}.filters label{font-size:10px;font-weight:800;color:#64748b}.filters input,.filters select{width:100%;height:38px;border:1px solid var(--line);border-radius:9px;padding:7px;margin-top:4px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.toast{position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;padding:12px 15px;border-radius:11px;font-size:12px;display:none;z-index:100}.toast.show{display:block}
+@media(max-width:900px){body{padding:10px}.header{align-items:flex-start;flex-direction:column}.actions{justify-content:flex-start}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media(max-width:600px){.trend-graphs{grid-template-columns:1fr}.svg-chart{height:135px}.nav{display:grid;grid-template-columns:1fr 1fr}.nav button{min-height:42px}.cards{grid-template-columns:1fr 1fr}.metric{font-size:22px}.barrow{grid-template-columns:105px 1fr 45px}.filters{grid-template-columns:1fr}.actions .btn{flex:1}.status{align-items:flex-start;flex-direction:column}}
+.chart-shell{min-height:120px}.trend-graphs{display:grid;grid-template-columns:1fr 1fr;gap:10px}.graph-box{border:1px solid #e6edf5;border-radius:12px;padding:8px;background:#fff}.graph-title{font-size:10px;font-weight:800;color:#334155;margin-bottom:4px}.svg-chart{width:100%;height:145px;display:block}.graph-foot{font-size:9px;color:#64748b;margin-top:2px;display:flex;justify-content:space-between}.barrow{transition:.2s}.barrow:hover{transform:translateX(3px)}
+@media print{
+ @page{size:A4 portrait;margin:6mm}body{background:#fff;padding:0;font-size:9px}.wrap{max-width:none}.header,.nav,.status,.no-print,.modal,.toast{display:none!important}.print-only{display:block}.print-head{display:flex;justify-content:space-between;border-bottom:2px solid #111;padding-bottom:5px;margin-bottom:6px}.print-head h1{font-size:15px;margin:0}.print-head p{margin:0;font-size:8px}.cards{grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:5px}.card,.section{box-shadow:none;border:1px solid #b9c0c9;border-radius:4px;padding:6px;break-inside:avoid;page-break-inside:avoid}.metric{font-size:16px;margin-top:3px}.metric-label{font-size:7px}.grid{gap:5px;margin-bottom:5px}.chart-shell{min-height:0;padding:4px;background:#fff}.trend-graphs{grid-template-columns:1fr 1fr;gap:5px}.graph-box{padding:4px;border-radius:3px}.graph-title{font-size:7px;margin-bottom:1px}.svg-chart{height:88px}.graph-foot{font-size:5.5px}.section h2{font-size:9px;margin-bottom:5px}.period-info{font-size:8px;margin-bottom:4px}.barrow{grid-template-columns:82px 1fr 34px;font-size:7px;gap:4px}.bars{gap:5px}.barbg{height:5px}.table{font-size:7px}.table th,.table td{padding:3px}.muted,.legend{font-size:6.5px}.repaint-section{margin-bottom:5px;padding:6px}.repaint-timeline{grid-template-columns:repeat(7,1fr);gap:4px}.repaint-day{border-radius:4px;padding:4px;min-height:37px}.repaint-day .date,.repaint-month .date{font-size:6.5px}.repaint-day .count,.repaint-month .count{font-size:12px;margin-top:0}.repaint-day .items{font-size:5.5px}.repaint-month{border-radius:4px;padding:4px}.repaint-section .muted{margin-top:3px}.print-footer{margin-top:3px;font-size:6px;color:#666;text-align:right}.table-section{margin-top:5px}.table-section .table{font-size:6.5px}.table-section .table th,.table-section .table td{padding:2px 3px}.table-section .empty{padding:8px}.screen-only{display:block}
+}
+
+/* Repaint timeline: robust responsive layout */
+.repaint-timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px;align-items:stretch}
+.repaint-day{min-width:0;border:1px solid #e5e7eb;border-radius:10px;background:#f8fafc;padding:8px;box-sizing:border-box;overflow:hidden}
+.repaint-day.active{background:#fff1f2;border-color:#fb7185;box-shadow:inset 0 3px 0 #ef4444}
+.repaint-day .rd-date{font-weight:800;font-size:12px;white-space:nowrap}
+.repaint-day .rd-count{font-size:16px;font-weight:900;margin:3px 0;line-height:1.2}
+.repaint-day .rd-names{font-size:10px;line-height:1.35;color:#475569;overflow-wrap:anywhere;word-break:break-word}
+.repaint-month{min-height:82px}
+@media(max-width:700px){.repaint-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{.repaint-timeline{grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.repaint-day{padding:4px;border-radius:5px}.repaint-day .rd-date{font-size:8px}.repaint-day .rd-count{font-size:10px}.repaint-day .rd-names{font-size:7px;line-height:1.2}.repaint-month{min-height:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="header no-print">
+ <div class="brand"><h1>SIRIUS 週報・月報・出力ビュー</h1><p>既存データを変更せず、読み取り専用で共有・集計・出力します。</p></div>
+ <div class="actions">
+  <button class="btn" onclick="setPeriod('lastweek')">↶ 先週</button><button class="btn primary" onclick="setPeriod('week')">今週</button><button class="btn" onclick="setPeriod('month')">月間</button><button class="btn" onclick="setPeriod('year')">年報</button>
+  <button class="btn green" onclick="openExport()">⇩ CSV / Excel</button><button class="btn" onclick="printSummary()">🖨 印刷ビュー</button>
+ </div>
+</header>
+<nav class="nav no-print"><button id="nav-week" class="active" onclick="setPeriod('week')">📅 今週</button><button id="nav-lastweek" onclick="setPeriod('lastweek')">先週</button><button id="nav-month" onclick="setPeriod('month')">今月</button><button id="nav-year" onclick="setPeriod('year')">年報</button><button id="nav-print" onclick="printSummary()">A4印刷</button></nav>
+<div class="status no-print"><span class="ok">● <span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。</span></div>
+<div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 月次／週次サマリー</h1><p id="print-period"></p></div><p id="print-date"></p></div>
+<section class="cards">
+ <div class="card"><div class="metric-label">総塗装台数</div><div class="metric" id="m-qty">0<small> 台</small></div></div>
+ <div class="card"><div class="metric-label">塗料使用量</div><div class="metric indigo" id="m-paint">0<small> kg</small></div></div>
+ <div class="card"><div class="metric-label">再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div></div>
+ <div class="card"><div class="metric-label">平均塗着率</div><div class="metric green" id="m-rate">0<small> %</small></div></div>
+</section>
+<div class="grid">
+ <section class="section"><h2>📊 生産・再塗装の推移</h2><div class="period-info" id="period-label"></div><div class="chart-shell"><div class="trend-graphs"><div class="graph-box"><div class="graph-title">塗装台数の推移</div><div id="production-chart"></div><div class="graph-foot"><span>台数</span><span id="production-total"></span></div></div><div class="graph-box"><div class="graph-title">再塗装発生の推移</div><div id="repaint-chart"></div><div class="graph-foot"><span>件数</span><span id="repaint-total"></span></div></div></div></div></section>
+ <section class="section"><h2>🏆 不具合原因ランキング</h2><div class="chart-shell"><div class="bars" id="causes"></div></div><div class="muted" id="cause-note"></div></section>
+</div>
+<section class="section repaint-section"><h2>🚨 再塗装の発生日・発生状況</h2><div class="repaint-timeline" id="repaint-timeline"></div><div class="muted" id="repaint-note"></div></section>
+<div class="grid">
+ <section class="section"><h2>🎯 塗着率ログ</h2><div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th>使用塗料</th><th>塗着率</th><th>ロス率</th></tr></thead><tbody id="t-table"></tbody></table></div></section>
+ <section class="section"><h2>🧪 実績データ</h2><div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th>台数</th><th>塗料</th><th>判定</th></tr></thead><tbody id="r-table"></tbody></table></div></section>
+</div>
+<div class="print-only print-footer">SIRIUS 読み取り専用レポート　※既存データは変更していません</div>
+</div>
+<div class="modal" id="export-modal"><div class="modalbox"><div class="modalhead"><h3>CSV / Excel 出力</h3><button class="close" onclick="closeExport()">×</button></div><div class="filters"><div><label>対象期間</label><select id="export-period"><option value="week">今週</option><option value="lastweek">先週</option><option value="month">今月</option><option value="year">今年</option></select></div><div><label>出力対象</label><select id="export-kind"><option value="records">実績データ</option><option value="tochaku">塗着率ログ</option><option value="causes">原因別ランキング</option><option value="all">3種まとめ</option></select></div></div><p class="muted" style="margin-top:12px">CSVはUTF-8 BOM付き、Excelは .xlsx 形式です。出力処理はブラウザ内だけで完結します。</p><div class="modal-actions"><button class="btn" onclick="closeExport()">キャンセル</button><button class="btn" onclick="doExport('csv')">CSV</button><button class="btn primary" onclick="doExport('xlsx')">Excel</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0'), ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()), today=()=>ds(new Date()), D=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const firebaseConfig={apiKey:"AIzaSyC4K1DTi4GLHmCRGHP1d4UglfzMSgNzSVM",authDomain:"powdercoating-9254b.firebaseapp.com",projectId:"powdercoating-9254b",storageBucket:"powdercoating-9254b.firebasestorage.app",messagingSenderId:"1094264514813",appId:"1:1094264514813:web:a6edb6b3c96b12fbbc7694"};
+let db=null,records=[],tochaku=[],period='week';
+const PERIODS={week:{label:'今週',range(){let n=new Date(),m=D(n,n.getDay()===0?-6:1-n.getDay());return[ds(m),ds(D(m,6))]}},lastweek:{label:'先週',range(){let n=new Date(),m=D(n,(n.getDay()===0?-6:1-n.getDay())-7);return[ds(m),ds(D(m,6))]}},month:{label:'今月',range(){let n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),1),b=new Date(n.getFullYear(),n.getMonth()+1,0);return[ds(a),ds(b)]}},year:{label:'今年',range(){let y=new Date().getFullYear();return[y+'-01-01',y+'-12-31']}}};
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function inRange(d,r){return d>=r[0]&&d<=r[1]}
+function setPeriod(p){period=p;$('nav-week').classList.toggle('active',p==='week');$('nav-lastweek').classList.toggle('active',p==='lastweek');$('nav-month').classList.toggle('active',p==='month');$('nav-year').classList.toggle('active',p==='year');render();}
+function init(){try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();$('conn').textContent='リアルタイム共有データへ接続済み（読み取り専用）';db.collection('records').onSnapshot(s=>{records=s.docs.map(d=>({docId:d.id,...d.data()}));render()},e=>{$('conn').textContent='接続エラー: '+e.message});db.collection('tochaku_records').onSnapshot(s=>{tochaku=s.docs.map(d=>({docId:d.id,...d.data()}));render()})}catch(e){$('conn').textContent='Firebase初期化エラー: '+e.message}}
+function rangeData(){const r=PERIODS[period].range();return{r,rec:records.filter(x=>inRange(String(x.date||''),r)),tk:tochaku.filter(x=>inRange(String(x.date||''),r))}}
+function qtyOf(x){return Number(x.total_qty)||(Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0),0):0)}
+function paintOf(x){return Number(x.paint_weight)||0}
+function workName(x){if(Array.isArray(x.items))return x.items.map(i=>i.name).join(' / ');return x.work_name||'-'}
+function renderRepaint(rec,r){
+  const el=document.getElementById('repaint-timeline');
+  const note=document.getElementById('repaint-note');
+  if(!el)return;
+  const map={};
+  rec.filter(x=>x.status==='NG').forEach(x=>{
+    const d=x.date||''; if(!d)return;
+    const q=Number(x.ng_qty)||((x.ng_details||[]).reduce((a,n)=>a+(Number(n.qty)||0),0))||1;
+    if(!map[d])map[d]={qty:0,names:new Set()};
+    map[d].qty+=q;
+    const n=workName(x); if(n)map[d].names.add(n);
+  });
+  const days=Object.keys(map).sort();
+  if(r.period==='year'){
+    el.innerHTML=Array.from({length:12},(_,i)=>{
+      const m=String(i+1).padStart(2,'0');
+      const rows=days.filter(d=>d.startsWith(r.start.slice(0,4)+'-'+m));
+      const qty=rows.reduce((a,d)=>a+map[d].qty,0);
+      const names=[...new Set(rows.flatMap(d=>[...map[d].names]))].slice(0,3);
+      return `<div class="repaint-day repaint-month ${qty?'active':''}"><div class="rd-date">${i+1}月</div><div class="rd-count">${qty?qty+'件':'—'}</div><div class="rd-names">${qty?(rows.length+'日発生'+(names.length?'・'+names.join(' / '):'')):'発生なし'}</div></div>`;
+    }).join('');
+  }else{
+    const arr=[]; for(let d=new Date(r.start);d<=new Date(r.end);d.setDate(d.getDate()+1)){
+      const key=d.toISOString().slice(0,10), v=map[key];
+      arr.push(`<div class="repaint-day ${v?'active':''}"><div class="rd-date">${d.getMonth()+1}/${d.getDate()}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names">${v?( [...v.names].slice(0,2).join(' / ')||'再塗装発生'):'発生なし'}</div></div>`);
+    }
+    el.innerHTML=arr.join('');
+  }
+  note.textContent=days.length?`${days.length}日で再塗装が発生。赤いセルが発生日です。`:'対象期間に再塗装の発生はありません。';
+}
+
+function render(){const {r,rec,tk}=rangeData();$('period-label').textContent=`${PERIODS[period].label}: ${r[0]} ～ ${r[1]}`;$('print-period').textContent=`${PERIODS[period].label}: ${r[0]} ～ ${r[1]}`;$('print-date').textContent='作成 '+today();
+ const qty=rec.reduce((s,x)=>s+qtyOf(x),0),paint=rec.reduce((s,x)=>s+paintOf(x),0),ng=rec.filter(x=>x.status==='NG').length,ngRate=rec.length?ng/rec.length*100:0,rs=tk.filter(x=>Number.isFinite(Number(x.rate))).map(x=>Number(x.rate)),rate=rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0;
+ $('m-qty').innerHTML=qty.toLocaleString()+'<small> 台</small>';$('m-paint').innerHTML=paint.toFixed(2)+'<small> kg</small>';$('m-ng').innerHTML=ngRate.toFixed(1)+'<small> %</small>';$('m-rate').innerHTML=rate.toFixed(1)+'<small> %</small>';
+ renderTrend(rec,r);renderCauses(rec);renderRepaint(rec,r);renderTables(rec,tk);
+}
+function svgLineChart(data, valueKey, color, suffix){
+ if(!data.length)return '<div class="empty">データがありません</div>';
+ const W=520,H=150,PL=34,PR=8,PT=8,PB=25,iw=W-PL-PR,ih=H-PT-PB;
+ const max=Math.max(1,...data.map(x=>Number(x[valueKey])||0));
+ const pts=data.map((x,i)=>{const px=PL+(data.length===1?iw/2:i*iw/(data.length-1));const py=PT+ih-(Number(x[valueKey])||0)/max*ih;return [px,py]});
+ const line=pts.map(p=>p.join(',')).join(' ');
+ const area=`${PL},${PT+ih} ${line} ${pts[pts.length-1][0]},${PT+ih}`;
+ const y0=PT+ih,y1=PT+ih/2,y2=PT;
+ const labels=data.map((x,i)=>{if(data.length<=7||i===0||i===data.length-1||i===Math.floor(data.length/2))return `<text x="${pts[i][0]}" y="${H-7}" text-anchor="middle" font-size="9" fill="#64748b">${esc(x.label)}</text>`;return ''}).join('');
+ const circles=pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${color}" stroke="#fff" stroke-width="1.5"><title>${esc(data[i].label)}: ${data[i][valueKey]}${suffix||''}</title></circle>`).join('');
+ return `<svg class="svg-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img"><line x1="${PL}" y1="${y0}" x2="${W-PR}" y2="${y0}" stroke="#cbd5e1"/><line x1="${PL}" y1="${y1}" x2="${W-PR}" y2="${y1}" stroke="#e2e8f0" stroke-dasharray="3 3"/><line x1="${PL}" y1="${y2}" x2="${W-PR}" y2="${y2}" stroke="#e2e8f0" stroke-dasharray="3 3"/><polygon points="${area}" fill="#0284c71a"/><polyline points="${line}" fill="none" stroke="${color}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${circles}<text x="${PL-5}" y="${y0+3}" text-anchor="end" font-size="8" fill="#94a3b8">0</text><text x="${PL-5}" y="${y1+3}" text-anchor="end" font-size="8" fill="#94a3b8">${Math.round(max/2)}</text><text x="${PL-5}" y="${y2+3}" text-anchor="end" font-size="8" fill="#94a3b8">${Math.round(max)}</text>${labels}</svg>`;
+}
+function trendBuckets(rec,r){
+ const start=new Date(r[0]),end=new Date(r[1]),days=[];for(let d=start;d<=end;d=D(d,1))days.push(ds(d));
+ if(period==='year')return Array.from({length:12},(_,i)=>{const a=ds(new Date(start.getFullYear(),i,1)),b=ds(new Date(start.getFullYear(),i+1,0)),rr=rec.filter(x=>String(x.date)>=a&&String(x.date)<=b);return{label:(i+1)+'月',q:rr.reduce((s,x)=>s+qtyOf(x),0),ng:rr.filter(x=>x.status==='NG').length}});
+ return days.map(d=>{const rr=rec.filter(x=>String(x.date)===d);return{label:d.slice(5).replace('-','/'),q:rr.reduce((s,x)=>s+qtyOf(x),0),ng:rr.filter(x=>x.status==='NG').length}});
+}
+function renderTrend(rec,r){
+ const b=trendBuckets(rec,r);
+ $('production-chart').innerHTML=svgLineChart(b,'q','#0284c7','台');
+ $('repaint-chart').innerHTML=svgLineChart(b,'ng','#e11d48','件');
+ $('production-total').textContent='合計 '+b.reduce((s,x)=>s+x.q,0).toLocaleString()+'台';
+ $('repaint-total').textContent='合計 '+b.reduce((s,x)=>s+x.ng,0)+'件';
+}
+function renderCauses(rec){const m=new Map();rec.forEach(x=>(x.ng_details||[]).forEach(d=>{if(d.cause)m.set(d.cause,(m.get(d.cause)||0)+(Number(d.qty)||0))}));let a=[...m].sort((x,y)=>y[1]-x[1]);let max=a[0]?.[1]||1;$('causes').innerHTML=a.slice(0,8).map((x,i)=>`<div class="barrow"><span>${i+1}. ${esc(x[0])}</span><div class="barbg"><div class="barfill" style="width:${x[1]/max*100}%"></div></div><b>${x[1]}件</b></div>`).join('')||'<div class="empty">再塗装原因データがありません</div>';$('cause-note').textContent=a.length?`原因個数ベース・上位${Math.min(8,a.length)}件`:'-'}
+function renderTables(rec,tk){$('r-table').innerHTML=rec.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,12).map(x=>`<tr><td>${x.date||'-'}</td><td>${esc(workName(x))}</td><td>${qtyOf(x)}</td><td>${paintOf(x).toFixed(2)}kg</td><td><span class="pill ${x.status==='NG'?'ng':''}">${x.status||'-'}</span></td></tr>`).join('')||'<tr><td colspan="5" class="empty">データがありません</td></tr>';$('t-table').innerHTML=tk.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,12).map(x=>`<tr><td>${x.date||'-'}</td><td>${esc(x.work_name||((x.work_items||[]).map(i=>i.name).join(' / '))||'-')}</td><td>${Number(x.used_paint_kg||0).toFixed(3)}kg</td><td>${Number(x.rate||0).toFixed(1)}%</td><td>${Number(x.loss_rate||0).toFixed(1)}%</td></tr>`).join('')||'<tr><td colspan="5" class="empty">データがありません</td></tr>'}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openExport(){$('export-period').value=period==='lastweek'?'lastweek':period==='month'?'month':period==='year'?'year':'week';$('export-modal').classList.add('show')};function closeExport(){$('export-modal').classList.remove('show')}
+function exportRows(kind,p){const r=PERIODS[p].range(),rec=records.filter(x=>inRange(String(x.date||''),r)),tk=tochaku.filter(x=>inRange(String(x.date||''),r));if(kind==='records')return rec.map(x=>({日付:x.date,品名:workName(x),台数:qtyOf(x),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:paintOf(x),平均膜厚_um:x.thickness??'',判定:x.status||'',再塗装個数:x.ng_qty||0,不具合原因:(x.ng_details||[]).map(d=>`${d.cause}(${d.qty})`).join(' / '),メモ:x.memo||''}));if(kind==='tochaku')return tk.map(x=>({日付:x.date,品名:x.work_name||'',台数:(x.work_items||[]).reduce((s,i)=>s+(Number(i.qty)||0),0),使用塗料_kg:x.used_paint_kg||0,塗膜増量_kg:x.attached_weight_kg||0,塗着率_pct:x.rate??'',ロス率_pct:x.loss_rate??'',吸込ロス_kg:x.suikomi_loss_kg||0,落下ロス_kg:x.rakka_loss_kg||0,計算方式:x.calc_type||''}));let m=new Map();rec.forEach(x=>(x.ng_details||[]).forEach(d=>{if(d.cause)m.set(d.cause,(m.get(d.cause)||0)+(Number(d.qty)||0))}));return[...m].sort((a,b)=>b[1]-a[1]).map((x,i)=>({順位:i+1,原因:x[0],件数:x[1]}))}
+function download(name,text,mime){const blob=new Blob([text],{type:mime}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function doExport(type){const p=$('export-period').value,k=$('export-kind').value,sets=k==='all'?['records','tochaku','causes']:[k];let base=`sirius_${p}_${today()}`;if(type==='csv'){sets.forEach((s,i)=>{const rows=exportRows(s,p),ws=rows.length?rows:[{メッセージ:'対象データなし'}],head=Object.keys(ws[0]),csv='\\uFEFF'+[head,...ws.map(o=>head.map(h=>o[h]??''))].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\\r\\n');download(`${base}_${s}.csv`,csv,'text/csv;charset=utf-8')})}else{const wb=XLSX.utils.book_new();sets.forEach(s=>{const rows=exportRows(s,p);XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.length?rows:[{メッセージ:'対象データなし'}]),s==='records'?'実績':s==='tochaku'?'塗着率':'原因ランキング')});XLSX.writeFile(wb,`${base}.xlsx`)}closeExport();toast('出力しました')}
+function printSummary(){window.print()}
+init();
+</script>
+</body></html>
