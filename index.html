@@ -144,6 +144,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
 /* ===== Tables ===== */
 .table-wrap{overflow:auto;max-height:460px;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--line2)}
+.table tr.extra{display:none}
 .table{width:100%;border-collapse:collapse;font-size:12px}
 .table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line2);text-align:left;vertical-align:top}
 .table th{position:sticky;top:0;z-index:2;background:#f8fafc;color:var(--muted);font-size:11px;font-weight:800;white-space:nowrap}
@@ -170,8 +171,10 @@ td.empty{padding:28px 12px}
 .filters label{font-size:11px;font-weight:800;color:var(--muted)}
 .filters select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;padding:0 10px;margin-top:5px;background:#fff;font-weight:700}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
-.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:calc(100vw - 32px);background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;display:none;z-index:100;box-shadow:0 12px 30px rgba(15,23,42,.3)}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);max-width:calc(100vw - 32px);width:max-content;background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.4;display:none;z-index:100;box-shadow:0 12px 30px rgba(15,23,42,.3)}
 .toast.show{display:block}
+@media(max-width:640px){.toast{bottom:calc(14px + env(safe-area-inset-bottom, 0px));font-size:12.5px;padding:10px 14px}}
+@media(orientation:landscape) and (max-height:500px){.toast{bottom:calc(10px + env(safe-area-inset-bottom, 0px))}}
 
 .print-only{display:none}
 
@@ -192,6 +195,18 @@ td.empty{padding:28px 12px}
   .table{min-width:620px}
   .table-wrap{max-height:none}
   .graph-note{font-size:9.5px}
+  /* 横スクロール可能なことに気づきやすいよう、端に影のヒントを表示 */
+  .table-wrap{
+    background:
+      linear-gradient(to right, #fff 0, rgba(255,255,255,0) 24px),
+      linear-gradient(to left, #fff 0, rgba(255,255,255,0) 24px) right,
+      radial-gradient(farthest-side at 0 50%, rgba(15,23,42,.16), rgba(15,23,42,0)) left,
+      radial-gradient(farthest-side at 100% 50%, rgba(15,23,42,.16), rgba(15,23,42,0)) right;
+    background-repeat:no-repeat;
+    background-size:24px 100%,24px 100%,8px 92%,8px 92%;
+    background-attachment:local,local,scroll,scroll;
+    background-color:#fff;
+  }
 }
 
 /* ===== Responsive ===== */
@@ -221,6 +236,10 @@ td.empty{padding:28px 12px}
   .pb-row{gap:6px}
   .seg{display:grid;grid-template-columns:repeat(5,1fr);width:100%}
   .seg button{padding:0 2px;font-size:13px}
+  @media(max-width:380px){
+    .seg{grid-template-columns:repeat(3,1fr);gap:4px 4px}
+    .seg button{min-height:36px;font-size:12px}
+  }
   .period-info{font-size:12px;width:100%}
   .weekbar>*{flex:none}.weekbar .datepick{flex:1 1 0;min-width:0}
   .weekbar .btn{padding:0 12px}
@@ -335,9 +354,10 @@ td.empty{padding:28px 12px}
     <button class="btn ghost" onclick="shiftPick(7)" aria-label="次の週へ">次週<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
     <button class="btn ghost" onclick="pickThisWeek()">今週へ</button>
   </div>
+  <div class="muted" id="pick-hint" style="margin-top:6px" hidden></div>
 </div>
 
-<div class="status no-print" id="status" aria-live="polite"><span class="ok"><span class="dot"></span><span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログは全件表示します。</span><span class="upd" id="updated"></span></div>
+<div class="status no-print" id="status" aria-live="polite"><span class="ok"><span class="dot"></span><span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログを確認できます（印刷時は常に全件、画面表示は「全件表示」ボタンで展開）。</span><span class="upd" id="updated"></span></div>
 
 <div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 週次・月次・年次サマリー</h1><p id="print-period"></p></div><p id="print-date"></p></div>
 
@@ -405,7 +425,7 @@ td.empty{padding:28px 12px}
     <div class="modal-actions"><button class="btn" onclick="closeExport()">キャンセル</button><button class="btn" onclick="doExport('csv')">CSV</button><button class="btn primary" onclick="doExport('xlsx')">Excel</button></div>
   </div>
 </div>
-<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script>
 const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0'), ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()), today=()=>ds(new Date()), D=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
@@ -413,8 +433,8 @@ const pd=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||''));return m?ne
 const WD=['日','月','火','水','木','金','土'];
 const mdw=s=>{const d=pd(s);return d?`${d.getMonth()+1}/${d.getDate()}(${WD[d.getDay()]})`:'-'};
 const firebaseConfig={apiKey:"AIzaSyC4K1DTi4GLHmCRGHP1d4UglfzMSgNzSVM",authDomain:"powdercoating-9254b.firebaseapp.com",projectId:"powdercoating-9254b",storageBucket:"powdercoating-9254b.firebasestorage.app",messagingSenderId:"1094264514813",appId:"1:1094264514813:web:a6edb6b3c96b12fbbc7694"};
-let db=null,records=[],tochaku=[],period='week',pickDate=today(),loaded={records:false,tochaku:false},lastView={rec:[],r:null},expand={r:true,t:true},GID=0;
-const LIM=0;
+let db=null,records=[],tochaku=[],period='week',pickDate=today(),loaded={records:false,tochaku:false},lastView={rec:[],tk:[],r:null},expand={r:false,t:false},GID=0;
+const LIM=80; /* 初期表示件数（各テーブル）。件数が多い期間でも描画を軽く保つための上限で、「全件表示」ボタンで展開できます */
 
 /* 日付の正規化（文字列 / Timestamp / Date に対応） */
 function normDate(v){
@@ -442,7 +462,15 @@ const fmt=(v,n,u)=>{if(v===null||v===undefined||v==='')return '-';const x=Number
 function syncUI(){
   Object.keys(PERIODS).forEach(k=>{const b=$('pd-'+k);if(b){b.classList.toggle('active',k===period);b.setAttribute('aria-pressed',k===period?'true':'false')}});
   $('weekbar').hidden=period!=='pick';
-  if(period==='pick')$('pick-date').value=pickDate;
+  const hint=$('pick-hint');
+  if(period==='pick'){
+    $('pick-date').value=pickDate;
+    const w=weekOf(pd(pickDate)||new Date()),a=pd(w[0]),b=pd(w[1]);
+    hint.hidden=false;
+    hint.textContent=`選択した日を含む週（月曜始まり）: ${a.getMonth()+1}/${a.getDate()}(${WD[a.getDay()]}) ～ ${b.getMonth()+1}/${b.getDate()}(${WD[b.getDay()]})`;
+  }else{
+    hint.hidden=true;
+  }
 }
 function syncHash(){
   try{const h=period==='week'?'':'#p='+period+(period==='pick'?'&d='+pickDate:'');history.replaceState(null,'',location.href.split('#')[0]+h)}catch(e){}
@@ -458,7 +486,7 @@ function setPeriod(p){
 function shiftPick(n){pickDate=ds(D(pd(pickDate)||new Date(),n));syncUI();syncHash();render()}
 function setPickDate(v){if(!pd(v)){syncUI();return}pickDate=v;syncUI();syncHash();render()}
 function pickThisWeek(){pickDate=today();syncUI();syncHash();render()}
-function toggleRows(k){expand[k]=!expand[k];render()}
+function toggleRows(k){expand[k]=!expand[k];renderTables(lastView.rec,lastView.tk);}
 
 /* ===== Firebase（読み取り専用・同期） ===== */
 window.__sharedTochaku=window.__sharedTochaku||{records:[],tochaku_records:[],updatedAt:null};
@@ -519,7 +547,7 @@ function render(){
   $('m-paint-sub').textContent=`実績データの合計`;
   $('m-ng-sub').textContent=`再塗装 ${repaintCases.toLocaleString()}件 / 総件数 ${totalCases.toLocaleString()}件`;
   $('m-rate-sub').textContent=`測定 ${rs.length}件の平均`;
-  lastView={rec,r};
+  lastView={rec,tk,r};
   renderTrend(rec,r);renderCauses(rec);renderRepaint(rec,r);renderTables(rec,tk);
 }
 
@@ -538,8 +566,9 @@ function renderRepaint(rec,r){
     el.className='repaint-timeline rp mode-year';
     const y=r[0].slice(0,4);
     html=Array.from({length:12},(_,i)=>{
-      const pre=y+'-'+pad(i+1),rows=days.filter(d=>d.startsWith(pre)),qty=rows.reduce((a,d)=>a+map[d].qty,0),names=[...new Set(rows.flatMap(d=>[...map[d].names]))].slice(0,3);
-      return `<div class="repaint-day ${qty?'active':''} ${tdy.startsWith(pre)?'today':''}"><div class="rd-date">${i+1}月</div><div class="rd-count">${qty?qty+'件':'—'}</div><div class="rd-names"></div></div>`;
+      const pre=y+'-'+pad(i+1),rows=days.filter(d=>d.startsWith(pre)),qty=rows.reduce((a,d)=>a+map[d].qty,0),names=[...new Set(rows.flatMap(d=>[...map[d].names]))],shown=names.slice(0,3),extra=names.length-shown.length;
+      const nameHtml=shown.length?esc(shown.join('・'))+(extra>0?` 他${extra}件`:''):'';
+      return `<div class="repaint-day ${qty?'active':''} ${tdy.startsWith(pre)?'today':''}"><div class="rd-date">${i+1}月</div><div class="rd-count">${qty?qty+'件':'—'}</div><div class="rd-names" title="${esc(names.join('・'))}">${nameHtml}</div></div>`;
     }).join('');
   }else{
     const isMonth=period==='month';
@@ -551,7 +580,8 @@ function renderRepaint(rec,r){
     }
     for(let d=new Date(s);d<=e;d=D(d,1)){
       const k=ds(d),v=map[k],dow=d.getDay(),names=v?[...v.names]:[];
-      html+=`<div class="repaint-day ${v?'active':''} ${k===tdy?'today':''} ${dow===0||dow===6?'we':''}"><div class="rd-date">${isMonth?d.getDate():(d.getMonth()+1)+'/'+d.getDate()}${isMonth?'':`<span class="wd">${WD[dow]}</span>`}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names"></div></div>`;
+      const nameHtml=names.length?esc(names.join('・')):'';
+      html+=`<div class="repaint-day ${v?'active':''} ${k===tdy?'today':''} ${dow===0||dow===6?'we':''}"><div class="rd-date">${isMonth?d.getDate():(d.getMonth()+1)+'/'+d.getDate()}${isMonth?'':`<span class="wd">${WD[dow]}</span>`}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names" title="${esc(names.join('・'))}">${nameHtml}</div></div>`;
     }
   }
   el.innerHTML=html;
@@ -671,7 +701,15 @@ function bindTip(box){
 }
 function hideTip(box){const t=box.querySelector('.tip');if(t)t.classList.remove('on');const g=box.querySelector('.guide');if(g)g.setAttribute('visibility','hidden')}
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('.chart-box').forEach(b=>{if(!b.contains(e.target))hideTip(b)})});
-window.addEventListener('beforeprint',()=>document.querySelectorAll('.chart-box').forEach(hideTip));
+/* 印刷直前（印刷ビューボタン経由でも、ブラウザのCtrl+P等の直接呼び出しでも）に
+   ツールチップを隠し、印刷用SVGを最新の状態で必ず再生成しておく */
+window.addEventListener('beforeprint',()=>{
+  document.querySelectorAll('.chart-box').forEach(hideTip);
+  if(lastView.r)renderTrend(lastView.rec,lastView.r);
+});
+/* リサイズ中は古い位置のツールチップが残らないよう即座に隠す（再描画はResizeObserver側で追従） */
+let _rTip=0;
+window.addEventListener('resize',()=>{clearTimeout(_rTip);_rTip=setTimeout(()=>document.querySelectorAll('.chart-box').forEach(hideTip),0)});
 
 function renderTrend(rec,r){
   rec=rec||lastView.rec;r=r||lastView.r;if(!r)return;
@@ -704,23 +742,30 @@ function renderCauses(rec){
 function renderTables(rec,tk){
   const byDate=(a,b)=>String(b._d).localeCompare(String(a._d));
   const rl=rec.slice().sort(byDate),tl=tk.slice().sort(byDate);
-  const cap=(k,l)=>l;
   const wait='<tr><td colspan="5" class="empty">読み込み中…</td></tr>',none='<tr><td colspan="5" class="empty">データがありません</td></tr>';
-  $('r-table').innerHTML=!loaded.records?wait:cap('r',rl).map((x,i)=>{const st=String(x.status||'').toUpperCase(),row=st==='NG'?'r-row-ng':st==='OK'?'r-row-ok':'';return `<tr class="${row} ${i>=LIM?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(workName(x))}</td><td class="num">${qtyOf(x)}</td><td class="num">${paintOf(x).toFixed(2)}kg</td><td><span class="pill ${st==='NG'?'ng':st==='OK'?'ok':''}">${st==='NG'?'NG':st==='OK'?'OK':esc(x.status||'-')}</span></td></tr>`}).join('')||none;
-  $('t-table').innerHTML=!loaded.tochaku?wait:cap('t',tl).map((x,i)=>`<tr class="${i>=LIM?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(tkName(x))}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num">${fmt(x.rate,1,'%')}</td><td class="num">${fmt(x.loss_rate,1,'%')}</td></tr>`).join('')||none;
+  $('r-table').innerHTML=!loaded.records?wait:rl.map((x,i)=>{const st=String(x.status||'').toUpperCase(),row=st==='NG'?'r-row-ng':st==='OK'?'r-row-ok':'';return `<tr class="${row} ${(!expand.r&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(workName(x))}</td><td class="num">${qtyOf(x)}</td><td class="num">${paintOf(x).toFixed(2)}kg</td><td><span class="pill ${st==='NG'?'ng':st==='OK'?'ok':''}">${st==='NG'?'NG':st==='OK'?'OK':esc(x.status||'-')}</span></td></tr>`}).join('')||none;
+  $('t-table').innerHTML=!loaded.tochaku?wait:tl.map((x,i)=>`<tr class="${(!expand.t&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(tkName(x))}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num">${fmt(x.rate,1,'%')}</td><td class="num">${fmt(x.loss_rate,1,'%')}</td></tr>`).join('')||none;
   [['r',rl],['t',tl]].forEach(([k,l])=>{
     $('cnt-'+k).textContent=l.length?`${l.length}件`:'';
-    const b=$('more-'+k);b.hidden=true;b.textContent=`全件表示（${l.length}件）`;
+    const b=$('more-'+k);
+    b.hidden=l.length<=LIM;
+    b.textContent=expand[k]?'表示を折りたたむ':`全件表示（${l.length}件）`;
   });
 }
 
 /* ===== 出力 ===== */
+let lastFocusEl=null;
 function openExport(){
+  lastFocusEl=document.activeElement;
   $('export-period').value=period;updateExportRange();
   $('export-modal').classList.add('show');
   setTimeout(()=>{try{$('export-period').focus()}catch(e){}},30);
 }
-function closeExport(){$('export-modal').classList.remove('show')}
+function closeExport(){
+  $('export-modal').classList.remove('show');
+  if(lastFocusEl&&typeof lastFocusEl.focus==='function'){try{lastFocusEl.focus()}catch(e){}}
+  lastFocusEl=null;
+}
 function updateExportRange(){const r=PERIODS[$('export-period').value].range();$('export-range').textContent=`対象: ${r[0]} ～ ${r[1]}`}
 function exportRows(kind,p){
   const r=PERIODS[p].range(),rec=records.filter(x=>inRange(x._d,r)),tk=tochaku.filter(x=>inRange(x._d,r));
@@ -762,7 +807,17 @@ function printSummary(){document.querySelectorAll('.chart-box').forEach(hideTip)
 (function(){
   const modal=$('export-modal');
   modal.addEventListener('click',e=>{if(e.target===modal)closeExport()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeExport()});
+  document.addEventListener('keydown',e=>{
+    if(!modal.classList.contains('show'))return;
+    if(e.key==='Escape'){closeExport();return}
+    if(e.key==='Tab'){
+      const f=[...modal.querySelectorAll('button,select,input,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
+      if(!f.length)return;
+      const first=f[0],last=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+    }
+  });
   $('export-period').addEventListener('change',updateExportRange);
   window.addEventListener('error',e=>{
     if(e&&/firebase|firestore|xlsx/i.test((e.message||'')+' '+(e.filename||''))){const s=$('status');if(s)setConn('err','データ接続または出力ライブラリでエラーが発生しました。')}
