@@ -152,8 +152,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .table td.date{white-space:nowrap;font-variant-numeric:tabular-nums}
 .table td.name{min-width:90px;overflow-wrap:anywhere}
 .table .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#eff6ff;color:#0369a1}
-.pill.ok{background:#ecfdf5;color:#047857}.pill.ng{background:#fff1f2;color:#be123c}
+.pill{display:inline-flex;align-items:center;justify-content:center;min-width:38px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:900;line-height:1.1;background:#eff6ff;color:#0369a1;border:1px solid #bfdbfe}
+.pill.ok{background:#ecfdf5;color:#047857;border-color:#86efac}.pill.ng{background:#fff1f2;color:#be123c;border-color:#fda4af}
+.r-row-ok td{background:rgba(16,185,129,.035)}.r-row-ng td{background:rgba(244,63,94,.055)}
+.r-row-ok td:first-child{box-shadow:inset 3px 0 0 #34d399}.r-row-ng td:first-child{box-shadow:inset 3px 0 0 #fb7185}
 .empty{text-align:center;padding:28px 12px;color:#94a3b8;font-size:12.5px}
 td.empty{padding:28px 12px}
 
@@ -172,6 +174,25 @@ td.empty{padding:28px 12px}
 .toast.show{display:block}
 
 .print-only{display:none}
+
+
+/* ===== Full-data tables / report polish ===== */
+.table-wrap{
+  max-height:none;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  border-radius:12px;
+  border:1px solid var(--line2);
+}
+.table th{top:0}
+.graph-note{font-size:10px;color:#94a3b8;margin-top:2px}
+.section.repaint-section{min-width:0}
+@media(max-width:640px){
+  .table-wrap{overflow-x:auto}
+  .table{min-width:620px}
+  .table-wrap{max-height:none}
+  .graph-note{font-size:9.5px}
+}
 
 /* ===== Responsive ===== */
 @media(max-width:900px){
@@ -265,6 +286,18 @@ td.empty{padding:28px 12px}
   .pill{font-size:7px;padding:0 6px}
   .empty{padding:8px;font-size:8px}
   .print-footer{margin-top:4px;font-size:7px;color:#64748b;text-align:right}
+
+  .cards,.row-2,.row-b,.trend-graphs{break-inside:auto;page-break-inside:auto}
+  .row-b{break-before:auto}
+  .section{break-inside:avoid;page-break-inside:avoid}
+  .table-wrap{max-height:none!important;overflow:visible!important}
+  .table{min-width:0;width:100%;table-layout:auto}
+  .table thead{display:table-header-group}
+  .table tbody tr{break-inside:avoid;page-break-inside:avoid}
+  .table tr.extra{display:table-row!important}
+  .more{display:none!important}
+  .print-footer{break-inside:avoid;page-break-inside:avoid}
+  .graph-note{font-size:6.5px}
 }
 </style>
 </head>
@@ -292,7 +325,7 @@ td.empty{padding:28px 12px}
       <button id="pd-week" class="active" onclick="setPeriod('week')" aria-pressed="true">今週</button>
       <button id="pd-pick" onclick="setPeriod('pick')" aria-pressed="false">週指定</button>
       <button id="pd-month" onclick="setPeriod('month')" aria-pressed="false">月間</button>
-      <button id="pd-year" onclick="setPeriod('year')" aria-pressed="false">年報</button>
+      <button id="pd-year" onclick="setPeriod('year')" aria-pressed="false">年間</button>
     </div>
     <div class="period-info" id="period-label" aria-live="polite"></div>
   </div>
@@ -304,9 +337,9 @@ td.empty{padding:28px 12px}
   </div>
 </div>
 
-<div class="status no-print" id="status" aria-live="polite"><span class="ok"><span class="dot"></span><span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。</span><span class="upd" id="updated"></span></div>
+<div class="status no-print" id="status" aria-live="polite"><span class="ok"><span class="dot"></span><span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログは全件表示します。</span><span class="upd" id="updated"></span></div>
 
-<div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 月次／週次サマリー</h1><p id="print-period"></p></div><p id="print-date"></p></div>
+<div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 週次・月次・年次サマリー</h1><p id="print-period"></p></div><p id="print-date"></p></div>
 
 <section class="cards">
   <div class="card"><div class="metric-label">総塗装台数</div><div class="metric" id="m-qty">0<small> 台</small></div><div class="metric-sub" id="m-qty-sub"></div></div>
@@ -327,7 +360,7 @@ td.empty{padding:28px 12px}
       <div class="graph-box">
         <div class="graph-head"><div class="graph-title">再塗装発生の推移</div><div class="graph-total" id="repaint-total"></div></div>
         <div class="chart-box" id="repaint-chart"></div>
-        <div class="graph-foot" id="repaint-foot"></div>
+        <div class="graph-foot" id="repaint-foot"></div><div class="graph-foot graph-note">※再塗装個数＝ng_qty、未設定時は不具合明細の個数を集計</div>
       </div>
     </div>
   </section>
@@ -339,7 +372,7 @@ td.empty{padding:28px 12px}
       <div class="muted" id="cause-note" style="margin-top:12px"></div>
     </section>
     <section class="section repaint-section">
-      <div class="section-head"><h2>再塗装の発生日・発生状況</h2></div>
+      <div class="section-head"><h2>再塗装の発生状況</h2></div>
       <div class="repaint-timeline rp mode-week" id="repaint-timeline"></div>
       <div class="muted" id="repaint-note"></div>
     </section>
@@ -347,11 +380,11 @@ td.empty{padding:28px 12px}
 
   <div class="row-2">
     <section class="section">
-      <div class="section-head"><h2>塗着率ログ</h2><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
+      <div class="section-head"><h2>塗着率ログ（全件）</h2><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
       <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th class="num">使用塗料</th><th class="num">塗着率</th><th class="num">ロス率</th></tr></thead><tbody id="t-table"></tbody></table></div>
     </section>
     <section class="section">
-      <div class="section-head"><h2>実績データ</h2><span class="count-tag" id="cnt-r"></span><button class="more no-print" id="more-r" onclick="toggleRows('r')" hidden></button></div>
+      <div class="section-head"><h2>実績データ（全件）</h2><span class="count-tag" id="cnt-r"></span><button class="more no-print" id="more-r" onclick="toggleRows('r')" hidden></button></div>
       <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th class="num">台数</th><th class="num">塗料</th><th>判定</th></tr></thead><tbody id="r-table"></tbody></table></div>
     </section>
   </div>
@@ -380,8 +413,8 @@ const pd=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||''));return m?ne
 const WD=['日','月','火','水','木','金','土'];
 const mdw=s=>{const d=pd(s);return d?`${d.getMonth()+1}/${d.getDate()}(${WD[d.getDay()]})`:'-'};
 const firebaseConfig={apiKey:"AIzaSyC4K1DTi4GLHmCRGHP1d4UglfzMSgNzSVM",authDomain:"powdercoating-9254b.firebaseapp.com",projectId:"powdercoating-9254b",storageBucket:"powdercoating-9254b.firebasestorage.app",messagingSenderId:"1094264514813",appId:"1:1094264514813:web:a6edb6b3c96b12fbbc7694"};
-let db=null,records=[],tochaku=[],period='week',pickDate=today(),loaded={records:false,tochaku:false},lastView={rec:[],r:null},expand={r:false,t:false},GID=0;
-const LIM=12;
+let db=null,records=[],tochaku=[],period='week',pickDate=today(),loaded={records:false,tochaku:false},lastView={rec:[],r:null},expand={r:true,t:true},GID=0;
+const LIM=0;
 
 /* 日付の正規化（文字列 / Timestamp / Date に対応） */
 function normDate(v){
@@ -455,16 +488,28 @@ function init(){
 
 /* ===== 集計 ===== */
 function rangeData(){const r=PERIODS[period].range();return{r,rec:records.filter(x=>inRange(x._d,r)),tk:tochaku.filter(x=>inRange(x._d,r))}}
-function qtyOf(x){return Number(x.total_qty)||(Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0),0):0)}
-function paintOf(x){return Number(x.paint_weight)||0}
+function qtyOf(x){
+  const q=Number(x.total_qty);
+  if(Number.isFinite(q)&&q>0)return q;
+  return Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0),0):0;
+}
+function paintOf(x){const q=Number(x.paint_weight);return Number.isFinite(q)?q:0}
+function repaintQtyOf(x){
+  const q=Number(x.ng_qty);
+  if(Number.isFinite(q)&&q>0)return q;
+  const detail=Array.isArray(x.ng_details)?x.ng_details.reduce((s,n)=>s+(Number(n.qty)||0),0):0;
+  if(detail>0)return detail;
+  return x.status==='NG'?1:0;
+}
 function workName(x){if(Array.isArray(x.items))return x.items.map(i=>i.name).join(' / ');return x.work_name||'-'}
 function tkName(x){return x.work_name||((x.work_items||[]).map(i=>i.name).join(' / '))||'-'}
 
 function render(){
   const {r,rec,tk}=rangeData();
   const label=`${PERIODS[period].label}: ${r[0]} ～ ${r[1]}`;
-  $('period-label').textContent=label;$('print-period').textContent=label;$('print-date').textContent='作成 '+today();
-  const qty=rec.reduce((s,x)=>s+qtyOf(x),0),paint=rec.reduce((s,x)=>s+paintOf(x),0),ng=rec.filter(x=>x.status==='NG').length,ngRate=rec.length?ng/rec.length*100:0;
+  $('period-label').textContent=label;$('print-period').textContent=`${r[0]} ～ ${r[1]}`;$('print-date').textContent='作成 '+today();
+  // 再塗装率は対象期間の総台数（総件数）に対する再塗装件数の割合。NGレコード数ではなく、実際の再塗装個数を分子にする。
+  const qty=rec.reduce((s,x)=>s+qtyOf(x),0),paint=rec.reduce((s,x)=>s+paintOf(x),0),totalCases=qty,repaintCases=rec.reduce((s,x)=>s+repaintQtyOf(x),0),ngRate=totalCases?(repaintCases/totalCases)*100:0;
   const rs=tk.filter(x=>x.rate!==null&&x.rate!==undefined&&x.rate!==''&&Number.isFinite(Number(x.rate))).map(x=>Number(x.rate)),rate=rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0;
   $('m-qty').innerHTML=qty.toLocaleString()+'<small> 台</small>';
   $('m-paint').innerHTML=paint.toFixed(2)+'<small> kg</small>';
@@ -472,7 +517,7 @@ function render(){
   $('m-rate').innerHTML=rate.toFixed(1)+'<small> %</small>';
   $('m-qty-sub').textContent=`実績 ${rec.length}件`;
   $('m-paint-sub').textContent=`実績データの合計`;
-  $('m-ng-sub').textContent=`NG ${ng}件 / 全${rec.length}件`;
+  $('m-ng-sub').textContent=`再塗装 ${repaintCases.toLocaleString()}件 / 総件数 ${totalCases.toLocaleString()}件`;
   $('m-rate-sub').textContent=`測定 ${rs.length}件の平均`;
   lastView={rec,r};
   renderTrend(rec,r);renderCauses(rec);renderRepaint(rec,r);renderTables(rec,tk);
@@ -484,7 +529,7 @@ function renderRepaint(rec,r){
   const map={};
   rec.forEach(x=>{
     if(x.status!=='NG'||!x._d)return;
-    const q=Number(x.ng_qty)||((x.ng_details||[]).reduce((a,n)=>a+(Number(n.qty)||0),0))||1;
+    const q=repaintQtyOf(x);
     const o=map[x._d]||(map[x._d]={qty:0,names:new Set()});
     o.qty+=q;const n=workName(x);if(n&&n!=='-')o.names.add(n);
   });
@@ -494,7 +539,7 @@ function renderRepaint(rec,r){
     const y=r[0].slice(0,4);
     html=Array.from({length:12},(_,i)=>{
       const pre=y+'-'+pad(i+1),rows=days.filter(d=>d.startsWith(pre)),qty=rows.reduce((a,d)=>a+map[d].qty,0),names=[...new Set(rows.flatMap(d=>[...map[d].names]))].slice(0,3);
-      return `<div class="repaint-day ${qty?'active':''} ${tdy.startsWith(pre)?'today':''}" ${qty?`title="${esc(names.join(' / '))}"`:''}><div class="rd-date">${i+1}月</div><div class="rd-count">${qty?qty+'件':'—'}</div><div class="rd-names">${qty?(rows.length+'日発生'+(names.length?'・'+esc(names.join(' / ')):'')):''}</div></div>`;
+      return `<div class="repaint-day ${qty?'active':''} ${tdy.startsWith(pre)?'today':''}"><div class="rd-date">${i+1}月</div><div class="rd-count">${qty?qty+'件':'—'}</div><div class="rd-names"></div></div>`;
     }).join('');
   }else{
     const isMonth=period==='month';
@@ -506,17 +551,17 @@ function renderRepaint(rec,r){
     }
     for(let d=new Date(s);d<=e;d=D(d,1)){
       const k=ds(d),v=map[k],dow=d.getDay(),names=v?[...v.names]:[];
-      html+=`<div class="repaint-day ${v?'active':''} ${k===tdy?'today':''} ${dow===0||dow===6?'we':''}" ${v?`title="${esc(names.join(' / '))}"`:''}><div class="rd-date">${isMonth?d.getDate():(d.getMonth()+1)+'/'+d.getDate()}${isMonth?'':`<span class="wd">${WD[dow]}</span>`}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names">${v?esc(names.slice(0,2).join(' / ')||'再塗装発生'):''}</div></div>`;
+      html+=`<div class="repaint-day ${v?'active':''} ${k===tdy?'today':''} ${dow===0||dow===6?'we':''}"><div class="rd-date">${isMonth?d.getDate():(d.getMonth()+1)+'/'+d.getDate()}${isMonth?'':`<span class="wd">${WD[dow]}</span>`}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names"></div></div>`;
     }
   }
   el.innerHTML=html;
-  note.textContent=days.length?`${days.length}日で再塗装が発生。赤いセルが発生日です。`:'対象期間に再塗装の発生はありません。';
+  const total=days.reduce((a,d)=>a+map[d].qty,0);note.textContent=total?`対象期間の再塗装発生は合計 ${total.toLocaleString()}件です。赤いセルが発生日です。`:'対象期間に再塗装の発生はありません。';
 }
 
 /* ===== 推移グラフ ===== */
 function trendBuckets(rec,r){
   const by=new Map();
-  rec.forEach(x=>{const k=x._d;if(!k)return;let o=by.get(k);if(!o){o={q:0,ng:0};by.set(k,o)}o.q+=qtyOf(x);if(x.status==='NG')o.ng++});
+  rec.forEach(x=>{const k=x._d;if(!k)return;let o=by.get(k);if(!o){o={q:0,ng:0};by.set(k,o)}o.q+=qtyOf(x);if(x.status==='NG')o.ng+=repaintQtyOf(x);});
   if(period==='year'){
     const y=r[0].slice(0,4);
     return Array.from({length:12},(_,i)=>{const pre=y+'-'+pad(i+1);let q=0,ng=0;by.forEach((o,k)=>{if(k.startsWith(pre)){q+=o.q;ng+=o.ng}});return{label:(i+1)+'月',sub:'',tip:(i+1)+'月',q,ng,wk:false,dow:-1}});
@@ -632,14 +677,14 @@ function renderTrend(rec,r){
   rec=rec||lastView.rec;r=r||lastView.r;if(!r)return;
   const b=trendBuckets(rec,r);
   mountChart($('production-chart'),'area',b,'q','台',{c1:'#0ea5e9',c2:'#4f46e5',avg:true,empty:'この期間の実績はありません',label:'塗装台数の推移'});
-  mountChart($('repaint-chart'),'bar',b,'ng','件',{c1:'#fb7185',c2:'#e11d48',empty:'この期間の再塗装はありません',label:'再塗装発生の推移'});
+  mountChart($('repaint-chart'),'area',b,'ng','件',{c1:'#fb7185',c2:'#e11d48',avg:true,empty:'この期間の再塗装はありません',label:'再塗装発生の推移（再塗装個数）'});
   const tq=b.reduce((s,x)=>s+x.q,0),tn=b.reduce((s,x)=>s+x.ng,0);
   $('production-total').textContent='合計 '+tq.toLocaleString()+'台';
   $('repaint-total').textContent='合計 '+tn+'件';
   const act=b.filter(x=>x.q>0),pk=act.slice().sort((x,y)=>y.q-x.q)[0];
   $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString()}台（${pk.tip}）／ 稼働${period==='year'?'月':'日'}平均 ${Math.round(tq/act.length).toLocaleString()}台`:'実績なし';
   const ng=b.filter(x=>x.ng>0),pn=ng.slice().sort((x,y)=>y.ng-x.ng)[0];
-  $('repaint-foot').textContent=pn?`発生 ${ng.length}${period==='year'?'か月':'日'} ／ 最多 ${pn.ng}件（${pn.tip}）`:'再塗装の発生なし';
+  $('repaint-foot').textContent=pn?`発生 ${ng.length}${period==='year'?'か月':'日'} ／ 最多 ${pn.ng}件（${pn.tip}） ／ 平均 ${Math.round(tn/Math.max(1,ng.length))}件`:'再塗装の発生なし';
 }
 if('ResizeObserver' in window){
   let lw=0;
@@ -659,13 +704,13 @@ function renderCauses(rec){
 function renderTables(rec,tk){
   const byDate=(a,b)=>String(b._d).localeCompare(String(a._d));
   const rl=rec.slice().sort(byDate),tl=tk.slice().sort(byDate);
-  const cap=(k,l)=>expand[k]?l.slice(0,500):l.slice(0,LIM);
+  const cap=(k,l)=>l;
   const wait='<tr><td colspan="5" class="empty">読み込み中…</td></tr>',none='<tr><td colspan="5" class="empty">データがありません</td></tr>';
-  $('r-table').innerHTML=!loaded.records?wait:cap('r',rl).map((x,i)=>`<tr class="${i>=LIM?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(workName(x))}</td><td class="num">${qtyOf(x)}</td><td class="num">${paintOf(x).toFixed(2)}kg</td><td><span class="pill ${x.status==='NG'?'ng':x.status==='OK'?'ok':''}">${esc(x.status||'-')}</span></td></tr>`).join('')||none;
+  $('r-table').innerHTML=!loaded.records?wait:cap('r',rl).map((x,i)=>{const st=String(x.status||'').toUpperCase(),row=st==='NG'?'r-row-ng':st==='OK'?'r-row-ok':'';return `<tr class="${row} ${i>=LIM?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(workName(x))}</td><td class="num">${qtyOf(x)}</td><td class="num">${paintOf(x).toFixed(2)}kg</td><td><span class="pill ${st==='NG'?'ng':st==='OK'?'ok':''}">${st==='NG'?'NG':st==='OK'?'OK':esc(x.status||'-')}</span></td></tr>`}).join('')||none;
   $('t-table').innerHTML=!loaded.tochaku?wait:cap('t',tl).map((x,i)=>`<tr class="${i>=LIM?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(tkName(x))}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num">${fmt(x.rate,1,'%')}</td><td class="num">${fmt(x.loss_rate,1,'%')}</td></tr>`).join('')||none;
   [['r',rl],['t',tl]].forEach(([k,l])=>{
     $('cnt-'+k).textContent=l.length?`${l.length}件`:'';
-    const b=$('more-'+k);b.hidden=l.length<=LIM;b.textContent=expand[k]?'折りたたむ':`すべて表示（${l.length}件）`;
+    const b=$('more-'+k);b.hidden=true;b.textContent=`全件表示（${l.length}件）`;
   });
 }
 
