@@ -265,7 +265,7 @@ td.empty{padding:28px 12px}
 /* Tablet / mobile */
 @media(max-width:900px){
   .cards{grid-template-columns:repeat(2,1fr)}
-  .row-2,.row-b,.trend-graphs{grid-template-columns:1fr}
+  .row-b,.trend-graphs{grid-template-columns:1fr}
 }
 @media(max-width:700px){
   .mode-week.rp{grid-template-columns:1fr;gap:6px}
@@ -427,15 +427,17 @@ td.empty{padding:28px 12px}
   .rank{width:11px;height:11px;font-size:6px;border-radius:2px}
   .cause-top small{font-size:5.2px;width:18px}
   .barbg{height:3px}
-  .rp{gap:1px}
-  .rp.mode-week .repaint-day{min-height:20px}.rp.mode-year .repaint-day{min-height:18px}
-  .rp.mode-month .repaint-day{min-height:15px}
-  .repaint-day{padding:1px 2px;border-radius:2px}
+  /* 週・月・年のいずれでもカードの縦横比・余白・センタリングが揃うように統一。
+     年間は6列だと横に間延びするため、月と同じ7列グリッドの折返し(4列相当の見た目)にする。 */
+  .rp{gap:2px}
+  .rp.mode-year{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .rp.mode-week .repaint-day,.rp.mode-month .repaint-day,.rp.mode-year .repaint-day{min-height:17px}
+  .repaint-day{padding:2px 3px;border-radius:3px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
   .repaint-day.today{outline:0}
-  .repaint-day.active{box-shadow:inset 1.5px 0 0 var(--rose);background:#fff8fa}
-  .rd-date{font-size:5.5px;padding-left:3px}.rd-date .wd{font-size:5px}
-  .rd-count{font-size:7px;margin:0}.rd-names{display:none!important}
-  .rp-h{font-size:5.3px}
+  .repaint-day.active{box-shadow:inset 0 0 0 1px var(--rose);background:#fff8fa}
+  .rd-date{font-size:5.6px;padding-left:0;line-height:1.15}.rd-date .wd{font-size:5px;margin-left:2px}
+  .rd-count{font-size:7.2px;margin:1px 0 0}.rd-names{display:none!important}
+  .rp-h{font-size:5.4px}
   #repaint-note{font-size:5px;margin-top:1px}
 
   /* NG detail: compact but readable, and allowed to continue naturally to the next page. */
