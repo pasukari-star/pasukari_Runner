@@ -65,6 +65,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .seg button.active{color:#fff;background:linear-gradient(135deg,var(--sky),var(--indigo));box-shadow:0 6px 14px rgba(2,132,199,.28)}
 .period-info{font-size:13px;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums}
 .weekbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.loadbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+.load-summary{font-size:11px;color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+.load-modal-note{margin:12px 0 0;padding:8px 10px;border-radius:9px;background:#f8fafc;border:1px solid var(--line2);font-size:11px;color:var(--muted)}
 .datepick{flex:0 1 190px;min-width:150px}
 .datepick input{width:100%;height:42px;border:1px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;font-weight:800;color:var(--ink)}
 
@@ -181,20 +184,20 @@ td.empty{padding:28px 12px}
 .r-table td.name{line-height:1.45;vertical-align:middle;min-width:0}
 .r-table td.num{line-height:1.45;vertical-align:middle}
 .batch-products{border:1px solid #e2e8f0;border-radius:11px;background:#fbfdff;overflow:hidden;box-sizing:border-box;width:100%;max-width:100%}
-.batch-item{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:9px;width:100%;min-height:36px;padding:7px 10px;border:0;border-radius:0;box-shadow:none;background:transparent;position:relative;box-sizing:border-box}
+.batch-item{display:grid;grid-template-columns:minmax(0,1fr) 58px minmax(96px,auto);align-items:center;gap:7px;width:100%;min-height:36px;padding:7px 8px;border:0;border-radius:0;box-shadow:none;background:transparent;position:relative;box-sizing:border-box}
 .batch-item+.batch-item{border-top:1px solid #e8edf3}
 .batch-item.batch-item-ng{background:linear-gradient(90deg,rgba(255,241,242,.72),rgba(255,255,255,0))}
 .batch-item.batch-item-ok{background:linear-gradient(90deg,rgba(236,253,245,.72),rgba(255,255,255,0))}
 .batch-item.batch-item-ng::before,.batch-item.batch-item-ok::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
 .batch-item.batch-item-ng::before{background:#fb7185}.batch-item.batch-item-ok::before{background:#34d399}
 .batch-item-name{min-width:0;font-size:13px;font-weight:800;line-height:1.35;overflow-wrap:anywhere;word-break:normal}
-.batch-item-qty{min-width:72px;font-size:12px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.batch-item-status{min-width:94px;text-align:right;white-space:nowrap}
+.batch-item-qty{min-width:0;font-size:12px;font-weight:900;color:#1f2937;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.batch-item-status{min-width:0;text-align:right;white-space:nowrap}
 .batch-ng-part{display:inline-flex;align-items:baseline;justify-content:flex-end;gap:3px;padding:4px 8px;border-radius:999px;background:#fff1f2;border:1px solid #fda4af;color:#be123c;font-size:12px;line-height:1.1;white-space:nowrap}
 .batch-ng-part b{font-size:13px}.batch-ng-part small{font-size:9px;font-weight:800}
 .batch-status-combined{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap;font-size:12px;font-weight:900}
 .status-ok-text{color:#047857}.status-ng-text{color:#be123c}
-.batch-ok-total{display:inline-flex;align-items:center;justify-content:center;padding:4px 9px;border-radius:999px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:12px;font-weight:900;white-space:nowrap}
+.batch-ok-total{display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:4px 8px;border-radius:999px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:12px;font-weight:900;white-space:nowrap}
 .batch-summary{padding:5px 10px;border-top:1px solid #e8edf3;background:#f8fafc;color:#64748b;font-size:9px;font-weight:800;text-align:right}
 .batch-summary b{color:#334155}
 .paint-shared{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
@@ -207,17 +210,26 @@ td.empty{padding:28px 12px}
 #tochaku-section .table{table-layout:fixed}
 #tochaku-section .table th:nth-child(1),#tochaku-section .table td.date{width:82px}
 #tochaku-section .table th:nth-child(2){width:auto}
-#tochaku-section .table th:nth-child(3){width:82px}
-#tochaku-section .table th:nth-child(4),#tochaku-section .table th:nth-child(5){width:74px}
+#tochaku-section .table th:nth-child(3){width:64px}
+#tochaku-section .table th:nth-child(4){width:82px}
+#tochaku-section .table th:nth-child(5),#tochaku-section .table th:nth-child(6){width:74px}
 #tochaku-section .table td.name{min-width:0;overflow-wrap:anywhere}
 #t-table tr{transition:background .15s ease}
 #t-table tr:hover{background:#f8fbff}
 #t-table td.name{font-weight:800;color:#0f1f33}
-#t-table td:nth-child(3),#t-table td:nth-child(4),#t-table td:nth-child(5){font-variant-numeric:tabular-nums}
-#t-table td:nth-child(4){font-weight:900;color:#047857}
-#t-table td:nth-child(5){font-weight:800;color:#64748b}
+#t-table td:nth-child(3),#t-table td:nth-child(4),#t-table td:nth-child(5),#t-table td:nth-child(6){font-variant-numeric:tabular-nums}
+#t-table td:nth-child(5){font-weight:900;color:#047857}
+#t-table td:nth-child(6){font-weight:800;color:#64748b}
 .tochaku-rate-value{display:inline-flex;align-items:center;justify-content:center;min-width:64px;padding:4px 8px;border-radius:999px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-weight:900}
 .tochaku-loss-value{display:inline-flex;align-items:center;justify-content:center;min-width:58px;padding:4px 7px;border-radius:999px;background:#f8fafc;border:1px solid #dbe3ee;color:#475569;font-weight:800}
+.tochaku-rate-value.warn{background:#fff7ed;border-color:#fdba74;color:#c2410c}
+.rate-warning{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 6px;border-radius:999px;background:#fff7ed;border:1px solid #fdba74;color:#c2410c;font-size:9px;font-weight:900;white-space:nowrap}
+.rate-warning::before{content:'⚠';font-size:9px}
+.rate-warning-box{border:1px solid #fed7aa;background:#fffaf5;color:#9a3412;border-radius:11px;padding:8px 10px;margin:-3px 0 12px;font-size:11px}
+.unidentified-box{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:11px;padding:8px 10px;margin:-3px 0 12px}
+.unidentified-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800}
+.unidentified-list{margin-top:5px;display:flex;flex-wrap:wrap;gap:4px}
+.unidentified-tag{display:inline-flex;padding:3px 7px;border-radius:999px;background:#fef3c7;border:1px solid #fcd34d;color:#92400e;font-size:10px;font-weight:800}
 
 /* NG detail */
 .ng-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:-3px 0 12px}
@@ -236,6 +248,8 @@ td.empty{padding:28px 12px}
 .ng-row td.date{position:relative;padding-left:12px!important}.ng-row td.date::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px 0 0 2px;background:#fb7185;pointer-events:none}
 .ng-empty{padding:24px 12px;text-align:center;color:#94a3b8;font-size:12px}
 
+.load-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.load-current-block{grid-column:1/-1;padding:12px 13px;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc}.load-current-block b{display:block;font-size:13px}.load-current-block span{display:block;margin-top:3px;font-size:12px;font-weight:800}.load-current-block small{display:block;margin-top:3px;color:var(--muted);font-size:10px}.load-quick{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:800;color:var(--ink);padding:6px 10px}.load-quick small{display:block;font-size:10px;color:var(--muted);font-weight:700}.load-quick:active{transform:translateY(1px)}.load-quick:disabled{background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0;cursor:default}.load-custom{margin-top:14px;padding:13px;border:1px solid var(--line2);border-radius:14px;background:#f8fafc}.load-custom-title{font-size:12px;font-weight:800;margin-bottom:8px}.load-month-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.load-month-fields label{font-size:11px;font-weight:800;color:var(--muted)}.load-month-fields select{width:100%;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 9px;margin-top:4px;background:#fff;font-weight:700}.load-custom .btn{width:100%;margin-top:9px}@media(max-width:520px){.load-quick{min-height:52px}}
+
 /* Modal / toast */
 .modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:60;align-items:center;justify-content:center;padding:18px;overscroll-behavior:contain}
 .modal.show{display:flex}
@@ -246,6 +260,8 @@ td.empty{padding:28px 12px}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .filters label{font-size:11px;font-weight:800;color:var(--muted)}
 .filters select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;padding:0 10px;margin-top:5px;background:#fff;font-weight:700}
+#export-pick-wrap label{display:block;font-size:11px;font-weight:800;color:var(--muted)}
+#export-pick-wrap input{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;padding:0 10px;margin-top:5px;background:#fff;font-weight:700}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:calc(100vw - 32px);width:max-content;background:#0f172a;color:#fff;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.4;display:none;z-index:100;box-shadow:0 12px 30px rgba(15,23,42,.3)}
 .toast.show{display:block}
@@ -315,22 +331,25 @@ td.empty{padding:28px 12px}
   #records-section .table td.num::before{content:'塗料 ';color:var(--muted);font-size:9px;font-weight:700;margin-right:3px}
   #records-section .table td.name,#tochaku-section .table td.name{grid-column:1 / -1;width:auto;min-width:0;margin-top:6px;overflow:visible}
   #records-section .batch-products{border-radius:10px}
-  #records-section .batch-item{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:'name status';column-gap:8px;min-height:40px;padding:7px 9px}
+  #records-section .batch-item{grid-template-columns:minmax(0,1fr) 48px minmax(76px,auto);grid-template-areas:'name qty status';column-gap:6px;min-height:40px;padding:7px 9px}
   #records-section .batch-item-name{grid-area:name;font-size:12px;line-height:1.3;overflow-wrap:anywhere}
-  #records-section .batch-item-qty{display:none}
+  #records-section .batch-item-qty{display:block;grid-area:qty;min-width:0;text-align:right;font-size:11px;font-weight:900;color:#1f2937;font-variant-numeric:tabular-nums;white-space:nowrap;align-self:center}
   #records-section .batch-item-status{grid-area:status;min-width:0;text-align:right}
-  #records-section .batch-ng-part{padding:4px 7px;font-size:10.5px;gap:2px}
-  #records-section .batch-ng-part b{font-size:11.5px}.batch-ng-part small{font-size:8px}
-  #records-section .batch-ok-total{padding:4px 7px;font-size:10.5px}
+  #records-section .batch-ng-part{padding:4px 6px;font-size:10px;gap:2px}
+  #records-section .batch-ng-part b{font-size:11px}.batch-ng-part small{font-size:8px}
+  #records-section .batch-status-combined{gap:4px;font-size:10px}
+  #records-section .batch-ok-total{padding:4px 6px;font-size:10px;min-width:40px}
   #records-section .batch-summary{padding:4px 8px;font-size:8.5px;text-align:left}
 
   #tochaku-section .table td.name{grid-row:2;margin-top:5px;margin-bottom:7px;font-size:12px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
   #tochaku-section .table td:nth-child(3){grid-column:1;grid-row:3;color:#334155;font-size:9.5px}
-  #tochaku-section .table td:nth-child(3)::before{content:'使用塗料 ';color:var(--muted);font-size:8.5px;font-weight:700}
-  #tochaku-section .table td:nth-child(4){grid-column:2;grid-row:3;align-self:center}
-  #tochaku-section .table td:nth-child(5){grid-column:2;grid-row:4;align-self:center;margin-top:3px}
-  #tochaku-section .table td:nth-child(4)::before{content:'塗着率';color:#047857;font-size:8px;font-weight:700;margin-right:3px}
-  #tochaku-section .table td:nth-child(5)::before{content:'ロス率';color:#64748b;font-size:8px;font-weight:700;margin-right:3px}
+  #tochaku-section .table td:nth-child(3)::before{content:'台数 ';color:var(--muted);font-size:8.5px;font-weight:700}
+  #tochaku-section .table td:nth-child(4){grid-column:2;grid-row:3;align-self:center;color:#334155;font-size:9.5px}
+  #tochaku-section .table td:nth-child(4)::before{content:'使用塗料 ';color:var(--muted);font-size:8.5px;font-weight:700}
+  #tochaku-section .table td:nth-child(5){grid-column:1;grid-row:4;align-self:center;margin-top:3px}
+  #tochaku-section .table td:nth-child(6){grid-column:2;grid-row:4;align-self:center;margin-top:3px}
+  #tochaku-section .table td:nth-child(5)::before{content:'塗着率';color:#047857;font-size:8px;font-weight:700;margin-right:3px}
+  #tochaku-section .table td:nth-child(6)::before{content:'ロス率';color:#64748b;font-size:8px;font-weight:700;margin-right:3px}
   #tochaku-section .tochaku-rate-value,#tochaku-section .tochaku-loss-value{min-width:50px;padding:3px 6px;font-size:9.5px}
 
   /* NG detail: one vertical reading column. Long causes/names/operators never compete for width.
@@ -367,10 +386,21 @@ td.empty{padding:28px 12px}
   .ng-empty{padding:16px 8px;font-size:11px}
 }
 @media(max-width:380px){
+  #records-section .batch-item{grid-template-columns:minmax(0,1fr) 44px minmax(70px,auto);column-gap:5px;padding-left:8px;padding-right:8px}
+  #records-section .batch-item-name{font-size:11.5px}
+  #records-section .batch-item-qty{font-size:10.5px}
+  #records-section .batch-status-combined{gap:3px;font-size:9.5px}
   .seg button{min-height:38px;font-size:11px;padding:0 1px}
   .ng-summary{gap:4px}.ng-summary-card{padding:6px}.ng-summary-value{font-size:13px}
 }
 
+/* ===== Final UX / data-safety refinements ===== */
+.export-safety-note{margin:7px 0 0;padding:7px 9px;border-radius:9px;background:#f8fafc;border:1px solid var(--line2);font-size:10.5px;color:var(--muted)}
+.warning-action{display:block;width:100%;border:0;background:transparent;color:inherit;text-align:left;padding:0;cursor:pointer}
+.warning-action:hover{text-decoration:underline;text-underline-offset:2px}
+.section-attention{animation:sectionAttention 1.4s ease}
+@keyframes sectionAttention{0%,100%{box-shadow:var(--shadow)}25%{box-shadow:0 0 0 3px rgba(2,132,199,.25),var(--shadow)}}
+.toast[data-type="success"]{background:#065f46}.toast[data-type="error"]{background:#991b1b}
 /* Reduced motion */
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -511,27 +541,30 @@ td.empty{padding:28px 12px}
   #records-section .batch-item.batch-item-ng,#records-section .batch-item.batch-item-ok{background:#fff!important}
   #records-section .batch-item.batch-item-ng::before,#records-section .batch-item.batch-item-ok::before{display:none!important}
   #records-section .batch-item{
-    grid-template-columns:minmax(0,1fr) auto;gap:2px;min-height:10px;padding:.5px 2px
+    grid-template-columns:minmax(0,1fr) 26px minmax(0,auto);
+    grid-template-areas:'name qty status';
+    align-items:center;gap:2px;min-height:10px;padding:.5px 2px
   }
   #records-section .batch-item+.batch-item{border-top:1px solid #eef1f5}
-  #records-section .batch-item-qty{display:none}
-  #records-section .batch-item-name{font-size:5.5px;line-height:1.05}
-  #records-section .batch-item-status{min-width:0;font-size:5.5px}
-  #records-section .batch-ng-part{gap:1px;padding:.5px 2px;font-size:5px;border-radius:3px}
+  #records-section .batch-item-name{grid-area:name;min-width:0;font-size:5.5px;line-height:1.05;overflow-wrap:anywhere}
+  #records-section .batch-item-qty{display:block;grid-area:qty;min-width:0;text-align:right;font-size:5.2px;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;white-space:nowrap;align-self:center}
+  #records-section .batch-item-status{grid-area:status;min-width:0;font-size:5.5px;text-align:right;white-space:nowrap}
+  #records-section .batch-ng-part{gap:1px;padding:.5px 2px;font-size:5px;border-radius:3px;white-space:nowrap}
   #records-section .batch-ng-part b{font-size:5.6px}
   #records-section .batch-ng-part small{font-size:4.4px}
-  #records-section .batch-ok-total{padding:.5px 2px;font-size:5px}
-  #records-section .batch-status-combined{gap:3px;font-size:5px}
+  #records-section .batch-ok-total{padding:.5px 2px;font-size:5px;white-space:nowrap}
+  #records-section .batch-status-combined{gap:3px;font-size:5px;white-space:nowrap}
   #records-section .batch-summary{padding:.5px 2px;font-size:4.6px}
   .paint-shared{gap:0}.paint-shared b{font-size:5.5px}.paint-shared small{font-size:4.4px}
 
   /* Tochaku is deliberately the final report block. Slightly roomier than 実績データ
      since it has fewer, wider columns, but still consistent with the rest of the page. */
-  #tochaku-section .table th:nth-child(1),#tochaku-section .table td.date{width:11%}
+  #tochaku-section .table th:nth-child(1),#tochaku-section .table td.date{width:10%}
   #tochaku-section .table th:nth-child(2),#tochaku-section .table td.name{width:auto}
-  #tochaku-section .table th:nth-child(3),#tochaku-section .table td:nth-child(3){width:17%}
-  #tochaku-section .table th:nth-child(4),#tochaku-section .table td:nth-child(4){width:13%}
-  #tochaku-section .table th:nth-child(5),#tochaku-section .table td:nth-child(5){width:13%}
+  #tochaku-section .table th:nth-child(3),#tochaku-section .table td:nth-child(3){width:10%}
+  #tochaku-section .table th:nth-child(4),#tochaku-section .table td:nth-child(4){width:15%}
+  #tochaku-section .table th:nth-child(5),#tochaku-section .table td:nth-child(5){width:12%}
+  #tochaku-section .table th:nth-child(6),#tochaku-section .table td:nth-child(6){width:12%}
   #tochaku-section .table{font-size:6.5px}
   #tochaku-section .table th{font-size:6px}
   #tochaku-section .table th,#tochaku-section .table td{padding:1.5px 4px}
@@ -546,12 +579,13 @@ td.empty{padding:28px 12px}
   .cards,.row-2,.row-b,.trend-graphs,.section,.ng-detail-section{break-inside:auto;page-break-inside:auto}
   .card,.graph-box,.cause,.repaint-day,.ng-detail-table tr,.table tbody tr{break-inside:avoid;page-break-inside:avoid}
 
-  /* データ量に応じた自動縮小: 上記の基準サイズは通常件数（〜50件程度）向け。
-     件数が多い期間だけ、実績・NG明細・塗着率ログの区画をまとめて縮小し、崩れを防ぐ。 */
-  body[data-print-density="l"] #records-section,body[data-print-density="l"] .ng-detail-section{zoom:.88}
-  body[data-print-density="l"] #tochaku-section{zoom:.92}
-  body[data-print-density="xl"] #records-section,body[data-print-density="xl"] .ng-detail-section{zoom:.74}
-  body[data-print-density="xl"] #tochaku-section{zoom:.8}
+  /* データ量に応じた自動縮小: 上記の基準サイズは通常件数（〜80件程度）向け。
+     極端に件数が多い期間だけ、実績・NG明細・塗着率ログの区画を穏やかに縮小して崩れを防ぐ
+     （縮小率は最小86%までに留め可読性を優先。印刷対象のデータ自体は期間・件数を問わず常に全件）。 */
+  body[data-print-density="l"] #records-section,body[data-print-density="l"] .ng-detail-section{zoom:.94}
+  body[data-print-density="l"] #tochaku-section{zoom:.96}
+  body[data-print-density="xl"] #records-section,body[data-print-density="xl"] .ng-detail-section{zoom:.86}
+  body[data-print-density="xl"] #tochaku-section{zoom:.9}
 }
 </style>
 
@@ -569,7 +603,7 @@ td.empty{padding:28px 12px}
   </div>
   <div class="actions">
     <button class="btn green" onclick="openExport()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>CSV / Excel</button>
-    <button class="btn" onclick="printSummary()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>印刷ビュー</button>
+    <button class="btn" onclick="printSummary()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>印刷・PDF</button>
   </div>
 </header>
 
@@ -591,9 +625,13 @@ td.empty{padding:28px 12px}
     <button class="btn ghost" onclick="pickThisWeek()">今週へ</button>
   </div>
   <div class="muted" id="pick-hint" style="margin-top:6px" hidden></div>
+  <div class="loadbar no-print">
+    <span class="load-summary" id="load-summary">直近6か月を自動同期しています</span>
+    <button class="btn ghost" type="button" onclick="openLoadRange()">追加期間を読み込む</button>
+  </div>
 </div>
 
-<div class="status no-print" id="status" aria-live="polite"><span class="ok"><span class="dot"></span><span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログを確認できます（印刷時は常に全件、画面表示は「全件表示」ボタンで展開）。</span><button class="retry" id="retry-btn" onclick="location.reload()" hidden>再接続</button><span class="upd" id="updated"></span></div>
+<div class="status no-print" id="status" aria-live="polite"><span class="ok"><span class="dot"></span><span id="conn">データ共有へ接続中…</span></span><span class="note">この画面は Firestore の records / tochaku_records を読み取り専用で表示します。現在の6か月だけ自動同期し、過去データは必要な半年だけ取得します。古い期間を常時監視しないため、PCやAndroidへの負荷を抑えます。</span><button class="retry" id="retry-btn" onclick="location.reload()" hidden>再接続</button><span class="upd" id="updated"></span></div>
 
 <div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 実績・NGレポート</h1><p id="print-period"></p></div><p id="print-date"></p></div>
 
@@ -608,6 +646,8 @@ td.empty{padding:28px 12px}
   <section class="section ng-detail-section">
     <div class="section-head"><div><h2>NG・再塗装 詳細</h2><div class="muted">発生日・原因・NG対象品名・塗装者を1件ずつ確認できます。対象品が特定できない旧データは推測せず表示します</div></div><span class="count-tag" id="cnt-ng-detail"></span></div>
     <div class="ng-summary" id="ng-summary"></div>
+    <div class="rate-warning-box" id="rate-warning-box" hidden></div>
+    <div class="unidentified-box" id="unidentified-box" hidden></div>
     <div class="table-wrap ng-detail-wrap"><table class="table ng-detail-table"><thead><tr>
       <th>発生日</th><th>原因</th><th>品名</th><th>塗装者</th><th class="num">NG数</th><th>判定</th>
     </tr></thead><tbody id="ng-detail-table"></tbody></table></div>
@@ -647,8 +687,8 @@ td.empty{padding:28px 12px}
       <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・台数・判定</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody></table></div>
     </section>
     <section class="section" id="tochaku-section">
-      <div class="section-head"><div><h2>塗着率ログ（全件）</h2><div class="muted">Firebase の <b>tochaku_records</b> を対象期間で表示</div></div><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
-      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th class="num">使用塗料</th><th class="num">塗着率</th><th class="num">ロス率</th></tr></thead><tbody id="t-table"></tbody></table></div>
+      <div class="section-head"><div><h2>塗着率ログ（全件）</h2><div class="muted">読み込み済みの <b>tochaku_records</b> を対象期間で表示</div></div><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th class="num">台数</th><th class="num">使用塗料</th><th class="num">塗着率</th><th class="num">ロス率</th></tr></thead><tbody id="t-table"></tbody></table></div>
     </section>
   </div>
 </div>
@@ -656,6 +696,23 @@ td.empty{padding:28px 12px}
 <div class="print-only print-footer">SIRIUS 読み取り専用レポート</div>
 </div>
 
+<div class="modal" id="load-modal" role="dialog" aria-modal="true" aria-labelledby="load-title">
+  <div class="modalbox">
+    <div class="modalhead"><h3 id="load-title">過去のデータを追加する</h3><button class="close" onclick="closeLoadRange()" aria-label="閉じる">×</button></div>
+    <p class="muted">現在の6か月だけ<strong>自動同期</strong>します。過去データは必要な半年だけ取得し、取得後は画面に保持します。古い期間を常時監視しないので、長期間使っても負荷が増えにくい設計です。</p>
+    <div class="load-quick-grid" id="load-quick-grid" aria-label="過去6か月の追加"></div>
+    <div class="load-custom">
+      <div class="load-custom-title">さらに古い半年を指定</div>
+      <div class="load-month-fields">
+        <label>年<select id="load-year"></select></label>
+        <label>期間<select id="load-half"><option value="1">1月～6月</option><option value="2">7月～12月</option></select></label>
+      </div>
+      <button type="button" class="btn primary" id="load-half-btn">この半年を追加する</button>
+    </div>
+    <p class="load-modal-note" id="load-modal-note">読み込み済みの期間は自動で案内します。</p>
+    <div class="modal-actions"><button class="btn" onclick="closeLoadRange()">閉じる</button></div>
+  </div>
+</div>
 <div class="modal" id="export-modal" role="dialog" aria-modal="true" aria-labelledby="export-title">
   <div class="modalbox">
     <div class="modalhead"><h3 id="export-title">CSV / Excel 出力</h3><button class="close" onclick="closeExport()" aria-label="閉じる">×</button></div>
@@ -663,20 +720,21 @@ td.empty{padding:28px 12px}
       <div><label for="export-period">対象期間</label><select id="export-period"><option value="week">今週</option><option value="lastweek">先週</option><option value="pick">指定週</option><option value="month">今月</option><option value="year">今年</option></select></div>
       <div><label for="export-kind">出力対象</label><select id="export-kind"><option value="records">実績データ</option><option value="tochaku">塗着率ログ</option><option value="causes">原因別ランキング</option><option value="all">3種まとめ</option></select></div>
     </div>
+    <div id="export-pick-wrap" hidden style="margin-top:10px"><label for="export-pick-date">指定週（この日を含む週を出力）</label><input type="date" id="export-pick-date"></div>
     <p class="muted" style="margin-top:12px" id="export-range"></p>
+    <p class="export-safety-note" id="export-safety-note">同期状態を確認してから出力します。</p>
     <p class="muted" style="margin-top:4px">CSVはUTF-8 BOM付き、Excelは .xlsx 形式です。出力処理はブラウザ内だけで完結します。</p>
-    <div class="modal-actions"><button class="btn" onclick="closeExport()">キャンセル</button><button class="btn" onclick="doExport('csv')">CSV</button><button class="btn primary" onclick="doExport('xlsx')">Excel</button></div>
+    <div class="modal-actions"><button class="btn" onclick="closeExport()">キャンセル</button><button class="btn" onclick="doExport('csv')">CSV保存</button><button class="btn primary" onclick="doExport('xlsx')">Excel</button></div>
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-
 <script>
 const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0'), ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()), today=()=>ds(new Date()), D=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
 const pd=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||''));return m?new Date(+m[1],+m[2]-1,+m[3]):null};
 const WD=['日','月','火','水','木','金','土'];
 const mdw=s=>{const d=pd(s);return d?`${d.getMonth()+1}/${d.getDate()}(${WD[d.getDay()]})`:'-'};
 const firebaseConfig={apiKey:"AIzaSyC4K1DTi4GLHmCRGHP1d4UglfzMSgNzSVM",authDomain:"powdercoating-9254b.firebaseapp.com",projectId:"powdercoating-9254b",storageBucket:"powdercoating-9254b.firebasestorage.app",messagingSenderId:"1094264514813",appId:"1:1094264514813:web:a6edb6b3c96b12fbbc7694"};
-let db=null,records=[],tochaku=[],period='week',pickDate=today(),loaded={records:false,tochaku:false},lastView={rec:[],tk:[],r:null},expand={r:false,t:false},GID=0;
+let db=null,records=[],tochaku=[],period='week',pickDate=today(),lastView={rec:[],tk:[],r:null},expand={r:false,t:false},GID=0;
 const LIM=80; /* 初期表示件数（各テーブル）。件数が多い期間でも描画を軽く保つための上限で、「全件表示」ボタンで展開できます */
 
 /* 日付の正規化（文字列 / Timestamp / Date に対応） */
@@ -701,34 +759,52 @@ function normDate(v){
   const c=/^(\d{4})(\d{2})(\d{2})$/.exec(raw);
   return c?`${c[1]}-${c[2]}-${c[3]}`:'';
 }
-function tochakuDateValue(o){
+/* 業務日付と登録日時を混同しない。集計対象の _d は「作業・測定日」だけから生成し、
+   日付欠損データを createdAt で勝手に補完しない。欠損は「日付不明」として扱う。 */
+const DATE_KEYS_COMMON=['date','work_date','production_date','record_date','created_date','measurement_date','measure_date','paint_date','target_date','day','日付','実施日','測定日','recordDate','workDate','productionDate'];
+function dateValueFromKeys(o){
   if(!o||typeof o!=='object')return '';
-  /* 塗着率ログ側は登録元によって日付キーが異なる可能性があるため広く吸収 */
-  const keys=['date','work_date','production_date','record_date','measurement_date','measure_date','paint_date','target_date','day','日付','実施日','測定日','recordDate','workDate','productionDate'];
-  for(const k of keys){const d=normDate(o[k]);if(d)return d}
-  const tsKeys=['createdAt','created_at','timestamp','updatedAt','created','登録日時','測定日時'];
-  for(const k of tsKeys){const d=normDate(o[k]);if(d)return d}
+  for(const k of DATE_KEYS_COMMON){
+    const d=normDate(o[k]);
+    if(d)return d;
+  }
   return '';
 }
-function recordDateValue(o){
-  if(!o||typeof o!=='object')return '';
-  const keys=['date','work_date','production_date','record_date','created_date','target_date','day','日付','実施日'];
-  for(const k of keys){const d=normDate(o[k]);if(d)return d}
-  const tsKeys=['createdAt','created_at','timestamp','updatedAt'];
-  for(const k of tsKeys){const d=normDate(o[k]);if(d)return d}
-  return '';
-}
+function tochakuDateValue(o){return dateValueFromKeys(o)}
+function recordDateValue(o){return dateValueFromKeys(o)}
 const prep=o=>{o._d=recordDateValue(o);return o};
 const prepTochaku=o=>{o._d=tochakuDateValue(o);return o};
 const weekOf=d=>{const m=D(d,d.getDay()===0?-6:1-d.getDay());return[ds(m),ds(D(m,6))]};
+function capToToday(r){
+  const t=today();
+  if(!r||!r[0]||!r[1])return r;
+  if(r[0]>t)return[r[0],r[1]];
+  return[r[0],r[1]>t?t:r[1]];
+}
+function monthPeriodRange(){const n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),1);return[ds(a),today()]}
+function yearPeriodRange(){const y=new Date().getFullYear();return[`${y}-01-01`,today()]}
+function weekPeriodRange(d){return capToToday(weekOf(d))}
 const PERIODS={
-  week:{label:'今週',range(){return weekOf(new Date())}},
+  week:{label:'今週',range(){return weekPeriodRange(new Date())}},
   lastweek:{label:'先週',range(){return weekOf(D(new Date(),-7))}},
-  pick:{label:'指定週',range(){return weekOf(pd(pickDate)||new Date())}},
-  month:{label:'今月',range(){let n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),1),b=new Date(n.getFullYear(),n.getMonth()+1,0);return[ds(a),ds(b)]}},
-  year:{label:'今年',range(){let y=new Date().getFullYear();return[y+'-01-01',y+'-12-31']}}
+  pick:{label:'指定週',range(){return weekPeriodRange(pd(pickDate)||new Date())}},
+  month:{label:'今月',range(){return monthPeriodRange()}},
+  year:{label:'今年',range(){return yearPeriodRange()}}
 };
-function toast(s){const t=$('toast');t.textContent=s;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2400)}
+function notify(message,type='info',ms=2600){
+  const t=$('toast');
+  t.dataset.type=type;
+  t.textContent=message;
+  t.classList.add('show');
+  clearTimeout(notify._t);
+  notify._t=setTimeout(()=>t.classList.remove('show'),ms);
+}
+const toast=(s,type='info')=>notify(s,type);
+let renderTimer=null;
+function scheduleRender(){
+  if(renderTimer)return;
+  renderTimer=requestAnimationFrame(()=>{renderTimer=null;try{syncUI();render()}catch(e){console.error('render error:',e);notify('画面更新に失敗しました: '+(e.message||e),'error',4200)}});
+}
 function inRange(d,r){return !!d&&d>=r[0]&&d<=r[1]}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 const fmt=(v,n,u)=>{if(v===null||v===undefined||v==='')return '-';const x=Number(v);return Number.isFinite(x)?x.toFixed(n)+(u||''):'-'};
@@ -763,37 +839,244 @@ function setPickDate(v){if(!pd(v)){syncUI();return}pickDate=v;syncUI();syncHash(
 function pickThisWeek(){pickDate=today();syncUI();syncHash();render()}
 function toggleRows(k){expand[k]=!expand[k];renderTables(lastView.rec,lastView.tk);}
 
-/* ===== Firebase（読み取り専用・同期） ===== */
-window.__sharedTochaku=window.__sharedTochaku||{records:[],tochaku_records:[],updatedAt:null};
-function setConn(state,msg){const s=$('status');s.className='status no-print '+state;$('conn').textContent=msg;const rb=$('retry-btn');if(rb)rb.hidden=state!=='err'}
-function markLive(){
-  const n=new Date();
-  $('updated').textContent='最終更新 '+pad(n.getHours())+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());
-  if(loaded.records&&loaded.tochaku){setConn('ok','リアルタイム共有データへ接続済み（読み取り専用）');$('kpi-cards').classList.remove('is-loading')}
-  else if(loaded.records||loaded.tochaku) setConn('load','一部データを読み込み済み（もう一方を同期中…）');
-}
-let rq=0;function scheduleRender(){if(rq)return;rq=requestAnimationFrame(()=>{rq=0;render()})}
-function init(){
-  try{
-    firebase.initializeApp(firebaseConfig);db=firebase.firestore();window.db=db;
-    setConn('load','データ共有へ接続中…');
-    db.collection('records').onSnapshot(s=>{
-      records=s.docs.map(d=>prep({docId:d.id,...d.data()}));
-      window.__sharedTochaku.records=s.docs.map(d=>Object.assign({_id:d.id},d.data()||{}));
-      window.__sharedTochaku.updatedAt=new Date();
-      document.dispatchEvent(new CustomEvent('records:shared-update',{detail:window.__sharedTochaku.records}));
-      loaded.records=true;markLive();scheduleRender();
-    },e=>{console.error('records listener error:',e);setConn('err','接続エラー: '+e.message);$('kpi-cards').classList.remove('is-loading')});
-    db.collection('tochaku_records').onSnapshot(s=>{
-      tochaku=s.docs.map(d=>prepTochaku({docId:d.id,...d.data()}));
-      window.__sharedTochaku.tochaku_records=s.docs.map(d=>Object.assign({_id:d.id},d.data()||{}));
-      window.__sharedTochaku.updatedAt=new Date();
-      document.dispatchEvent(new CustomEvent('tochaku:shared-update',{detail:window.__sharedTochaku.tochaku_records}));
-      loaded.tochaku=true;markLive();scheduleRender();
-    },e=>{console.error('tochaku_records listener error:',e);setConn('err','塗着率ログの共有・同期に失敗しました。設定または権限を確認してください。');$('kpi-cards').classList.remove('is-loading')});
-  }catch(e){setConn('err','Firebase初期化エラー: '+e.message);$('kpi-cards').classList.remove('is-loading');scheduleRender()}
-}
+/* ===== Firebase（現在6か月だけ自動同期／過去は必要時に一括取得） ===== */
+const LOAD_DATE_FIELDS=DATE_KEYS_COMMON.slice();
+let loadedRanges=[];
+const schemaCache=new Map();
+const historicalData={records:new Map(),tochaku_records:new Map()};
+const liveSource={records:null,tochaku_records:null};
+function currentSyncCovers(r){return !!(r&&currentSyncRange&&currentSyncRange[0]<=r[0]&&currentSyncRange[1]>=r[1])}
+function currentSyncReady(){return !!(liveSource.records?.ready&&liveSource.tochaku_records?.ready)}
+let currentSyncRange=null;
 
+function setConn(state,msg){
+  const s=$('status');s.className='status no-print '+state;$('conn').textContent=msg;
+  const rb=$('retry-btn');if(rb)rb.hidden=state!=='err';
+}
+function sixMonthRange(){
+  const end=pd(today())||new Date(),start=new Date(end);
+  start.setMonth(start.getMonth()-6);
+  return[ds(start),ds(end)];
+}
+function rangeKey(r){return `${r[0]}__${r[1]}`}
+function mergeRanges(ranges){
+  const a=ranges.filter(x=>x&&x[0]&&x[1]).slice().sort((x,y)=>x[0].localeCompare(y[0]));
+  const out=[];
+  for(const r of a){
+    const last=out[out.length-1];
+    if(!last||D(pd(last[1]),1)<pd(r[0]))out.push([r[0],r[1]]);
+    else if(r[1]>last[1])last[1]=r[1];
+  }
+  return out;
+}
+function addLoadedRange(r){loadedRanges=mergeRanges([...loadedRanges,[r[0],r[1]]]);}
+function isRangeLoaded(r){return !!r&&!!r[0]&&!!r[1]&&((currentSyncCovers(r)&&currentSyncReady())||loadedRanges.some(x=>x[0]<=r[0]&&x[1]>=r[1]));}
+function loadedRangeLabel(){return loadedRanges.length?loadedRanges.map(r=>`${r[0]} ～ ${r[1]}`).join(' / '):'データ未読み込み'}
+function updateLoadSummary(){const el=$('load-summary');if(el)el.textContent=`現在6か月は自動同期・過去は必要時のみ読込：${loadedRangeLabel()}`}
+function rebuildData(){
+  const rmap=new Map(historicalData.records),tmap=new Map(historicalData.tochaku_records);
+  if(liveSource.records?.docs)liveSource.records.docs.forEach((v,id)=>rmap.set(id,v));
+  if(liveSource.tochaku_records?.docs)liveSource.tochaku_records.docs.forEach((v,id)=>tmap.set(id,v));
+  records=[...rmap.values()].map(prep);
+  tochaku=[...tmap.values()].map(prepTochaku);
+}
+function markLoadedSource(){
+  const live=currentSyncRange?`${currentSyncRange[0]} ～ ${currentSyncRange[1]}`:'未設定';
+  setConn(currentSyncReady()?'ok':'load',currentSyncReady()?`🟢 現在6か月を自動同期中：${live}`:'🔄 現在6か月を同期中…');
+  $('kpi-cards').classList.remove('is-loading');
+  updateLoadSummary();
+}
+function dataIsReady(){return currentSyncReady()}
+function missingRangesFor(r){
+  if(isRangeLoaded(r))return [];
+  const gaps=[];let cursor=pd(r[0]);const end=pd(r[1]);
+  if(!cursor||!end)return[r];
+  while(cursor<=end){
+    const day=ds(cursor),cover=loadedRanges.find(x=>x[0]<=day&&x[1]>=day);
+    if(cover){cursor=D(pd(cover[1]),1);continue}
+    const start=ds(cursor);let next=D(cursor,1);
+    while(next<=end&&!loadedRanges.some(x=>x[0]<=ds(next)&&x[1]>=ds(next)))next=D(next,1);
+    gaps.push([start,ds(D(next,-1))]);cursor=next;
+  }
+  return gaps;
+}
+function isPeriodRangeReady(r){
+  /* 年間は「1/1～今日の全期間を取得済み」である必要はない。
+     現在の自動同期＋取得済みの過去データを合算して、
+     その時点でSIRIUSが保持している今年の実績を年間集計・印刷する。
+     未取得の過去月があることだけを理由に、利用者の印刷操作を止めない。 */
+  if(period==='year')return dataIsReady();
+  return isRangeLoaded(r);
+}
+function requireRangeLoaded(r,action,allowPartial=false){
+  if(allowPartial||period==='year'){
+    if(dataIsReady())return true;
+    notify('データを同期中です。完了後にもう一度お試しください。','error',3200);
+    return false;
+  }
+  if(isRangeLoaded(r))return true;
+  if(!dataIsReady()){
+    notify('データを同期中です。完了後にもう一度お試しください。','error',3200);
+    return false;
+  }
+  const gaps=missingRangesFor(r),label=gaps.slice(0,2).map(x=>`${x[0]} ～ ${x[1]}`).join(' / ');
+  notify(`${action}対象に未読み込み期間があります：${label}。追加期間から必要な半年を読み込んでください。`,'error',5000);
+  return false;
+}
+function firestoreDateBounds(sample,r){
+  const v=sample;
+  if(v&&typeof v.toDate==='function'){
+    const T=firebase.firestore.Timestamp;
+    return T?[T.fromDate(pd(r[0])),T.fromDate(new Date(pd(r[1]).getFullYear(),pd(r[1]).getMonth(),pd(r[1]).getDate(),23,59,59,999))]:null;
+  }
+  if(v instanceof Date)return[pd(r[0]),new Date(pd(r[1]).getFullYear(),pd(r[1]).getMonth(),pd(r[1]).getDate(),23,59,59,999)];
+  if(typeof v==='number'&&Number.isFinite(v)){
+    const n=Math.trunc(v);
+    if(n>=10000000&&n<=99999999)return[Number(r[0].replaceAll('-','')),Number(r[1].replaceAll('-',''))];
+    if(n>100000000000)return[pd(r[0]).getTime(),new Date(pd(r[1]).getFullYear(),pd(r[1]).getMonth(),pd(r[1]).getDate(),23,59,59,999).getTime()];
+    if(n>1000000000)return[Math.floor(pd(r[0]).getTime()/1000),Math.floor(new Date(pd(r[1]).getFullYear(),pd(r[1]).getMonth(),pd(r[1]).getDate(),23,59,59,999).getTime()/1000)];
+  }
+  if(typeof v==='string')return[r[0],r[1]+'\uf8ff'];
+  return null;
+}
+async function detectDateSchema(collection){
+  if(schemaCache.has(collection))return schemaCache.get(collection);
+  const first=await db.collection(collection).limit(1).get();
+  const firstData=first.docs[0]?.data()||{};
+  for(const field of LOAD_DATE_FIELDS){
+    const sample=firstData[field];
+    if(sample!==undefined&&sample!==null&&sample!==''){
+      const bounds=firestoreDateBounds(sample,sixMonthRange());
+      if(bounds){const schema={field,sample};schemaCache.set(collection,schema);return schema;}
+    }
+  }
+  const sampleSnap=await db.collection(collection).limit(40).get();
+  for(const field of LOAD_DATE_FIELDS){
+    for(const d of sampleSnap.docs){
+      const sample=d.data()?.[field];
+      if(sample===undefined||sample===null||sample==='')continue;
+      const bounds=firestoreDateBounds(sample,sixMonthRange());
+      if(bounds){const schema={field,sample};schemaCache.set(collection,schema);return schema;}
+    }
+  }
+  throw new Error(`${collection} の業務日付フィールドを特定できません。Firestoreのdate項目を確認してください。`);
+}
+function buildRangeQuery(collection,r,schema){
+  const bounds=firestoreDateBounds(schema.sample,r);
+  if(!bounds)throw new Error(`日付形式を判定できません: ${collection}.${schema.field}`);
+  return db.collection(collection).where(schema.field,'>=',bounds[0]).where(schema.field,'<=',bounds[1]);
+}
+function startCurrentListener(collection,r){
+  if(liveSource[collection]?.unsubscribe)liveSource[collection].unsubscribe();
+  return detectDateSchema(collection).then(schema=>new Promise((resolve,reject)=>{
+    const source={collection,range:[r[0],r[1]],docs:new Map(),unsubscribe:null,ready:false};
+    liveSource[collection]=source;
+    let first=true;
+    try{
+      source.unsubscribe=buildRangeQuery(collection,r,schema).onSnapshot(snap=>{
+        const docs=new Map();snap.docs.forEach(d=>docs.set(d.id,{docId:d.id,...d.data()}));
+        source.docs=docs;rebuildData();
+        if(first){first=false;source.ready=true;}
+        if(currentSyncReady()){addLoadedRange(r);markLoadedSource();}
+        scheduleRender();
+        resolve({count:docs.size});
+      },err=>{console.error(collection,'current listener error:',err);source.ready=false;setConn('err',err&&err.code==='permission-denied'?'Firestoreの読み取り権限がありません。':'Firestore同期エラー: '+(err.message||err));reject(err);});
+    }catch(e){reject(e)}
+  }));
+}
+async function fetchHistoricalRange(collection,r){
+  const schema=await detectDateSchema(collection);
+  const snap=await buildRangeQuery(collection,r,schema).get();
+  const map=historicalData[collection];
+  snap.docs.forEach(d=>map.set(d.id,{docId:d.id,...d.data()}));
+  return snap.size;
+}
+async function loadRange(r,initial=false){
+  if(!r||!r[0]||!r[1]||r[0]>r[1])throw new Error('期間指定が正しくありません。');
+  if(!initial&&isRangeLoaded(r))return {records:0,tochaku:0,skipped:true};
+  if(initial){
+      currentSyncRange=[r[0],r[1]];
+      setConn('load',`現在6か月を自動同期中… ${r[0]} ～ ${r[1]}`);
+      const [ra,ta]=await Promise.all([startCurrentListener('records',r),startCurrentListener('tochaku_records',r)]);
+      if(currentSyncReady())addLoadedRange(r);
+      markLoadedSource();scheduleRender();
+      return {records:ra.count||0,tochaku:ta.count||0,skipped:false};
+    }
+    setConn('load',`過去データを取得中… ${r[0]} ～ ${r[1]}（現在の6か月はそのまま使用できます）`);
+    const [ra,ta]=await Promise.all([fetchHistoricalRange('records',r),fetchHistoricalRange('tochaku_records',r)]);
+    addLoadedRange(r);rebuildData();markLoadedSource();scheduleRender();
+    return {records:ra,tochaku:ta,skipped:false};
+}
+async function init(){
+  try{
+    firebase.initializeApp(firebaseConfig);db=firebase.firestore();
+    const r=sixMonthRange();
+    await loadRange(r,true);
+    updateLoadSummary();render();
+  }catch(e){
+    console.error('initial data load error:',e);
+    setConn('err',e&&e.code==='permission-denied'?'Firestoreの読み取り権限がありません。':'データ同期に失敗しました: '+(e.message||e));
+    $('kpi-cards').classList.remove('is-loading');
+  }
+}
+function populateLoadMonth(){
+  const ys=$('load-year'),hs=$('load-half');if(!ys||!hs)return;
+  const now=new Date();ys.innerHTML='';
+  for(let y=now.getFullYear();y>=now.getFullYear()-8;y--){const o=document.createElement('option');o.value=y;o.textContent=`${y}年`;ys.appendChild(o)}
+  ys.value=now.getFullYear();
+  hs.value=now.getMonth()<6?'2':'1';
+}
+function sixMonthBlockRange(offset=0){
+  const endBase=pd(today())||new Date();let end=new Date(endBase);
+  for(let i=0;i<offset;i++){const start=new Date(end);start.setMonth(start.getMonth()-6);end=D(start,-1)}
+  const start=new Date(end);start.setMonth(start.getMonth()-6);
+  return[ds(start),ds(end)];
+}
+function renderMissingMonthChoices(){
+  const box=$('load-quick-grid');if(!box)return;
+  box.innerHTML='';
+  const base=currentSyncRange||sixMonthRange();
+  const current=document.createElement('div');current.className='load-current-block';
+  current.innerHTML=`<b>現在：自動同期（この期間だけリアルタイム）</b><span>${base[0]} ～ ${base[1]}</span><small>過去データは必要な半年だけ取得します。古いデータは常時監視しないので、PCへの負荷を抑えます。</small>`;
+  box.appendChild(current);
+  let added=0;
+  for(let i=1;i<=4;i++){
+    const r=sixMonthBlockRange(i);if(isRangeLoaded(r))continue;
+    const b=document.createElement('button');b.type='button';b.className='load-quick';
+    b.innerHTML=`${i===1?'その前の6か月':`${i}つ前の6か月`}<small>${r[0]} ～ ${r[1]}（必要時のみ取得）</small>`;
+    b.addEventListener('click',()=>loadCustomRange(r));box.appendChild(b);added++;
+  }
+  if(!added){const note=document.createElement('div');note.className='load-modal-note';note.style.margin='8px 0 0';note.style.gridColumn='1/-1';note.textContent='過去24か月分は取得済みです。さらに古い期間は下の「半年を指定」から追加できます。過去データは取得時点の内容です。更新が必要な場合は画面を再読み込みして、必要な半年をもう一度取得してください。';box.appendChild(note)}
+}
+function updateLoadQuickState(){
+  renderMissingMonthChoices();
+  const y=Number($('load-year')?.value),h=Number($('load-half')?.value);
+  if(y&&h){
+    const r=h===1?[`${y}-01-01`,`${y}-06-30`]:[`${y}-07-01`,`${y}-12-31`];
+    const t=today();if(r[1]>t)r[1]=t;
+    const done=r[0]<=r[1]&&isRangeLoaded(r);
+    const btn=$('load-half-btn');if(btn){btn.disabled=done||r[0]>r[1];btn.textContent=done?'この半年は取得済み':'この半年を追加する'}
+  }
+}
+function openLoadRange(){
+  populateLoadMonth();$('load-modal-note').textContent=`現在の取得範囲：${loadedRangeLabel()}。過去データは自動同期しません。`;
+  updateLoadQuickState();$('load-modal').classList.add('show');
+  setTimeout(()=>document.querySelector('.load-quick:not(:disabled)')?.focus(),30);
+}
+function closeLoadRange(){$('load-modal').classList.remove('show')}
+const loadingRanges=new Set();
+function loadCustomRange(r){
+  if(!r)return;
+  const key=rangeKey(r);
+  if(isRangeLoaded(r)){toast('その期間はすでに取得済みです','info',2400);updateLoadQuickState();return}
+  if(loadingRanges.has(key)){toast('その期間は現在取得中です','info',2400);return}
+  loadingRanges.add(key);closeLoadRange();
+  setConn('load',`過去データを取得中… ${r[0]} ～ ${r[1]}（現在の6か月はそのまま使用できます）`);
+  toast(`${r[0]} ～ ${r[1]} の取得を開始しました。現在の6か月はそのまま使用できます。`,'info',3000);
+  loadRange(r).then(result=>{toast(`取得完了：実績 ${result.records.toLocaleString()}件 / 塗着率 ${result.tochaku.toLocaleString()}件`,'success',3600);markLoadedSource();scheduleRender()})
+    .catch(e=>{console.error(e);notify(e&&e.code==='permission-denied'?'Firestoreの読み取り権限がありません。':e&&e.code==='failed-precondition'?'Firestoreの期間検索に必要な設定を確認してください。':'過去データの取得に失敗しました: '+(e.message||e),'error',5000);scheduleRender()})
+    .finally(()=>loadingRanges.delete(key));
+}
 /* ===== 集計 ===== */
 function rangeData(){
   const r=PERIODS[period].range();
@@ -885,6 +1168,21 @@ function tkName(x){
   }
   return '-';
 }
+/* 塗着率ログの台数。CSV/Excel出力(exportRows)と画面表示(renderTables)の両方から
+   同じ関数を使い、表示している台数と出力される台数が食い違わないようにする。 */
+function tkQtyOf(x){
+  if(!x||typeof x!=='object')return 0;
+  const groups=[x.work_items,x.items,x.products,x.product_items];
+  for(const arr of groups){
+    if(Array.isArray(arr))return arr.reduce((s,i)=>s+(Number(i?.qty)||0),0);
+  }
+  return 0;
+}
+function tochakuRateValue(x){const n=Number(x?.rate);return Number.isFinite(n)?n:null}
+function isAbnormalTochakuRate(x){const n=tochakuRateValue(x);return n!==null&&(n<0||n>100)}
+function abnormalTochakuRows(tk){return tk.filter(isAbnormalTochakuRate).sort((a,b)=>String(b._d).localeCompare(String(a._d)))}
+function isUnidentifiedNgRecord(x){return String(x?.status||'').toUpperCase()==='NG'&&ngProductNames(x)==='NG対象品未特定'}
+function unidentifiedNgRows(rec){return rec.filter(isUnidentifiedNgRecord).sort((a,b)=>String(b._d).localeCompare(String(a._d)))}
 function ngProductNames(x){
   const rows=productRowsOf(x);
   if(rows.length) return rows.map(i=>i.name).join(' / ');
@@ -906,15 +1204,42 @@ function ngDetailRows(rec){
 function renderNgDetails(rec){
   const rows=ngDetailRows(rec),total=rows.reduce((s,x)=>s+(Number(x.qty)||0),0);
   const causes=new Set(rows.map(x=>x.cause).filter(Boolean)),operators=new Set(rows.map(x=>x.operator).filter(Boolean));
+  const unidentified=unidentifiedNgRows(rec);
   $('cnt-ng-detail').textContent=rows.length?`${rows.length}明細`:'';
   $('ng-summary').innerHTML=`<div class="ng-summary-card"><div class="ng-summary-label">NG明細</div><div class="ng-summary-value">${rows.length.toLocaleString()}件</div></div><div class="ng-summary-card"><div class="ng-summary-label">再塗装数</div><div class="ng-summary-value">${total.toLocaleString()}件</div></div><div class="ng-summary-card"><div class="ng-summary-label">原因 / 塗装者</div><div class="ng-summary-value">${causes.size} / ${operators.size}</div></div>`;
+  const ub=$('unidentified-box');
+  if(unidentified.length){
+    const tags=unidentified.slice(0,12).map(x=>`<span class="unidentified-tag">${esc(mdw(x._d))} / NG ${ngQtyForRecord(x).toLocaleString()}件</span>`).join('');
+    ub.hidden=false;ub.innerHTML=`<button type="button" class="warning-action" onclick="focusSection('records-section')"><div class="unidentified-head"><span>⚠ NG対象品未特定</span><b>${unidentified.length.toLocaleString()}件</b></div><div class="unidentified-list">${tags}${unidentified.length>12?`<span class="unidentified-tag">ほか ${unidentified.length-12}件</span>`:''}</div></button>`;
+  }else{ub.hidden=true;ub.innerHTML='';}
   $('ng-detail-table').innerHTML=rows.length?rows.map(x=>`<tr class="ng-row"><td class="date">${mdw(x.date)}</td><td class="cause-cell">${esc(x.cause)}</td><td class="name-cell ${x.name==='NG対象品未特定'?'ng-unidentified':''}">${esc(x.name)}</td><td class="operator-cell">${esc(x.operator)}</td><td class="num qty-cell">${Number(x.qty)||0}</td><td><span class="pill ng">NG</span></td></tr>`).join(''):`<tr><td colspan="6" class="ng-empty">対象期間のNG・再塗装データはありません</td></tr>`;
 }
 
+function focusSection(id){
+  const el=$(id);
+  if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.add('section-attention');
+  clearTimeout(el._attentionTimer);
+  el._attentionTimer=setTimeout(()=>el.classList.remove('section-attention'),1400);
+}
 function render(){
   const {r,rec,tk}=rangeData();
+  const rangeReady=isPeriodRangeReady(r);
+  const undatedRec=records.filter(x=>!x._d).length;
+  const undatedTk=tochaku.filter(x=>!x._d).length;
   const label=`${PERIODS[period].label}: ${r[0]} ～ ${r[1]}`;
-  $('period-label').textContent=label;$('repaint-period-mini').textContent=`（${PERIODS[period].label}: ${r[0]} ～ ${r[1]}）`;$('print-period').textContent=`${PERIODS[period].label}：${r[0]} ～ ${r[1]}`;$('print-date').textContent='作成 '+today();
+  const annualPartial=period==='year';
+  $('period-label').textContent=annualPartial?`${label}（現在読み込み済みデータで集計）`:(rangeReady?label:`${label}（未読み込み期間あり）`);
+  if(!rangeReady&&!annualPartial){
+    const gaps=missingRangesFor(r),g=gaps[0]?`${gaps[0][0]} ～ ${gaps[0][1]}`:'';
+    setConn('load',`⚠ 表示期間に未読み込みがあります${g?`：${g}`:''}。必要な月だけ追加できます。`);
+  }else if(currentSyncReady()){
+    markLoadedSource();
+  }$('repaint-period-mini').textContent=`（${PERIODS[period].label}: ${r[0]} ～ ${r[1]}）`;$('print-period').textContent=annualPartial?`${PERIODS[period].label}：${r[0]} ～ ${r[1]}（現在読み込み済みデータ）`:`${PERIODS[period].label}：${r[0]} ～ ${r[1]}`;$('print-date').textContent='作成 '+today();
+  const dateWarning=undatedRec||undatedTk;
+  const noteEl=$('status')?.querySelector('.note');
+  if(noteEl)noteEl.textContent=dateWarning?`日付不明データ ${undatedRec?`実績${undatedRec}件`:''}${undatedRec&&undatedTk?' / ':''}${undatedTk?`塗着率${undatedTk}件`:''} は期間集計から除外しています。日付を補正してから再集計してください。`:'この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログを確認できます。';
   // 再塗装率は対象期間の総台数（総件数）に対する再塗装件数の割合。NGレコード数ではなく、実際の再塗装個数を分子にする。
   const qty=rec.reduce((s,x)=>s+qtyOf(x),0),paint=rec.reduce((s,x)=>s+paintOf(x),0),totalCases=qty,repaintCases=rec.reduce((s,x)=>s+repaintQtyOf(x),0),ngRate=totalCases?(repaintCases/totalCases)*100:0;
   const rs=tk.filter(x=>x.rate!==null&&x.rate!==undefined&&x.rate!==''&&Number.isFinite(Number(x.rate))).map(x=>Number(x.rate)),rate=rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0;
@@ -922,17 +1247,24 @@ function render(){
   $('m-paint').innerHTML=paint.toFixed(2)+'<small> kg</small>';
   $('m-ng').innerHTML=ngRate.toFixed(1)+'<small> %</small>';
   $('m-rate').innerHTML=rate.toFixed(1)+'<small> %</small>';
-  $('m-qty-sub').textContent=`実績 ${rec.length}件`;
-  $('m-paint-sub').textContent=`実績データの合計`;
-  $('m-ng-sub').textContent=`再塗装 ${repaintCases.toLocaleString()}件 / 総件数 ${totalCases.toLocaleString()}件`;
-  $('m-rate-sub').textContent=`測定 ${rs.length}件の平均`;
+  $('m-qty-sub').textContent=rec.length?`実績 ${rec.length.toLocaleString()}件`:'データなし';
+  $('m-paint-sub').textContent=rec.length?`実績データの合計`:'データなし';
+  $('m-ng-sub').textContent=totalCases?`再塗装 ${repaintCases.toLocaleString()}件 / 総件数 ${totalCases.toLocaleString()}件`:'対象実績なし';
+  $('m-rate-sub').textContent=rs.length?`測定 ${rs.length.toLocaleString()}件の平均`:'測定データなし';
+  const abnormalRates=abnormalTochakuRows(tk),rw=$('rate-warning-box');
+  if(abnormalRates.length){
+    rw.hidden=false;
+    const details=abnormalRates.slice(0,8).map(x=>`${esc(mdw(x._d))} / ${esc(tkName(x))} / ${fmt(x.rate,1,'%')}`).join('、');
+    rw.innerHTML=`<button type="button" class="warning-action" onclick="focusSection('tochaku-section')"><b>⚠ 塗着率の異常値：</b>${abnormalRates.length.toLocaleString()}件（0%未満 / 100%超）<br><span class="warning-detail">${details}${abnormalRates.length>8?'、ほか':''}</span></button>`;
+  }else{rw.hidden=true;rw.innerHTML='';}
   lastView={rec,tk,r};
   renderNgDetails(rec);
   renderTrend(rec,r);renderCauses(rec);renderRepaint(rec,r);renderTables(rec,tk);
   // 印刷時のサイズ自動調整: 実績・NG明細・塗着率ログのうち最も件数が多いものを基準に密度を判定し、
   // 印刷CSS側（body[data-print-density]）でその区画だけを縮小する。通常件数は今のサイズ感のまま。
   const printVolume=Math.max(rec.length,tk.length,ngDetailRows(rec).length);
-  document.body.dataset.printDensity=printVolume>90?'xl':printVolume>50?'l':'';
+  document.body.dataset.printDensity=printVolume>160?'xl':printVolume>80?'l':'';
+  if((rec.length+tk.length)>5000 && dataIsReady())notify(`大量データ（${(rec.length+tk.length).toLocaleString()}件）を表示中です。処理に時間がかかる場合があります。`,'info',3600);
 }
 
 /* ===== 再塗装の発生状況 ===== */
@@ -1114,11 +1446,27 @@ if('ResizeObserver' in window){
 }else window.addEventListener('resize',()=>{if(lastView.r)renderTrend(lastView.rec,lastView.r)});
 
 /* ===== 原因ランキング ===== */
-function renderCauses(rec){
+/* NG明細の合計（renderNgDetails / ngDetailRows）と数値が一致するよう、ng_detailsが
+   無い（未入力の）NGレコードも「原因未設定」として集計に含める。原因別ランキングと
+   CSV/Excelの「原因別ランキング」出力の両方でこの関数を使い、集計方法を1箇所に統一する。 */
+function causeBuckets(rec){
   const m=new Map();
-  rec.forEach(x=>(x.ng_details||[]).forEach(d=>{if(d.cause)m.set(d.cause,(m.get(d.cause)||0)+(Number(d.qty)||0))}));
+  rec.forEach(x=>{
+    if(String(x.status||'').toUpperCase()!=='NG')return;
+    const details=Array.isArray(x.ng_details)?x.ng_details:[];
+    if(details.length){
+      details.forEach(d=>{const c=causeOf(d)||'原因未設定';const q=Number(d.qty)>0?Number(d.qty):1;m.set(c,(m.get(c)||0)+q)});
+    }else{
+      const q=repaintQtyOf(x);
+      if(q>0)m.set('原因未設定',(m.get('原因未設定')||0)+q);
+    }
+  });
+  return m;
+}
+function renderCauses(rec){
+  const m=causeBuckets(rec);
   const a=[...m].sort((x,y)=>y[1]-x[1]),max=a[0]?.[1]||1,total=a.reduce((s,x)=>s+x[1],0)||1;
-  $('causes').innerHTML=a.slice(0,8).map((x,i)=>`<div class="cause"><div class="cause-top"><span class="rank r${i<3?i+1:0}">${i+1}</span><span class="cause-name" title="${esc(x[0])}">${esc(x[0])}</span><b>${x[1]}件</b><small>${Math.round(x[1]/total*100)}%</small></div><div class="barbg"><div class="barfill" style="width:${Math.max(3,x[1]/max*100)}%"></div></div></div>`).join('')||'<div class="empty">再塗装原因データがありません</div>';
+  $('causes').innerHTML=a.slice(0,8).map((x,i)=>`<div class="cause"><div class="cause-top"><span class="rank ${i<3?'r'+(i+1):''}">${i+1}</span><span class="cause-name" title="${esc(x[0])}">${esc(x[0])}</span><b>${x[1]}件</b><small>${Math.round(x[1]/total*100)}%</small></div><div class="barbg"><div class="barfill" style="width:${Math.max(3,x[1]/max*100)}%"></div></div></div>`).join('')||'<div class="empty">再塗装原因データがありません</div>';
   $('cause-note').textContent=a.length?`原因個数ベース・上位${Math.min(8,a.length)}件`:'-';
 }
 
@@ -1170,12 +1518,11 @@ function groupedProductsHtml(x){
     /* One product + exact NG count: show the OK remainder and NG count together. */
     if(st==='NG'&&info&&info.exact){
       const ok=Math.max(0,info.total-info.actual);
-      right=`<span class="batch-status-combined">${ok>0?`<b class="status-ok-text">${ok}/${info.total}台 OK</b>`:''}<b class="status-ng-text">${info.actual}/${info.total}台 NG</b></span>`;
-      qtyHtml='';
+      right=`<span class="batch-status-combined">${ok>0?`<b class="status-ok-text">OK ${ok}台</b>`:''}<b class="status-ng-text">NG ${info.actual}台</b></span>`;
     }else if(st==='NG'&&info){
       right=`<span class="batch-ng-part"><b>NG</b><small>対象品合計</small></span>`;
     }else if(st==='OK'){
-      right=`<span class="batch-ok-total">${Number(it.qty)||0}台 OK</span>`;
+      right=`<span class="batch-ok-total">OK</span>`;
     }else{
       right=`<span class="item-status ${cls}">${esc(label)}</span>`;
     }
@@ -1191,7 +1538,8 @@ function sharedPaintHtml(x,multi){
 function renderTables(rec,tk){
   const byDate=(a,b)=>String(b._d).localeCompare(String(a._d));
   const rl=rec.slice().sort(byDate),tl=tk.slice().sort(byDate);
-  const wait='<tr><td colspan="3" class="empty">読み込み中…</td></tr>',none='<tr><td colspan="3" class="empty">データがありません</td></tr>';
+  const waitR='<tr><td colspan="3" class="empty">読み込み中…</td></tr>',noneR='<tr><td colspan="3" class="empty">データがありません</td></tr>';
+  const waitT='<tr><td colspan="6" class="empty">読み込み中…</td></tr>',noneT='<tr><td colspan="6" class="empty">データがありません</td></tr>';
   let rowsHtml='';
   rl.forEach((x,recordIndex)=>{
     const items=displayRowsOf(x);
@@ -1203,18 +1551,16 @@ function renderTables(rec,tk){
     const paint=sharedPaintHtml(x,multi);
     rowsHtml+=`<tr class="${row}${hidden}"><td class="date">${mdw(x._d)}</td><td class="name">${groupedProductsHtml(x)}</td><td class="num">${paint}</td></tr>`;
   });
-  $('r-table').innerHTML=!loaded.records?wait:(rowsHtml||none);
-  $('t-table').innerHTML=!loaded.tochaku?wait:tl.map((x,i)=>{
-    const nm=tkName(x);
-    return `<tr class="${(!expand.t&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(nm)}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num"><span class="tochaku-rate-value">${fmt(x.rate,1,'%')}</span></td><td class="num"><span class="tochaku-loss-value">${fmt(x.loss_rate,1,'%')}</span></td></tr>`;
-  }).join('')||none;
+  $('r-table').innerHTML=!liveSource.records?.ready?waitR:(rowsHtml||noneR);
+  $('t-table').innerHTML=!liveSource.tochaku_records?.ready?waitT:tl.map((x,i)=>{
+    const nm=tkName(x),qty=tkQtyOf(x),abnormal=isAbnormalTochakuRate(x);
+    return `<tr class="${(!expand.t&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(nm)}</td><td class="num">${qty?qty.toLocaleString()+'台':'-'}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num"><span class="tochaku-rate-value ${abnormal?'warn':''}">${fmt(x.rate,1,'%')}</span>${abnormal?'<span class="rate-warning">異常値</span>':''}</td><td class="num"><span class="tochaku-loss-value">${fmt(x.loss_rate,1,'%')}</span></td></tr>`;
+  }).join('')||noneT;
+  /* 実績データ（r）には件数バッジは無し（各実績内で「品名・台数・判定」を同じ行にまとめて表示するため）。
+     塗着率ログ（t）だけ対象期間件数／全件数のバッジを表示する。 */
+  const allTochaku=tochaku.length;
+  $('cnt-t').textContent=tl.length?`対象期間 ${tl.length.toLocaleString()}件 / 全${allTochaku.toLocaleString()}件`:(allTochaku?`対象期間 0件 / 全${allTochaku.toLocaleString()}件`:'0件');
   [['r',rl],['t',tl]].forEach(([k,l])=>{
-    if(k==='r'){
-      /* 件数バッジは廃止。各実績内で「品名・台数・判定」を同じ行にまとめて表示します。 */
-    }else{
-      const all=tochaku.length;
-      $('cnt-t').textContent=l.length?`対象期間 ${l.length.toLocaleString()}件 / 全${all.toLocaleString()}件`:(all?`対象期間 0件 / 全${all.toLocaleString()}件`:'0件');
-    }
     const b=$('more-'+k);
     b.hidden=l.length<=LIM;
     b.textContent=expand[k]?'表示を折りたたむ':`全件表示（${l.length}件）`;
@@ -1225,7 +1571,12 @@ function renderTables(rec,tk){
 let lastFocusEl=null;
 function openExport(){
   lastFocusEl=document.activeElement;
-  $('export-period').value=period;updateExportRange();
+  $('export-period').value=period;
+  /* 「指定週」の日付欄は、メイン画面が指定週表示中ならその週を初期値にし、
+     それ以外は今日を初期値にする。以後はこの欄の日付だけで出力範囲を決める
+     （メイン画面の週指定とは独立して、出力したい週をここで直接選べるようにする）。 */
+  $('export-pick-date').value=(period==='pick')?pickDate:today();
+  updateExportRange();
   $('export-modal').classList.add('show');
   setTimeout(()=>{try{$('export-period').focus()}catch(e){}},30);
 }
@@ -1234,52 +1585,116 @@ function closeExport(){
   if(lastFocusEl&&typeof lastFocusEl.focus==='function'){try{lastFocusEl.focus()}catch(e){}}
   lastFocusEl=null;
 }
-function updateExportRange(){const r=PERIODS[$('export-period').value].range();$('export-range').textContent=`対象: ${r[0]} ～ ${r[1]}`}
+function exportRange(p){
+  if(p==='pick'){const v=$('export-pick-date').value;return weekOf(pd(v)||new Date())}
+  return PERIODS[p].range();
+}
+function updateExportRange(){
+  const p=$('export-period').value;
+  $('export-pick-wrap').hidden=p!=='pick';
+  const r=exportRange(p);$('export-range').textContent=`対象: ${r[0]} ～ ${r[1]}`;
+  const n=$('export-safety-note');
+  if(n)n.textContent=!dataIsReady()?'⚠ データ同期中です。':p==='year'?'🟢 今年は現在読み込み済みのデータで集計・出力します。過去月のデータが必要な場合だけ追加してください。':!isRangeLoaded(r)?`⚠ ${r[0]} ～ ${r[1]} に未読み込み期間があります。追加期間を読み込んでください。`:'🟢 対象期間は読み込み済み・自動同期中です。';
+}
 function exportRows(kind,p){
-  const r=PERIODS[p].range(),rec=records.filter(x=>inRange(x._d,r)),tk=tochaku.filter(x=>inRange(x._d,r));
-  if(kind==='records')return rec.flatMap(x=>displayRowsOf(x).map((it,i)=>({日付:x._d||x.date||'',品名:it.name,台数:Number(it.qty)||0,同時登録品:recordProductRows(x).map(v=>`${v.name} (${Number(v.qty)||0}台)`).join(' / '),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:i===0?paintOf(x):'',塗料備考:i===0&&recordProductRows(x).length>1?`${recordProductRows(x).length}品同時登録の実績全体`: '',平均膜厚_um:i===0?(x.thickness??''):'',判定:it.status||x.status||'',再塗装個数:it.status==='NG'?Number(it.qty)||0:0,不具合原因:it.status==='NG'?(x.ng_details||[]).map(d=>`${d.cause}(${d.qty})`).join(' / '):'',メモ:x.memo||''})));
-  if(kind==='tochaku')return tk.map(x=>({日付:x._d||x.date||'',品名:x.work_name||'',台数:(x.work_items||[]).reduce((s,i)=>s+(Number(i.qty)||0),0),使用塗料_kg:x.used_paint_kg||0,塗膜増量_kg:x.attached_weight_kg||0,塗着率_pct:x.rate??'',ロス率_pct:x.loss_rate??'',吸込ロス_kg:x.suikomi_loss_kg||0,落下ロス_kg:x.rakka_loss_kg||0,計算方式:x.calc_type||''}));
-  const m=new Map();rec.forEach(x=>(x.ng_details||[]).forEach(d=>{if(d.cause)m.set(d.cause,(m.get(d.cause)||0)+(Number(d.qty)||0))}));
+  const r=exportRange(p),rec=records.filter(x=>inRange(x._d,r)),tk=tochaku.filter(x=>inRange(x._d,r));
+  if(kind==='records')return rec.flatMap(x=>displayRowsOf(x).map((it,i)=>({日付:x._d||x.date||'',品名:it.name,台数:Number(it.qty)||0,同時登録品:recordProductRows(x).map(v=>`${v.name} (${Number(v.qty)||0}台)`).join(' / '),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:i===0?paintOf(x):'',塗料備考:i===0&&recordProductRows(x).length>1?`${recordProductRows(x).length}品同時登録の実績全体`: '',平均膜厚_um:i===0?(x.thickness??''):'',判定:it.status||x.status||'',再塗装個数:it.status==='NG'?Number(it.qty)||0:0,不具合原因:it.status==='NG'?(x.ng_details||[]).map(d=>`${causeOf(d)||'原因未設定'}(${Number(d.qty)>0?Number(d.qty):1})`).join(' / '):'',メモ:x.memo||''})));
+  if(kind==='tochaku')return tk.map(x=>({日付:x._d||x.date||'',品名:tkName(x),台数:tkQtyOf(x),使用塗料_kg:x.used_paint_kg||0,塗膜増量_kg:x.attached_weight_kg||0,塗着率_pct:x.rate??'',ロス率_pct:x.loss_rate??'',吸込ロス_kg:x.suikomi_loss_kg||0,落下ロス_kg:x.rakka_loss_kg||0,計算方式:x.calc_type||''}));
+  const m=causeBuckets(rec);
   return[...m].sort((a,b)=>b[1]-a[1]).map((x,i)=>({順位:i+1,原因:x[0],件数:x[1]}));
 }
-function download(name,text,mime){
-  const blob=new Blob([text],{type:mime}),a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+function u16(n){return new Uint8Array([n&255,(n>>>8)&255])}
+function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255])}
+function concatBytes(...parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;parts.forEach(p=>{out.set(p,o);o+=p.length});return out}
+function crc32(data){let c=0xffffffff;for(let i=0;i<data.length;i++){c^=data[i];for(let k=0;k<8;k++)c=(c>>>1)^((c&1)?0xedb88320:0)}return(c^0xffffffff)>>>0}
+function makeStoreZip(files){
+  /* 互換性優先の無圧縮ZIP。内部ファイル名はASCIIに固定し、CSV本文はUTF-8 BOM付きのまま保持する。
+     Androidの標準ファイルアプリや古いPCでも開けることを優先し、UTF-8日本語ファイル名依存を避ける。 */
+  const enc=new TextEncoder(),local=[],central=[];let offset=0;
+  files.forEach((f,i)=>{
+    const safeName=`${String(i+1).padStart(2,'0')}_${i===0?'records':i===1?'tochaku':'causes'}.csv`;
+    const name=enc.encode(safeName),data=enc.encode(f.text),crc=crc32(data);
+    if(name.length>0xffff||data.length>0xffffffff)throw new Error('ZIP出力サイズが対応範囲を超えています');
+    const lh=concatBytes(
+      new Uint8Array([0x50,0x4b,0x03,0x04]),
+      u16(20),u16(0),u16(0),u16(0),u16(0),
+      u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data
+    );
+    const ch=concatBytes(
+      new Uint8Array([0x50,0x4b,0x01,0x02]),
+      u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),
+      u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),
+      u16(0),u16(0),u32(0),u32(offset),name
+    );
+    local.push(lh);central.push(ch);offset+=lh.length;
+  });
+  const cd=concatBytes(...central),ld=concatBytes(...local);
+  const end=concatBytes(
+    new Uint8Array([0x50,0x4b,0x05,0x06]),
+    u16(0),u16(0),u16(files.length),u16(files.length),u32(cd.length),u32(ld.length),u16(0)
+  );
+  return new Blob([ld,cd,end],{type:'application/zip'});
 }
-function doExport(type){
-  const p=$('export-period').value,k=$('export-kind').value,sets=k==='all'?['records','tochaku','causes']:[k],rg=PERIODS[p].range(),base=`sirius_${p}_${rg[0]}_${rg[1]}`;
+function downloadFile(name,data,mime){
+  return new Promise((resolve,reject)=>{
+    try{
+      const blob=data instanceof Blob?data:new Blob([data],{type:mime});
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download=name;a.rel='noopener';a.style.display='none';
+      document.body.appendChild(a);a.click();a.remove();
+      /* Android/Chromeではクリック直後のURL解放が保存完了前に起きる場合があるため、十分な猶予を置く。 */
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      resolve(true);
+    }catch(e){reject(e)}
+  });
+}
+function csvText(rows){
+  const ws=rows.length?rows:[{メッセージ:'対象データなし'}],head=Object.keys(ws[0]);
+  return '\uFEFF'+[head,...ws.map(o=>head.map(h=>o[h]??''))].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+}
+function downloadStamp(){
+  const d=new Date();
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+async function doExport(type){
+  const p=$('export-period').value,k=$('export-kind').value,sets=k==='all'?['records','tochaku','causes']:[k],rg=exportRange(p),base=`sirius_${p}_${rg[0]}_${rg[1]}`,stamp=downloadStamp();
+  if(!requireRangeLoaded(rg,'出力',p==='year'))return;
   try{
     if(type==='csv'){
-      sets.forEach((s,i)=>{
-        const rows=exportRows(s,p),ws=rows.length?rows:[{メッセージ:'対象データなし'}],head=Object.keys(ws[0]);
-        const csv='\uFEFF'+[head,...ws.map(o=>head.map(h=>o[h]??''))].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-        setTimeout(()=>download(`${base}_${s}.csv`,csv,'text/csv;charset=utf-8'),i*350);
-      });
+      const files=sets.map(s=>({name:`${base}_${s}.csv`,text:csvText(exportRows(s,p))}));
+      if(k==='all'){await downloadFile(`sirius_csv_${rg[0]}_${rg[1]}_${stamp}.zip`,makeStoreZip(files),'application/zip');closeExport();toast('3種のCSVをZIPにまとめてダウンロードを開始しました','success');}
+      else{await downloadFile(files[0].name.replace(/\.csv$/i,`_${stamp}.csv`),files[0].text,'text/csv;charset=utf-8');closeExport();toast('CSVのダウンロードを開始しました','success');}
     }else{
       if(typeof XLSX==='undefined')throw new Error('Excel出力ライブラリを読み込めませんでした');
       const wb=XLSX.utils.book_new();
-      sets.forEach(s=>{
-        const rows=exportRows(s,p),ws=XLSX.utils.json_to_sheet(rows.length?rows:[{メッセージ:'対象データなし'}]);
-        ws['!cols']=Object.keys(rows[0]||{メッセージ:1}).map(h=>({wch:Math.min(32,Math.max(8,h.length*2+2))}));
-        XLSX.utils.book_append_sheet(wb,ws,s==='records'?'実績':s==='tochaku'?'塗着率':'原因ランキング');
-      });
-      XLSX.writeFile(wb,`${base}.xlsx`);
+      sets.forEach(s=>{const rows=exportRows(s,p),ws=XLSX.utils.json_to_sheet(rows.length?rows:[{メッセージ:'対象データなし'}]);ws['!cols']=Object.keys(rows[0]||{メッセージ:1}).map(h=>({wch:Math.min(32,Math.max(8,h.length*2+2))}));XLSX.utils.book_append_sheet(wb,ws,s==='records'?'実績':s==='tochaku'?'塗着率':'原因ランキング')});
+      XLSX.writeFile(wb,`${base}_${stamp}.xlsx`);closeExport();toast('Excelのダウンロードを開始しました','success');
     }
-    closeExport();toast('出力しました');
-  }catch(e){console.error(e);toast('出力に失敗しました: '+e.message)}
+  }catch(e){console.error(e);toast('出力に失敗しました: '+e.message,'error',4200)}
 }
-function printSummary(){document.querySelectorAll('.chart-box').forEach(hideTip);window.print()}
+
+function printSummary(){
+  const r=PERIODS[period].range();
+  /* 年間は未取得の過去月が存在していても、現在保持している今年のデータで印刷する。
+     「過去月が空だから印刷不可」という利用者目線に反する停止をしない。 */
+  if(!requireRangeLoaded(r,'印刷',period==='year'))return;
+  document.querySelectorAll('.chart-box').forEach(hideTip);
+  /* async/await を挟まず、ボタン操作のユーザー操作コンテキスト内で直接 window.print() を呼ぶ。
+     Android/Chrome 等では非同期化すると印刷ダイアログが抑止される場合がある。 */
+  window.print();
+}
 
 /* ===== UX ===== */
 (function(){
-  const modal=$('export-modal');
+  const modal=$('export-modal'),loadModal=$('load-modal');
   modal.addEventListener('click',e=>{if(e.target===modal)closeExport()});
+  loadModal.addEventListener('click',e=>{if(e.target===loadModal)closeLoadRange()});
   document.addEventListener('keydown',e=>{
-    if(!modal.classList.contains('show'))return;
-    if(e.key==='Escape'){closeExport();return}
+    const active=modal.classList.contains('show')?modal:(loadModal.classList.contains('show')?loadModal:null);
+    if(!active)return;
+    if(e.key==='Escape'){active===modal?closeExport():closeLoadRange();return}
     if(e.key==='Tab'){
-      const f=[...modal.querySelectorAll('button,select,input,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
+      const f=[...active.querySelectorAll('button,select,input,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
       if(!f.length)return;
       const first=f[0],last=f[f.length-1];
       if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
@@ -1287,20 +1702,15 @@ function printSummary(){document.querySelectorAll('.chart-box').forEach(hideTip)
     }
   });
   $('export-period').addEventListener('change',updateExportRange);
+  $('export-pick-date').addEventListener('change',updateExportRange);
+  $('load-half-btn').addEventListener('click',()=>{const y=Number($('load-year').value),h=Number($('load-half').value);let r=h===1?[`${y}-01-01`,`${y}-06-30`]:[`${y}-07-01`,`${y}-12-31`];if(r[1]>today())r[1]=today();if(r[0]<=r[1])loadCustomRange(r)});
+  $('load-year').addEventListener('change',updateLoadQuickState);
+  $('load-half').addEventListener('change',updateLoadQuickState);
   window.addEventListener('error',e=>{
     if(e&&/firebase|firestore|xlsx/i.test((e.message||'')+' '+(e.filename||''))){const s=$('status');if(s)setConn('err','データ接続または出力ライブラリでエラーが発生しました。')}
   });
 })();
 
-/* とちゃくりつデータの共有スナップショット（読み取り専用） */
-window.shareTochakuSnapshot=async function(){
-  const text=JSON.stringify({type:'tochaku_snapshot',generatedAt:new Date().toISOString(),tochaku_records:window.__sharedTochaku.tochaku_records||[]});
-  try{
-    if(navigator.share){await navigator.share({title:'とちゃくりつ共有',text});return true}
-    if(navigator.clipboard){await navigator.clipboard.writeText(text);toast('とちゃくりつデータをクリップボードへコピーしました。');return true}
-  }catch(e){console.warn('shareTochakuSnapshot:',e)}
-  return false;
-};
 
 readHash();syncUI();render();init();
 </script>
