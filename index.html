@@ -183,6 +183,8 @@ td.empty{padding:28px 12px}
 .r-table{table-layout:fixed;width:100%}
 .r-table td.name{line-height:1.45;vertical-align:middle;min-width:0}
 .r-table td.num{line-height:1.45;vertical-align:middle}
+#records-section td.operator{min-width:0;font-weight:700;color:#334155;overflow-wrap:anywhere}
+.op-none{color:#94a3b8;font-weight:700}
 .batch-products{border:1px solid #e2e8f0;border-radius:11px;background:#fbfdff;overflow:hidden;box-sizing:border-box;width:100%;max-width:100%}
 .batch-item{display:grid;grid-template-columns:minmax(0,1fr) 58px minmax(96px,auto);align-items:center;gap:7px;width:100%;min-height:36px;padding:7px 8px;border:0;border-radius:0;box-shadow:none;background:transparent;position:relative;box-sizing:border-box}
 .batch-item+.batch-item{border-top:1px solid #e8edf3}
@@ -270,9 +272,11 @@ td.empty{padding:28px 12px}
 /* Desktop refinements */
 @media(min-width:641px){
   #records-section .table-wrap{overflow-x:auto}
-  #records-section .table{min-width:680px}
+  #records-section .table{min-width:760px}
   #records-section .table th:nth-child(1),#records-section .table td.date{width:86px}
-  #records-section .table th:nth-child(3),#records-section .table td.num{width:118px}
+  #records-section .table th:nth-child(3){width:104px}
+  #records-section .table th:nth-child(4),#records-section .table td.num{width:118px}
+  #records-section .table td.operator{padding:9px 8px;font-size:12px;line-height:1.45}
   #records-section .table td.name{padding:7px 12px 7px 8px}
   #records-section .batch-item{column-gap:12px}
   #tochaku-section .table td{vertical-align:middle;padding-right:12px}
@@ -330,6 +334,13 @@ td.empty{padding:28px 12px}
   #records-section .table td.num{grid-column:2;grid-row:1;width:auto;text-align:right;align-self:center;font-size:10.5px;font-weight:800}
   #records-section .table td.num::before{content:'塗料 ';color:var(--muted);font-size:9px;font-weight:700;margin-right:3px}
   #records-section .table td.name,#tochaku-section .table td.name{grid-column:1 / -1;width:auto;min-width:0;margin-top:6px;overflow:visible}
+  /* 塗装者: 1行目を「日付｜塗装者｜塗料」の3列に揃え、品名ブロックは2行目に全幅で配置 */
+  #records-section .table tr{grid-template-columns:78px minmax(0,1fr) auto;column-gap:6px}
+  #records-section .table td{background:transparent!important}
+  #records-section .table td.operator{grid-column:2;grid-row:1;align-self:start;font-size:10.5px;font-weight:800;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #records-section .table td.operator::before{content:'塗装者 ';color:var(--muted);font-size:9px;font-weight:700;margin-right:3px}
+  #records-section .table td.num{grid-column:3;align-self:start}
+  #records-section .table td.name{grid-row:2}
   #records-section .batch-products{border-radius:10px}
   #records-section .batch-item{grid-template-columns:minmax(0,1fr) 48px minmax(76px,auto);grid-template-areas:'name qty status';column-gap:6px;min-height:40px;padding:7px 9px}
   #records-section .batch-item-name{grid-area:name;font-size:12px;line-height:1.3;overflow-wrap:anywhere}
@@ -386,6 +397,9 @@ td.empty{padding:28px 12px}
   .ng-empty{padding:16px 8px;font-size:11px}
 }
 @media(max-width:380px){
+  #records-section .table tr{grid-template-columns:70px minmax(0,1fr) auto;column-gap:4px}
+  #records-section .table td.operator{font-size:10px}
+  #records-section .table td.operator::before{font-size:8.5px;margin-right:2px}
   #records-section .batch-item{grid-template-columns:minmax(0,1fr) 44px minmax(70px,auto);column-gap:5px;padding-left:8px;padding-right:8px}
   #records-section .batch-item-name{font-size:11.5px}
   #records-section .batch-item-qty{font-size:10.5px}
@@ -521,13 +535,18 @@ td.empty{padding:28px 12px}
   #records-section .table{min-width:0!important;display:block!important}
   #records-section .table thead{display:none!important}
   /* Two independent columns avoid the equal-height grid-track whitespace when one record has more products. */
+  /* column-fill:auto だと高さ未指定の多段組は全件が左列に積まれて右列が空になり、区画が高くなって1ページ目の余白に収まらず丸ごと2ページ目へ送られていた。
+     balance で左右均等に配分し、区画の高さを半分にして1ページ目に収まりやすくする。 */
   /* 2列を「行」として揃えるグリッドは、片方の実績が長いと隣に無駄な空白ができるため、
      新聞レイアウト同様のCSS多段組（column）に変更。各列が独立して詰まるので余白が出ない。 */
-  #records-section .table tbody{display:block!important;column-count:2;column-gap:4px;column-fill:auto;width:100%}
-  #records-section .table tbody tr{display:grid!important;grid-template-columns:17% minmax(0,1fr) auto;align-items:center;min-width:0;width:100%;margin:0 0 2px;padding:1px 2px;border:1px solid #dbe3ee;border-radius:2px;background:#fff;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
+  #records-section .table tbody{display:block!important;column-count:2;column-gap:4px;column-fill:balance;width:100%}
+  #records-section .table tbody tr{display:grid!important;grid-template-columns:15% minmax(0,1fr) 14% 18%;align-items:center;min-width:0;width:100%;margin:0 0 2px;padding:1px 2px;border:1px solid #dbe3ee;border-radius:2px;background:#fff;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
   #records-section .table td{display:block!important;width:auto!important;min-width:0;border:0!important;padding:.5px 2px!important;vertical-align:middle;min-height:0}
   #records-section .table td.date{font-size:5.2px;white-space:nowrap;padding-left:6px!important}
   #records-section .table td.name{font-size:5.5px;line-height:1.1}
+  #records-section .table td.operator{font-size:5.2px;line-height:1.1;text-align:center;color:#334155;font-weight:800;overflow-wrap:anywhere}
+  #records-section .table td.operator::before{content:none}
+  #records-section .table td.operator .op-none{color:#94a3b8;font-weight:700}
   #records-section .table td.num{font-size:5.2px;text-align:right;white-space:nowrap}
   #records-section .table tr.r-row-ok td.date,#records-section .table tr.r-row-ng td.date,#records-section .table tr.r-row-mixed td.date{padding-left:11px!important;background-clip:padding-box}
   #records-section .table tr.r-row-ok{background:#f1fcf7!important;border-color:#b7ead2}
@@ -684,7 +703,7 @@ td.empty{padding:28px 12px}
   <div class="row-2">
     <section class="section" id="records-section">
       <div class="section-head"><h2>実績データ（全件）</h2><button class="more no-print" id="more-r" onclick="toggleRows('r')" hidden></button></div>
-      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・台数・判定</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody></table></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・台数・判定</th><th class="operator">塗装者</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody></table></div>
     </section>
     <section class="section" id="tochaku-section">
       <div class="section-head"><div><h2>塗着率ログ（全件）</h2><div class="muted">読み込み済みの <b>tochaku_records</b> を対象期間で表示</div></div><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
@@ -1530,6 +1549,10 @@ function groupedProductsHtml(x){
   }).join('');
   return `<div class="batch-products">${body}${summary}</div>`;
 }
+function operatorCellHtml(x){
+  const op=String(operatorOf(x)??'').trim();
+  return op?`<span class="op-name">${esc(op)}</span>`:'<span class="op-name op-none">未設定</span>';
+}
 function sharedPaintHtml(x,multi){
   const p=paintOf(x).toFixed(2);
   return multi?`<span class="paint-shared"><b>${p}kg</b><small>同時登録した品目全体</small></span>`:`${p}kg`;
@@ -1538,7 +1561,7 @@ function sharedPaintHtml(x,multi){
 function renderTables(rec,tk){
   const byDate=(a,b)=>String(b._d).localeCompare(String(a._d));
   const rl=rec.slice().sort(byDate),tl=tk.slice().sort(byDate);
-  const waitR='<tr><td colspan="3" class="empty">読み込み中…</td></tr>',noneR='<tr><td colspan="3" class="empty">データがありません</td></tr>';
+  const waitR='<tr><td colspan="4" class="empty">読み込み中…</td></tr>',noneR='<tr><td colspan="4" class="empty">データがありません</td></tr>';
   const waitT='<tr><td colspan="6" class="empty">読み込み中…</td></tr>',noneT='<tr><td colspan="6" class="empty">データがありません</td></tr>';
   let rowsHtml='';
   rl.forEach((x,recordIndex)=>{
@@ -1549,7 +1572,7 @@ function renderTables(rec,tk){
     const row=hasNg&&hasOk?'r-row-mixed':hasNg?'r-row-ng':hasOk?'r-row-ok':'';
     const hidden=!expand.r&&recordIndex>=LIM?' extra':'';
     const paint=sharedPaintHtml(x,multi);
-    rowsHtml+=`<tr class="${row}${hidden}"><td class="date">${mdw(x._d)}</td><td class="name">${groupedProductsHtml(x)}</td><td class="num">${paint}</td></tr>`;
+    rowsHtml+=`<tr class="${row}${hidden}"><td class="date">${mdw(x._d)}</td><td class="name">${groupedProductsHtml(x)}</td><td class="operator">${operatorCellHtml(x)}</td><td class="num">${paint}</td></tr>`;
   });
   $('r-table').innerHTML=!liveSource.records?.ready?waitR:(rowsHtml||noneR);
   $('t-table').innerHTML=!liveSource.tochaku_records?.ready?waitT:tl.map((x,i)=>{
