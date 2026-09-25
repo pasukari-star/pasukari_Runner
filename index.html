@@ -93,7 +93,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .metric small{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:0}
 .metric.rose{color:var(--rose)}.metric.green{color:var(--green)}.metric.indigo{color:var(--indigo)}
 .metric-sub{font-size:11px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
-.metric-sub2{font-size:11px;color:var(--indigo);margin-top:1px;font-variant-numeric:tabular-nums;font-weight:700}
+.metric-sub2{font-size:11px;color:var(--indigo);margin-top:1px;font-variant-numeric:tabular-nums;font-weight:700}.metric-sub2.rose{color:var(--rose)}
 .conversion-note{margin:5px 0 0;padding:4px 8px;border-radius:6px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:9px;line-height:1.35;font-weight:700;text-align:center;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box;width:100%}.conversion-note b{color:#c2410c}
 .unit-breakdown{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;white-space:normal}
 .cards.is-loading .metric,.cards.is-loading .metric-sub{color:transparent!important;position:relative}
@@ -664,7 +664,7 @@ td.empty{padding:28px 12px}
 <section class="cards is-loading" id="kpi-cards">
   <div class="card"><div class="metric-label">実質総件数</div><div class="metric indigo" id="m-qty">0<small> 件</small></div><div class="metric-sub" id="m-qty-sub"></div><div class="metric-sub2" id="m-qty-sub2"></div></div>
   <div class="card c-paint"><div class="metric-label">塗料使用量</div><div class="metric indigo" id="m-paint">0<small> kg</small></div><div class="metric-sub" id="m-paint-sub"></div></div>
-  <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2" id="m-ng-sub2"></div></div>
+  <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2 rose" id="m-ng-sub2"></div></div>
   <div class="card c-rate"><div class="metric-label">平均塗着率</div><div class="metric green" id="m-rate">0<small> %</small></div><div class="metric-sub" id="m-rate-sub"></div></div>
 </section>
 <div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、登録済みの換算係数に基づいて「台=1.0」として換算した集計値です。実質再塗装率も、この実質総件数を母数に算出しています。</div>
@@ -1315,7 +1315,7 @@ function render(){
   $('m-qty-sub').textContent=rec.length?`総件数 ${qty.toLocaleString(undefined,{maximumFractionDigits:1})}件`:'データなし';
   $('m-qty-sub2')&&($('m-qty-sub2').innerHTML=units?`原単位内訳：<span class="unit-breakdown">${esc(units)}</span>`:'');
   $('m-paint-sub').textContent=rec.length?`実績データの合計`:'データなし';
-  $('m-ng-sub').textContent=totalCases?`再塗装 ${repaintCases.toLocaleString()}件 / 総件数 ${totalCases.toLocaleString()}件`:'対象実績なし';
+  $('m-ng-sub').textContent=totalCases?`再塗装 ${repaintCases.toLocaleString()}件`:'対象実績なし';
   $('m-ng-sub2')&&($('m-ng-sub2').textContent=totalCases?`総件数による再塗装率 ${ngRate.toFixed(1)}%`:'');
   $('m-rate-sub').textContent=rs.length?`測定 ${rs.length.toLocaleString()}件の平均`:'測定データなし';
   const abnormalRates=abnormalTochakuRows(tk),rw=$('rate-warning-box');
