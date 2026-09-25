@@ -93,6 +93,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .metric small{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:0}
 .metric.rose{color:var(--rose)}.metric.green{color:var(--green)}.metric.indigo{color:var(--indigo)}
 .metric-sub{font-size:11px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.metric-sub2{font-size:11px;color:var(--indigo);margin-top:1px;font-variant-numeric:tabular-nums;font-weight:700}
+.conversion-note{margin:5px 0 0;padding:4px 8px;border-radius:6px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:9px;line-height:1.35;font-weight:700;text-align:center;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box;width:100%}.conversion-note b{color:#c2410c}
+.unit-breakdown{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;white-space:normal}
 .cards.is-loading .metric,.cards.is-loading .metric-sub{color:transparent!important;position:relative}
 .cards.is-loading .metric::before,.cards.is-loading .metric-sub::before{content:'';position:absolute;left:0;top:2px;bottom:2px;width:64%;border-radius:6px;background:linear-gradient(90deg,#eef2f7 25%,#f8fafc 37%,#eef2f7 63%);background-size:400% 100%;animation:skel 1.3s ease-in-out infinite}
 .cards.is-loading .metric-sub::before{width:80%}
@@ -354,7 +357,7 @@ td.empty{padding:28px 12px}
 
   #tochaku-section .table td.name{grid-row:2;margin-top:5px;margin-bottom:7px;font-size:12px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
   #tochaku-section .table td:nth-child(3){grid-column:1;grid-row:3;color:#334155;font-size:9.5px}
-  #tochaku-section .table td:nth-child(3)::before{content:'台数 ';color:var(--muted);font-size:8.5px;font-weight:700}
+  #tochaku-section .table td:nth-child(3)::before{content:'数量 ';color:var(--muted);font-size:8.5px;font-weight:700}
   #tochaku-section .table td:nth-child(4){grid-column:2;grid-row:3;align-self:center;color:#334155;font-size:9.5px}
   #tochaku-section .table td:nth-child(4)::before{content:'使用塗料 ';color:var(--muted);font-size:8.5px;font-weight:700}
   #tochaku-section .table td:nth-child(5){grid-column:1;grid-row:4;align-self:center;margin-top:3px}
@@ -397,6 +400,7 @@ td.empty{padding:28px 12px}
   .ng-empty{padding:16px 8px;font-size:11px}
 }
 @media(max-width:380px){
+  .conversion-note{font-size:8.5px;line-height:1.3;padding:4px 6px;margin-top:4px}
   #records-section .table tr{grid-template-columns:70px minmax(0,1fr) auto;column-gap:4px}
   #records-section .table td.operator{font-size:10px}
   #records-section .table td.operator::before{font-size:8.5px;margin-right:2px}
@@ -449,6 +453,9 @@ td.empty{padding:28px 12px}
   .metric{font-size:16px;line-height:1.05;margin:1px 0 0;text-align:center}
   .metric small{font-size:6px}
   .metric-sub{font-size:5px;margin-top:1px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .metric-sub2{font-size:5px;margin-top:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .unit-breakdown{font-size:4.6px;margin-top:1px}
+  .conversion-note{margin:1px 0 0;padding:1px 0;border-radius:0;font-size:5.4px;line-height:1.1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:clip;width:100%;box-sizing:border-box}
 
   .stack{gap:4px}
   .section{padding:5px 6px}
@@ -655,11 +662,12 @@ td.empty{padding:28px 12px}
 <div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 実績・NGレポート</h1><p id="print-period"></p></div><p id="print-date"></p></div>
 
 <section class="cards is-loading" id="kpi-cards">
-  <div class="card"><div class="metric-label">総塗装台数</div><div class="metric" id="m-qty">0<small> 台</small></div><div class="metric-sub" id="m-qty-sub"></div></div>
+  <div class="card"><div class="metric-label">実質総件数</div><div class="metric indigo" id="m-qty">0<small> 件</small></div><div class="metric-sub" id="m-qty-sub"></div><div class="metric-sub2" id="m-qty-sub2"></div></div>
   <div class="card c-paint"><div class="metric-label">塗料使用量</div><div class="metric indigo" id="m-paint">0<small> kg</small></div><div class="metric-sub" id="m-paint-sub"></div></div>
-  <div class="card c-ng"><div class="metric-label">再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div></div>
+  <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2" id="m-ng-sub2"></div></div>
   <div class="card c-rate"><div class="metric-label">平均塗着率</div><div class="metric green" id="m-rate">0<small> %</small></div><div class="metric-sub" id="m-rate-sub"></div></div>
 </section>
+<div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、登録済みの換算係数に基づいて「台=1.0」として換算した集計値です。実質再塗装率も、この実質総件数を母数に算出しています。</div>
 
 <div class="stack">
   <section class="section ng-detail-section">
@@ -675,7 +683,7 @@ td.empty{padding:28px 12px}
     <div class="section-head"><h2>生産・再塗装の推移</h2></div>
     <div class="trend-graphs" id="trend-graphs">
       <div class="graph-box">
-        <div class="graph-head"><div class="graph-title">塗装台数の推移</div><div class="graph-total" id="production-total"></div></div>
+        <div class="graph-head"><div class="graph-title">塗装数量の推移</div><div class="graph-total" id="production-total"></div></div>
         <div class="chart-box" id="production-chart"></div>
         <div class="graph-foot" id="production-foot"></div>
       </div>
@@ -703,11 +711,11 @@ td.empty{padding:28px 12px}
   <div class="row-2">
     <section class="section" id="records-section">
       <div class="section-head"><h2>実績データ（全件）</h2><button class="more no-print" id="more-r" onclick="toggleRows('r')" hidden></button></div>
-      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・台数・判定</th><th class="operator">塗装者</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody></table></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・数量・判定</th><th class="operator">塗装者</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody></table></div>
     </section>
     <section class="section" id="tochaku-section">
       <div class="section-head"><div><h2>塗着率ログ（全件）</h2><div class="muted">読み込み済みの <b>tochaku_records</b> を対象期間で表示</div></div><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
-      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th class="num">台数</th><th class="num">使用塗料</th><th class="num">塗着率</th><th class="num">ロス率</th></tr></thead><tbody id="t-table"></tbody></table></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名</th><th class="num">数量</th><th class="num">使用塗料</th><th class="num">塗着率</th><th class="num">ロス率</th></tr></thead><tbody id="t-table"></tbody></table></div>
     </section>
   </div>
 </div>
@@ -754,6 +762,10 @@ const WD=['日','月','火','水','木','金','土'];
 const mdw=s=>{const d=pd(s);return d?`${d.getMonth()+1}/${d.getDate()}(${WD[d.getDay()]})`:'-'};
 const firebaseConfig={apiKey:"AIzaSyC4K1DTi4GLHmCRGHP1d4UglfzMSgNzSVM",authDomain:"powdercoating-9254b.firebaseapp.com",projectId:"powdercoating-9254b",storageBucket:"powdercoating-9254b.firebasestorage.app",messagingSenderId:"1094264514813",appId:"1:1094264514813:web:a6edb6b3c96b12fbbc7694"};
 let db=null,records=[],tochaku=[],period='week',pickDate=today(),lastView={rec:[],tk:[],r:null},expand={r:false,t:false},GID=0;
+/* 実質換算（台=1.0基準の重み付け）。登録アプリ側の「換算係数設定」と同じ設定(settings/config .unitFactors)を読み取り専用で反映する */
+const UNITS=['台','枚','個','本'];
+let unitFactors={台:1,枚:0.3,個:0.15,本:0.4};
+const uf=u=>{const v=unitFactors[u];return typeof v==='number'&&v>0?v:1};
 const LIM=80; /* 初期表示件数（各テーブル）。件数が多い期間でも描画を軽く保つための上限で、「全件表示」ボタンで展開できます */
 
 /* 日付の正規化（文字列 / Timestamp / Date に対応） */
@@ -1029,6 +1041,11 @@ async function loadRange(r,initial=false){
 async function init(){
   try{
     firebase.initializeApp(firebaseConfig);db=firebase.firestore();
+    db.collection('settings').doc('config').onSnapshot(d=>{
+      const x=d.exists?d.data():{};
+      if(x.unitFactors&&typeof x.unitFactors==='object')UNITS.forEach(u=>{if(typeof x.unitFactors[u]==='number'&&x.unitFactors[u]>0)unitFactors[u]=x.unitFactors[u]});
+      scheduleRender();
+    },e=>console.error('settings/config 読み取りエラー:',e));
     const r=sixMonthRange();
     await loadRange(r,true);
     updateLoadSummary();render();
@@ -1108,6 +1125,25 @@ function qtyOf(x){
   if(Number.isFinite(q)&&q>0)return q;
   return Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0),0):0;
 }
+function qtyConvOf(x){
+  return Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0)*uf(i.unit||x.unit||'台'),0):qtyOf(x)*uf(x.unit||'台');
+}
+function unitOfItem(i,x){
+  const u=String(i?.unit??x?.unit??'台').trim();
+  return UNITS.includes(u)?u:(u||'台');
+}
+function formatQty(q,u='台',fraction=1){
+  const n=Number(q)||0;
+  return `${n.toLocaleString(undefined,{maximumFractionDigits:fraction})} ${esc(u)}`;
+}
+function unitBreakdown(rec){
+  const m=new Map();
+  rec.forEach(x=>{
+    const items=Array.isArray(x.items)&&x.items.length?x.items:[{qty:qtyOf(x),unit:x.unit||'台'}];
+    items.forEach(i=>{const q=Number(i.qty)||0;if(q>0){const u=unitOfItem(i,x);m.set(u,(m.get(u)||0)+q)}});
+  });
+  return [...m.entries()].sort((a,b)=>a[0].localeCompare(b[0],'ja')).map(([u,q])=>`${q.toLocaleString(undefined,{maximumFractionDigits:1})}${u}`).join(' / ');
+}
 function paintOf(x){const q=Number(x.paint_weight);return Number.isFinite(q)?q:0}
 function repaintQtyOf(x){
   const q=Number(x.ng_qty);
@@ -1116,12 +1152,20 @@ function repaintQtyOf(x){
   if(detail>0)return detail;
   return x.status==='NG'?1:0;
 }
+function repaintQtyConvOf(x){
+  if(Array.isArray(x.ng_products)&&x.ng_products.length){
+    const items=Array.isArray(x.items)?x.items:[];
+    return x.ng_products.reduce((s,p)=>{const it=items.find(i=>i.name===p.name);return s+(Number(p.qty)||0)*uf((it&&it.unit)||'台')},0);
+  }
+  return repaintQtyOf(x);
+}
 function itemRowsOf(x){
   if(!Array.isArray(x.items)) return [];
   return x.items.map((i,index)=>({
     index,
     name:String(i?.name??'').trim(),
     qty:Number(i?.qty)||0,
+    unit:unitOfItem(i,x),
     key:normalizeProductName(i?.name)
   })).filter(i=>i.name);
 }
@@ -1129,7 +1173,7 @@ function recordProductRows(x){
   const items=itemRowsOf(x);
   if(items.length) return items;
   const fallback=String(x.work_name||'').trim();
-  return fallback?[{name:fallback,qty:qtyOf(x),index:0,key:normalizeProductName(fallback)}]:[];
+  return fallback?[{name:fallback,qty:qtyOf(x),unit:unitOfItem(null,x),index:0,key:normalizeProductName(fallback)}]:[];
 }
 function ngTargetRows(x){
   const items=recordProductRows(x);
@@ -1261,14 +1305,18 @@ function render(){
   if(noteEl)noteEl.textContent=dateWarning?`日付不明データ ${undatedRec?`実績${undatedRec}件`:''}${undatedRec&&undatedTk?' / ':''}${undatedTk?`塗着率${undatedTk}件`:''} は期間集計から除外しています。日付を補正してから再集計してください。`:'この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログを確認できます。';
   // 再塗装率は対象期間の総台数（総件数）に対する再塗装件数の割合。NGレコード数ではなく、実際の再塗装個数を分子にする。
   const qty=rec.reduce((s,x)=>s+qtyOf(x),0),paint=rec.reduce((s,x)=>s+paintOf(x),0),totalCases=qty,repaintCases=rec.reduce((s,x)=>s+repaintQtyOf(x),0),ngRate=totalCases?(repaintCases/totalCases)*100:0;
+  const qtyConv=rec.reduce((s,x)=>s+qtyConvOf(x),0),repaintConv=rec.reduce((s,x)=>s+repaintQtyConvOf(x),0),ngRateConv=qtyConv?(repaintConv/qtyConv)*100:0;
   const rs=tk.filter(x=>x.rate!==null&&x.rate!==undefined&&x.rate!==''&&Number.isFinite(Number(x.rate))).map(x=>Number(x.rate)),rate=rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0;
-  $('m-qty').innerHTML=qty.toLocaleString()+'<small> 台</small>';
+  const units=unitBreakdown(rec);
+  $('m-qty').innerHTML=qtyConv.toLocaleString(undefined,{maximumFractionDigits:1})+'<small> 件</small>';
   $('m-paint').innerHTML=paint.toFixed(2)+'<small> kg</small>';
-  $('m-ng').innerHTML=ngRate.toFixed(1)+'<small> %</small>';
+  $('m-ng').innerHTML=ngRateConv.toFixed(1)+'<small> %</small>';
   $('m-rate').innerHTML=rate.toFixed(1)+'<small> %</small>';
-  $('m-qty-sub').textContent=rec.length?`実績 ${rec.length.toLocaleString()}件`:'データなし';
+  $('m-qty-sub').textContent=rec.length?`総件数 ${qty.toLocaleString(undefined,{maximumFractionDigits:1})}件`:'データなし';
+  $('m-qty-sub2')&&($('m-qty-sub2').innerHTML=units?`原単位内訳：<span class="unit-breakdown">${esc(units)}</span>`:'');
   $('m-paint-sub').textContent=rec.length?`実績データの合計`:'データなし';
   $('m-ng-sub').textContent=totalCases?`再塗装 ${repaintCases.toLocaleString()}件 / 総件数 ${totalCases.toLocaleString()}件`:'対象実績なし';
+  $('m-ng-sub2')&&($('m-ng-sub2').textContent=totalCases?`総件数による再塗装率 ${ngRate.toFixed(1)}%`:'');
   $('m-rate-sub').textContent=rs.length?`測定 ${rs.length.toLocaleString()}件の平均`:'測定データなし';
   const abnormalRates=abnormalTochakuRows(tk),rw=$('rate-warning-box');
   if(abnormalRates.length){
@@ -1449,13 +1497,13 @@ window.addEventListener('resize',()=>{clearTimeout(_rTip);_rTip=setTimeout(()=>d
 function renderTrend(rec,r){
   rec=rec||lastView.rec;r=r||lastView.r;if(!r)return;
   const b=trendBuckets(rec,r);
-  mountChart($('production-chart'),'area',b,'q','台',{c1:'#0ea5e9',c2:'#4f46e5',avg:true,empty:'この期間の実績はありません',label:'塗装台数の推移'});
+  mountChart($('production-chart'),'area',b,'q','台',{c1:'#0ea5e9',c2:'#4f46e5',avg:true,empty:'この期間の実績はありません',label:'塗装数量の推移'});
   mountChart($('repaint-chart'),'area',b,'ng','件',{c1:'#fb7185',c2:'#e11d48',avg:true,empty:'この期間の再塗装はありません',label:'再塗装発生の推移（再塗装個数）'});
   const tq=b.reduce((s,x)=>s+x.q,0),tn=b.reduce((s,x)=>s+x.ng,0);
-  $('production-total').textContent='合計 '+tq.toLocaleString()+'台';
+  $('production-total').textContent='実質合計 '+rec.reduce((s,x)=>s+qtyConvOf(x),0).toLocaleString(undefined,{maximumFractionDigits:1})+'件';
   $('repaint-total').textContent='合計 '+tn+'件';
   const act=b.filter(x=>x.q>0),pk=act.slice().sort((x,y)=>y.q-x.q)[0];
-  $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString()}台（${pk.tip}）／ 稼働${period==='year'?'月':'日'}平均 ${Math.round(tq/act.length).toLocaleString()}台`:'実績なし';
+  $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString()}数量（${pk.tip}）／ 稼働${period==='year'?'月':'日'}平均 ${Math.round(tq/act.length).toLocaleString()}数量`:'実績なし';
   const ng=b.filter(x=>x.ng>0),pn=ng.slice().sort((x,y)=>y.ng-x.ng)[0];
   $('repaint-foot').textContent=pn?`発生 ${ng.length}${period==='year'?'か月':'日'} ／ 最多 ${pn.ng}件（${pn.tip}） ／ 平均 ${Math.round(tn/Math.max(1,ng.length))}件`:'再塗装の発生なし';
 }
@@ -1509,11 +1557,11 @@ function ngDisplayInfo(x,item,items){
   if(targets.length===1){
     const total=Math.max(0,Number(item.qty)||0);
     const actual=Math.min(ng,total);
-    return {total,actual,exact:true};
+    return {total,actual,unit:item.unit||'台',exact:true};
   }
   /* 複数品がNG対象の場合、データ上はNG数の品目別内訳がないため、対象品合計として表示して誤配分しません。 */
   const total=targets.reduce((s,t)=>s+(Number(t.qty)||0),0);
-  return {total,actual:Math.min(ng,total),exact:false};
+  return {total,actual:Math.min(ng,total),unit:targets.length===1?(targets[0].unit||'台'):'件',exact:false};
 }
 function groupedProductsHtml(x){
   const items=displayRowsOf(x).slice();
@@ -1524,7 +1572,7 @@ function groupedProductsHtml(x){
   let summary='';
   if(ngItems.length>1){
     const targets=ngTargetRows(x),targetTotal=targets.reduce((s,t)=>s+(Number(t.qty)||0),0);
-    if(targetTotal>0&&ngTotal>0)summary=`<div class="batch-summary">NG対象品合計 <b>${Math.min(ngTotal,targetTotal)} / ${targetTotal}台</b></div>`;
+    if(targetTotal>0&&ngTotal>0)summary=`<div class="batch-summary">NG対象品合計 <b>${Math.min(ngTotal,targetTotal)} / ${targetTotal}${esc(targets.length===1?(targets[0].unit||'台'):'件')}</b></div>`;
   }
   const body=items.map(it=>{
     const st=String(it.status||'').toUpperCase();
@@ -1533,11 +1581,11 @@ function groupedProductsHtml(x){
     const itemCls=st==='NG'?'batch-item-ng':st==='OK'?'batch-item-ok':'';
     const info=st==='NG'?ngDisplayInfo(x,it,items):null;
     let right='';
-    let qtyHtml=`<b>${Number(it.qty)||0}</b>台`;
+    let qtyHtml=`<b>${Number(it.qty)||0}</b>${esc(it.unit||'台')}`;
     /* One product + exact NG count: show the OK remainder and NG count together. */
     if(st==='NG'&&info&&info.exact){
       const ok=Math.max(0,info.total-info.actual);
-      right=`<span class="batch-status-combined">${ok>0?`<b class="status-ok-text">OK ${ok}台</b>`:''}<b class="status-ng-text">NG ${info.actual}台</b></span>`;
+      right=`<span class="batch-status-combined">${ok>0?`<b class="status-ok-text">OK ${ok}${esc(info.unit||'台')}</b>`:''}<b class="status-ng-text">NG ${info.actual}${esc(info.unit||'台')}</b></span>`;
     }else if(st==='NG'&&info){
       right=`<span class="batch-ng-part"><b>NG</b><small>対象品合計</small></span>`;
     }else if(st==='OK'){
@@ -1576,8 +1624,8 @@ function renderTables(rec,tk){
   });
   $('r-table').innerHTML=!liveSource.records?.ready?waitR:(rowsHtml||noneR);
   $('t-table').innerHTML=!liveSource.tochaku_records?.ready?waitT:tl.map((x,i)=>{
-    const nm=tkName(x),qty=tkQtyOf(x),abnormal=isAbnormalTochakuRate(x);
-    return `<tr class="${(!expand.t&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(nm)}</td><td class="num">${qty?qty.toLocaleString()+'台':'-'}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num"><span class="tochaku-rate-value ${abnormal?'warn':''}">${fmt(x.rate,1,'%')}</span>${abnormal?'<span class="rate-warning">異常値</span>':''}</td><td class="num"><span class="tochaku-loss-value">${fmt(x.loss_rate,1,'%')}</span></td></tr>`;
+    const nm=tkName(x),qty=tkQtyOf(x),abnormal=isAbnormalTochakuRate(x),tu=(Array.isArray(x.items)&&x.items[0]?.unit)||x.unit||'台';
+    return `<tr class="${(!expand.t&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(nm)}</td><td class="num">${qty?formatQty(qty,tu):'-'}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num"><span class="tochaku-rate-value ${abnormal?'warn':''}">${fmt(x.rate,1,'%')}</span>${abnormal?'<span class="rate-warning">異常値</span>':''}</td><td class="num"><span class="tochaku-loss-value">${fmt(x.loss_rate,1,'%')}</span></td></tr>`;
   }).join('')||noneT;
   /* 実績データ（r）には件数バッジは無し（各実績内で「品名・台数・判定」を同じ行にまとめて表示するため）。
      塗着率ログ（t）だけ対象期間件数／全件数のバッジを表示する。 */
@@ -1621,8 +1669,8 @@ function updateExportRange(){
 }
 function exportRows(kind,p){
   const r=exportRange(p),rec=records.filter(x=>inRange(x._d,r)),tk=tochaku.filter(x=>inRange(x._d,r));
-  if(kind==='records')return rec.flatMap(x=>displayRowsOf(x).map((it,i)=>({日付:x._d||x.date||'',品名:it.name,台数:Number(it.qty)||0,同時登録品:recordProductRows(x).map(v=>`${v.name} (${Number(v.qty)||0}台)`).join(' / '),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:i===0?paintOf(x):'',塗料備考:i===0&&recordProductRows(x).length>1?`${recordProductRows(x).length}品同時登録の実績全体`: '',平均膜厚_um:i===0?(x.thickness??''):'',判定:it.status||x.status||'',再塗装個数:it.status==='NG'?Number(it.qty)||0:0,不具合原因:it.status==='NG'?(x.ng_details||[]).map(d=>`${causeOf(d)||'原因未設定'}(${Number(d.qty)>0?Number(d.qty):1})`).join(' / '):'',メモ:x.memo||''})));
-  if(kind==='tochaku')return tk.map(x=>({日付:x._d||x.date||'',品名:tkName(x),台数:tkQtyOf(x),使用塗料_kg:x.used_paint_kg||0,塗膜増量_kg:x.attached_weight_kg||0,塗着率_pct:x.rate??'',ロス率_pct:x.loss_rate??'',吸込ロス_kg:x.suikomi_loss_kg||0,落下ロス_kg:x.rakka_loss_kg||0,計算方式:x.calc_type||''}));
+  if(kind==='records')return rec.flatMap(x=>displayRowsOf(x).map((it,i)=>({日付:x._d||x.date||'',品名:it.name,数量:Number(it.qty)||0,単位:it.unit||x.unit||'台',同時登録品:recordProductRows(x).map(v=>`${v.name} (${Number(v.qty)||0}${v.unit||x.unit||'台'})`).join(' / '),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:i===0?paintOf(x):'',塗料備考:i===0&&recordProductRows(x).length>1?`${recordProductRows(x).length}品同時登録の実績全体`: '',平均膜厚_um:i===0?(x.thickness??''):'',判定:it.status||x.status||'',再塗装個数:it.status==='NG'?Number(it.qty)||0:0,不具合原因:it.status==='NG'?(x.ng_details||[]).map(d=>`${causeOf(d)||'原因未設定'}(${Number(d.qty)>0?Number(d.qty):1})`).join(' / '):'',メモ:x.memo||''})));
+  if(kind==='tochaku')return tk.map(x=>({日付:x._d||x.date||'',品名:tkName(x),数量:tkQtyOf(x),単位:(Array.isArray(x.items)&&x.items[0]?.unit)||x.unit||'台',使用塗料_kg:x.used_paint_kg||0,塗膜増量_kg:x.attached_weight_kg||0,塗着率_pct:x.rate??'',ロス率_pct:x.loss_rate??'',吸込ロス_kg:x.suikomi_loss_kg||0,落下ロス_kg:x.rakka_loss_kg||0,計算方式:x.calc_type||''}));
   const m=causeBuckets(rec);
   return[...m].sort((a,b)=>b[1]-a[1]).map((x,i)=>({順位:i+1,原因:x[0],件数:x[1]}));
 }
