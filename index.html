@@ -94,6 +94,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .metric.rose{color:var(--rose)}.metric.green{color:var(--green)}.metric.indigo{color:var(--indigo)}
 .metric-sub{font-size:11px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
 .metric-sub2{font-size:11px;color:var(--indigo);margin-top:1px;font-variant-numeric:tabular-nums;font-weight:700}.metric-sub2.rose{color:var(--rose)}
+.metric-compare{font-size:20px;font-weight:800;line-height:1.15;margin-top:5px;white-space:nowrap;overflow:visible;text-overflow:clip;letter-spacing:-.02em;display:block}.metric-compare.muted{color:var(--muted)}.metric-compare.rose{color:var(--rose)}
 .conversion-note{margin:5px 0 0;padding:4px 8px;border-radius:6px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:9px;line-height:1.35;font-weight:700;text-align:center;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box;width:100%}.conversion-note b{color:#c2410c}
 .unit-breakdown{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.3;white-space:normal}
 .cards.is-loading .metric,.cards.is-loading .metric-sub{color:transparent!important;position:relative}
@@ -273,6 +274,15 @@ td.empty{padding:28px 12px}
 .print-only{display:none}.print-period-mini{display:inline;font-size:.65em;color:#64748b;font-weight:700;margin-left:4px;white-space:nowrap}
 
 /* Desktop refinements */
+@media(min-width:1101px){
+  /* Four-column desktop cards are narrow, so the comparison line is scaled to fit
+     without ellipsis while retaining the same heavy visual weight. */
+  .metric-compare{font-size:18px;letter-spacing:-.02em}
+}
+@media(min-width:641px) and (max-width:1100px){
+  .metric-compare{font-size:20px;letter-spacing:-.025em}
+}
+
 @media(min-width:641px){
   #records-section .table-wrap{overflow-x:auto}
   #records-section .table{min-width:760px}
@@ -286,7 +296,7 @@ td.empty{padding:28px 12px}
 }
 
 /* Tablet / mobile */
-@media(max-width:900px){
+@media(max-width:1100px){
   .cards{grid-template-columns:repeat(2,1fr)}
   .row-b,.trend-graphs{grid-template-columns:1fr}
 }
@@ -315,7 +325,7 @@ td.empty{padding:28px 12px}
   .section-head{align-items:flex-start;flex-wrap:wrap}
   .section-head>.count-tag{margin-left:auto;font-size:10px;padding:3px 7px}
   .cards{gap:10px}.card{padding:13px 12px 12px 16px}
-  .metric{font-size:25px}.metric small{font-size:12px}
+  .metric{font-size:25px}.metric small{font-size:12px}.metric-compare{font-size:19px;line-height:1.15;margin-top:4px;white-space:nowrap;overflow:visible;text-overflow:clip;letter-spacing:-.02em}
   .section{padding:14px}.graph-box{padding:10px 10px 8px}.filters{grid-template-columns:1fr}
   .table{font-size:12px}.table th,.table td{padding:8px 6px}
 
@@ -445,15 +455,22 @@ td.empty{padding:28px 12px}
 
   .cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:4px;align-items:stretch}
   .card,.section{box-shadow:none;border:1px solid #cbd5e1;border-radius:4px}
-  .card{padding:5px 6px;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1px}
+  .card{padding:5px 6px;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1px;overflow:visible}
   .card::before{width:3px;bottom:2px;top:2px;border-radius:2px}
   .card{border-width:1px}
   .card:not(.c-paint):not(.c-ng):not(.c-rate){background:#f0f9ff;border-color:#bae6fd}.card.c-paint{background:#f5f3ff;border-color:#c4b5fd}.card.c-ng{background:#fff1f2;border-color:#fda4af}.card.c-rate{background:#ecfdf5;border-color:#a7f3d0}
   .metric-label{font-size:6px;white-space:nowrap;line-height:1.15}
-  .metric{font-size:16px;line-height:1.05;margin:1px 0 0;text-align:center}
+  .metric{font-size:15px;line-height:1.05;margin:1px 0 0;text-align:center}
   .metric small{font-size:6px}
   .metric-sub{font-size:5px;margin-top:1px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
   .metric-sub2{font-size:5px;margin-top:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .metric-compare{font-size:15.5px;line-height:1.05;margin-top:2px;font-weight:800;max-width:100%;letter-spacing:-.035em;white-space:nowrap;overflow:visible;text-overflow:clip}
+  /* Print KPI: keep the comparison figure legible and visually close to the main figure. */
+  .cards .card{min-height:52px}
+  .cards .card .metric-label{font-size:6.5px}
+  .cards .card .metric{font-size:18px;line-height:1.02}
+  .cards .card .metric small{font-size:7px}
+  .cards .card .metric-compare{font-size:16px;line-height:1.02;margin-top:1px;letter-spacing:-.035em;white-space:nowrap;overflow:visible;text-overflow:clip;font-weight:800}
   .unit-breakdown{font-size:4.6px;margin-top:1px}
   .conversion-note{margin:1px 0 0;padding:1px 0;border-radius:0;font-size:5.4px;line-height:1.1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:clip;width:100%;box-sizing:border-box}
 
@@ -662,9 +679,9 @@ td.empty{padding:28px 12px}
 <div class="print-only print-head"><div><h1>SIRIUS 生産・塗装 実績・NGレポート</h1><p id="print-period"></p></div><p id="print-date"></p></div>
 
 <section class="cards is-loading" id="kpi-cards">
-  <div class="card"><div class="metric-label">実質総件数</div><div class="metric indigo" id="m-qty">0<small> 件</small></div><div class="metric-sub" id="m-qty-sub"></div><div class="metric-sub2" id="m-qty-sub2"></div></div>
+  <div class="card"><div class="metric-label">実質総件数</div><div class="metric indigo" id="m-qty">0<small> 件</small></div><div class="metric-sub metric-compare muted" id="m-qty-sub"></div><div class="metric-sub2" id="m-qty-sub2"></div></div>
   <div class="card c-paint"><div class="metric-label">塗料使用量</div><div class="metric indigo" id="m-paint">0<small> kg</small></div><div class="metric-sub" id="m-paint-sub"></div></div>
-  <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2 rose" id="m-ng-sub2"></div></div>
+  <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2 metric-compare rose" id="m-ng-sub2"></div></div>
   <div class="card c-rate"><div class="metric-label">平均塗着率</div><div class="metric green" id="m-rate">0<small> %</small></div><div class="metric-sub" id="m-rate-sub"></div></div>
 </section>
 <div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、登録済みの換算係数に基づいて「台=1.0」として換算した集計値です。実質再塗装率も、この実質総件数を母数に算出しています。</div>
@@ -1316,7 +1333,7 @@ function render(){
   $('m-qty-sub2')&&($('m-qty-sub2').innerHTML=units?`原単位内訳：<span class="unit-breakdown">${esc(units)}</span>`:'');
   $('m-paint-sub').textContent=rec.length?`実績データの合計`:'データなし';
   $('m-ng-sub').textContent=totalCases?`再塗装 ${repaintCases.toLocaleString()}件`:'対象実績なし';
-  $('m-ng-sub2')&&($('m-ng-sub2').textContent=totalCases?`総件数による再塗装率 ${ngRate.toFixed(1)}%`:'');
+  $('m-ng-sub2')&&($('m-ng-sub2').textContent=totalCases?`総件数比 ${ngRate.toFixed(1)}%`:'');
   $('m-rate-sub').textContent=rs.length?`測定 ${rs.length.toLocaleString()}件の平均`:'測定データなし';
   const abnormalRates=abnormalTochakuRows(tk),rw=$('rate-warning-box');
   if(abnormalRates.length){
