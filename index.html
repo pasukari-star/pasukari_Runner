@@ -539,15 +539,15 @@ td.empty{padding:28px 12px}
   #tochaku-section .table-wrap{max-width:150mm;margin:0 auto}
 
   /* Records: dense two-column card grid for A4 print. */
-  #records-section .table{min-width:0!important;display:block!important}
+  #records-section .table{min-width:0!important;display:flex!important;gap:4px;align-items:flex-start}
   #records-section .table thead{display:none!important}
   /* Two independent columns avoid the equal-height grid-track whitespace when one record has more products. */
-  /* column-fill:auto だと高さ未指定の多段組は全件が左列に積まれて右列が空になり、区画が高くなって1ページ目の余白に収まらず丸ごと2ページ目へ送られていた。
-     balance で左右均等に配分し、区画の高さを半分にして1ページ目に収まりやすくする。 */
-  /* 2列を「行」として揃えるグリッドは、片方の実績が長いと隣に無駄な空白ができるため、
-     新聞レイアウト同様のCSS多段組（column）に変更。各列が独立して詰まるので余白が出ない。 */
-  #records-section .table tbody{display:block!important;column-count:2;column-gap:4px;column-fill:balance;width:100%}
-  #records-section .table tbody tr{display:grid!important;grid-template-columns:15% minmax(0,1fr) 14% 18%;align-items:center;min-width:0;width:100%;margin:0 0 2px;padding:1px 2px;border:1px solid #dbe3ee;border-radius:2px;background:#fff;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
+  /* CSSの多段組(column-count+column-fill:balance)によるブラウザ間の印刷時バランス差
+     （PC Chrome等では左列を詰めてから右列へあふれさせ、Safari/スマホより早く2ページ目へ送られる）
+     を避けるため、2つ目のtbody(#r-table-2)へJS側で行の高さを実測して均等に振り分ける方式に変更。
+     この2つのtbodyをflexで横並びにし、各列は独立したブロックとして自然に詰まる。 */
+  #records-section .table tbody{display:flex!important;flex-direction:column;gap:2px;flex:1 1 0;min-width:0;width:auto}
+  #records-section .table tbody tr{display:grid!important;grid-template-columns:15% minmax(0,1fr) 14% 18%;align-items:center;min-width:0;width:100%;margin:0;padding:1px 2px;border:1px solid #dbe3ee;border-radius:2px;background:#fff;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
   #records-section .table td{display:block!important;width:auto!important;min-width:0;border:0!important;padding:.5px 2px!important;vertical-align:middle;min-height:0}
   #records-section .table td.date{font-size:5.2px;white-space:nowrap;padding-left:6px!important}
   #records-section .table td.name{font-size:5.5px;line-height:1.1}
@@ -711,7 +711,7 @@ td.empty{padding:28px 12px}
   <div class="row-2">
     <section class="section" id="records-section">
       <div class="section-head"><h2>実績データ（全件）</h2><button class="more no-print" id="more-r" onclick="toggleRows('r')" hidden></button></div>
-      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・数量・判定</th><th class="operator">塗装者</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody></table></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>日付</th><th>品名・数量・判定</th><th class="operator">塗装者</th><th class="num">塗料</th></tr></thead><tbody id="r-table"></tbody><tbody id="r-table-2"></tbody></table></div>
     </section>
     <section class="section" id="tochaku-section">
       <div class="section-head"><div><h2>塗着率ログ（全件）</h2><div class="muted">読み込み済みの <b>tochaku_records</b> を対象期間で表示</div></div><span class="count-tag" id="cnt-t"></span><button class="more no-print" id="more-t" onclick="toggleRows('t')" hidden></button></div>
@@ -1484,12 +1484,44 @@ function bindTip(box){
 }
 function hideTip(box){const t=box.querySelector('.tip');if(t)t.classList.remove('on');const g=box.querySelector('.guide');if(g)g.setAttribute('visibility','hidden')}
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('.chart-box').forEach(b=>{if(!b.contains(e.target))hideTip(b)})});
+/* 実績データの印刷2段組を、CSSのcolumn-fill:balance（PC Chrome等で左列を詰めてから
+   右列へあふれさせ、Safari/スマホより早く次ページへ送られてしまうブラウザ差がある）ではなく、
+   各行の実測高さで均等に振り分けるJS側の処理に置き換える。#r-table/#r-table-2 は
+   印刷用CSSでflexの2列として横並びになっているため、ここでは行のtr要素を実測高さの
+   累積が半分を超えた地点で#r-table-2側へ移すだけでよい。 */
+function mergeRecordPrintColumns(){
+  const c1=document.getElementById('r-table'),c2=document.getElementById('r-table-2');
+  if(!c1||!c2||!c2.firstChild)return;
+  while(c2.firstChild)c1.appendChild(c2.firstChild);
+}
+function balanceRecordsForPrint(){
+  const c1=document.getElementById('r-table'),c2=document.getElementById('r-table-2');
+  if(!c1||!c2)return;
+  mergeRecordPrintColumns();
+  const rows=Array.prototype.filter.call(c1.children,el=>el.tagName==='TR');
+  if(rows.length<2)return;
+  let total=0;
+  const heights=rows.map(r=>{const h=r.offsetHeight||0;total+=h;return h});
+  if(!total)return;
+  const target=total/2;
+  let acc=0,splitAt=rows.length;
+  for(let i=0;i<rows.length;i++){
+    acc+=heights[i];
+    if(acc>=target){splitAt=i+1;break}
+  }
+  if(splitAt>=rows.length)return;
+  for(let i=splitAt;i<rows.length;i++)c2.appendChild(rows[i]);
+}
 /* 印刷直前（印刷ビューボタン経由でも、ブラウザのCtrl+P等の直接呼び出しでも）に
    ツールチップを隠し、印刷用SVGを最新の状態で必ず再生成しておく */
 window.addEventListener('beforeprint',()=>{
   document.querySelectorAll('.chart-box').forEach(hideTip);
   if(lastView.r)renderTrend(lastView.rec,lastView.r);
+  balanceRecordsForPrint();
 });
+/* 印刷終了後は必ず単一のtbodyへ戻し、画面表示（通常のテーブル/カード表示）に
+   分割の影響が残らないようにする */
+window.addEventListener('afterprint',mergeRecordPrintColumns);
 /* リサイズ中は古い位置のツールチップが残らないよう即座に隠す（再描画はResizeObserver側で追従） */
 let _rTip=0;
 window.addEventListener('resize',()=>{clearTimeout(_rTip);_rTip=setTimeout(()=>document.querySelectorAll('.chart-box').forEach(hideTip),0)});
