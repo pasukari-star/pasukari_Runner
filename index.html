@@ -11,7 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
 :root{
@@ -102,6 +101,24 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .cards.is-loading .metric-sub::before{width:80%}
 @keyframes skel{0%{background-position:100% 0}100%{background-position:0 0}}
 
+/* Skeleton Text */
+.skeleton-text {
+  color: transparent !important;
+  position: relative;
+  display: inline-block;
+  min-width: 80px;
+  min-height: 1.2em;
+}
+.skeleton-text::before {
+  content: '';
+  position: absolute;
+  inset: 2px 0;
+  border-radius: 4px;
+  background: linear-gradient(90deg,#eef2f7 25%,#f8fafc 37%,#eef2f7 63%);
+  background-size: 400% 100%;
+  animation: skel 1.3s ease-in-out infinite;
+}
+
 /* Layout */
 .stack{display:grid;gap:14px}
 .row-2{display:grid;grid-template-columns:1fr;gap:14px}
@@ -127,7 +144,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .svg-chart{width:100%;height:auto;display:block}
 .svg-chart text{font-family:'Plus Jakarta Sans','Noto Sans JP',sans-serif}
 .graph-foot{font-size:11.5px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
-.graph-note{font-size:10px;color:#94a3b8;margin-top:2px}
+.graph-note{font-size:10px;color:var(--muted);margin-top:2px}
 .tip{position:absolute;z-index:5;transform:translateX(-50%);display:flex;gap:8px;align-items:baseline;padding:5px 10px;border-radius:9px;background:#0f172a;color:#fff;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 8px 20px rgba(15,23,42,.28)}
 .tip.on{opacity:1}.tip b{font-size:13px}
 
@@ -162,7 +179,22 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 #repaint-note{margin-top:10px}
 
 /* Tables */
-.table-wrap{overflow:auto;max-height:none;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--line2)}
+.table-wrap{
+  overflow:auto;
+  max-height:none;
+  -webkit-overflow-scrolling:touch;
+  border-radius:12px;
+  border:1px solid var(--line2);
+  background: 
+    linear-gradient(to right, white 30%, rgba(255,255,255,0)),
+    linear-gradient(to right, rgba(255,255,255,0), white 70%) 100% 0,
+    radial-gradient(farthest-side at 0 50%, rgba(15,23,42,.12), rgba(15,23,42,0)),
+    radial-gradient(farthest-side at 100% 50%, rgba(15,23,42,.12), rgba(15,23,42,0)) 100% 0;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
 .table{width:100%;border-collapse:collapse;font-size:12px}
 .table tr.extra{display:none}
 .table th,.table td{padding:9px 10px;border-bottom:1px solid var(--line2);text-align:left;vertical-align:top}
@@ -180,7 +212,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .r-row-ok td:first-child::before,.r-row-ng td:first-child::before,.r-row-mixed td:first-child::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px 0 0 2px;pointer-events:none}
 .r-row-ok td:first-child::before{background:#34d399}
 .r-row-ng td:first-child::before,.r-row-mixed td:first-child::before{background:#fb7185}
-.empty{text-align:center;padding:28px 12px;color:#94a3b8;font-size:12.5px}
+.empty{text-align:center;padding:28px 12px;color:var(--muted);font-size:12.5px}
 td.empty{padding:28px 12px}
 
 /* Product group */
@@ -188,7 +220,7 @@ td.empty{padding:28px 12px}
 .r-table td.name{line-height:1.45;vertical-align:middle;min-width:0}
 .r-table td.num{line-height:1.45;vertical-align:middle}
 #records-section td.operator{min-width:0;font-weight:700;color:#334155;overflow-wrap:anywhere}
-.op-none{color:#94a3b8;font-weight:700}
+.op-none{color:var(--muted);font-weight:700}
 .batch-products{border:1px solid #e2e8f0;border-radius:11px;background:#fbfdff;overflow:hidden;box-sizing:border-box;width:100%;max-width:100%}
 .batch-item{display:grid;grid-template-columns:minmax(0,1fr) 58px minmax(96px,auto);align-items:center;gap:7px;width:100%;min-height:36px;padding:7px 8px;border:0;border-radius:0;box-shadow:none;background:transparent;position:relative;box-sizing:border-box}
 .batch-item+.batch-item{border-top:1px solid #e8edf3}
@@ -200,16 +232,16 @@ td.empty{padding:28px 12px}
 .batch-item-qty{min-width:0;font-size:12px;font-weight:900;color:#1f2937;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .batch-item-status{min-width:0;text-align:right;white-space:nowrap}
 .batch-ng-part{display:inline-flex;align-items:baseline;justify-content:flex-end;gap:3px;padding:4px 8px;border-radius:999px;background:#fff1f2;border:1px solid #fda4af;color:#be123c;font-size:12px;line-height:1.1;white-space:nowrap}
-.batch-ng-part b{font-size:13px}.batch-ng-part small{font-size:9px;font-weight:800}
+.batch-ng-part b{font-size:13px}.batch-ng-part small{font-size:10px;font-weight:800} /* 9->10 */
 .batch-status-combined{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;white-space:nowrap;font-size:12px;font-weight:900}
 .status-ok-text{color:#047857}.status-ng-text{color:#be123c}
 .batch-ok-total{display:inline-flex;align-items:center;justify-content:center;min-width:42px;padding:4px 8px;border-radius:999px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-size:12px;font-weight:900;white-space:nowrap}
-.batch-summary{padding:5px 10px;border-top:1px solid #e8edf3;background:#f8fafc;color:#64748b;font-size:9px;font-weight:800;text-align:right}
+.batch-summary{padding:5px 10px;border-top:1px solid #e8edf3;background:#f8fafc;color:#64748b;font-size:10px;font-weight:800;text-align:right} /* 9->10 */
 .batch-summary b{color:#334155}
 .paint-shared{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
 .paint-shared b{font-variant-numeric:tabular-nums}
-.paint-shared small{font-size:9px;color:#64748b;font-weight:700;line-height:1.2;text-align:right}
-.item-status{display:inline-flex;align-items:center;justify-content:center;padding:2px 7px;border-radius:999px;font-size:9px;font-weight:900;vertical-align:middle}
+.paint-shared small{font-size:10px;color:#64748b;font-weight:700;line-height:1.2;text-align:right} /* 9->10 */
+.item-status{display:inline-flex;align-items:center;justify-content:center;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:900;vertical-align:middle} /* 9->10 */
 .item-status.ok{background:#ecfdf5;color:#047857}.item-status.ng{background:#fff1f2;color:#be123c}
 
 /* Tochaku */
@@ -229,8 +261,8 @@ td.empty{padding:28px 12px}
 .tochaku-rate-value{display:inline-flex;align-items:center;justify-content:center;min-width:64px;padding:4px 8px;border-radius:999px;background:#ecfdf5;border:1px solid #a7f3d0;color:#047857;font-weight:900}
 .tochaku-loss-value{display:inline-flex;align-items:center;justify-content:center;min-width:58px;padding:4px 7px;border-radius:999px;background:#f8fafc;border:1px solid #dbe3ee;color:#475569;font-weight:800}
 .tochaku-rate-value.warn{background:#fff7ed;border-color:#fdba74;color:#c2410c}
-.rate-warning{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 6px;border-radius:999px;background:#fff7ed;border:1px solid #fdba74;color:#c2410c;font-size:9px;font-weight:900;white-space:nowrap}
-.rate-warning::before{content:'⚠';font-size:9px}
+.rate-warning{display:inline-flex;align-items:center;gap:4px;margin-left:5px;padding:2px 6px;border-radius:999px;background:#fff7ed;border:1px solid #fdba74;color:#c2410c;font-size:10px;font-weight:900;white-space:nowrap} /* 9->10 */
+.rate-warning::before{content:'⚠';font-size:10px} /* 9->10 */
 .rate-warning-box{border:1px solid #fed7aa;background:#fffaf5;color:#9a3412;border-radius:11px;padding:8px 10px;margin:-3px 0 12px;font-size:11px}
 .unidentified-box{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:11px;padding:8px 10px;margin:-3px 0 12px}
 .unidentified-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800}
@@ -252,9 +284,9 @@ td.empty{padding:28px 12px}
 .ng-detail-table .name-cell.ng-unidentified{color:#b45309;font-weight:800}
 .ng-row td{background:rgba(244,63,94,.055)}
 .ng-row td.date{position:relative;padding-left:12px!important}.ng-row td.date::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px 0 0 2px;background:#fb7185;pointer-events:none}
-.ng-empty{padding:24px 12px;text-align:center;color:#94a3b8;font-size:12px}
+.ng-empty{padding:24px 12px;text-align:center;color:var(--muted);font-size:12px}
 
-.load-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.load-current-block{grid-column:1/-1;padding:12px 13px;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc}.load-current-block b{display:block;font-size:13px}.load-current-block span{display:block;margin-top:3px;font-size:12px;font-weight:800}.load-current-block small{display:block;margin-top:3px;color:var(--muted);font-size:10px}.load-quick{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:800;color:var(--ink);padding:6px 10px}.load-quick small{display:block;font-size:10px;color:var(--muted);font-weight:700}.load-quick:active{transform:translateY(1px)}.load-quick:disabled{background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0;cursor:default}.load-custom{margin-top:14px;padding:13px;border:1px solid var(--line2);border-radius:14px;background:#f8fafc}.load-custom-title{font-size:12px;font-weight:800;margin-bottom:8px}.load-month-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.load-month-fields label{font-size:11px;font-weight:800;color:var(--muted)}.load-month-fields select{width:100%;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 9px;margin-top:4px;background:#fff;font-weight:700}.load-custom .btn{width:100%;margin-top:9px}@media(max-width:520px){.load-quick{min-height:52px}}
+.load-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.load-current-block{grid-column:1/-1;padding:12px 13px;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc}.load-current-block b{display:block;font-size:13px}.load-current-block span{display:block;margin-top:3px;font-size:12px;font-weight:800}.load-current-block small{display:block;margin-top:3px;color:var(--muted);font-size:10px}.load-quick{min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:800;color:var(--ink);padding:6px 10px}.load-quick small{display:block;font-size:10px;color:var(--muted);font-weight:700}.load-quick:active{transform:translateY(1px)}.load-quick:disabled{background:#f1f5f9;color:var(--muted);border-color:#e2e8f0;cursor:default}.load-custom{margin-top:14px;padding:13px;border:1px solid var(--line2);border-radius:14px;background:#f8fafc}.load-custom-title{font-size:12px;font-weight:800;margin-bottom:8px}.load-month-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.load-month-fields label{font-size:11px;font-weight:800;color:var(--muted)}.load-month-fields select{width:100%;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 9px;margin-top:4px;background:#fff;font-weight:700}.load-custom .btn{width:100%;margin-top:9px}@media(max-width:520px){.load-quick{min-height:52px}}
 
 /* Modal / toast */
 .modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);z-index:60;align-items:center;justify-content:center;padding:18px;overscroll-behavior:contain}
@@ -266,6 +298,18 @@ td.empty{padding:28px 12px}
 .filters{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .filters label{font-size:11px;font-weight:800;color:var(--muted)}
 .filters select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;padding:0 10px;margin-top:5px;background:#fff;font-weight:700}
+#export-pick-wrap {
+  max-height: 100px;
+  opacity: 1;
+  transition: max-height 0.25s ease, opacity 0.25s ease, margin-top 0.25s ease;
+  overflow: hidden;
+}
+#export-pick-wrap.hidden {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0 !important;
+  pointer-events: none;
+}
 #export-pick-wrap label{display:block;font-size:11px;font-weight:800;color:var(--muted)}
 #export-pick-wrap input{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;padding:0 10px;margin-top:5px;background:#fff;font-weight:700}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
@@ -275,8 +319,6 @@ td.empty{padding:28px 12px}
 
 /* Desktop refinements */
 @media(min-width:1101px){
-  /* Four-column desktop cards are narrow, so the comparison line is scaled to fit
-     without ellipsis while retaining the same heavy visual weight. */
   .metric-compare{font-size:18px;letter-spacing:-.02em}
 }
 @media(min-width:641px) and (max-width:1100px){
@@ -329,9 +371,14 @@ td.empty{padding:28px 12px}
   .section{padding:14px}.graph-box{padding:10px 10px 8px}.filters{grid-template-columns:1fr}
   .table{font-size:12px}.table th,.table td{padding:8px 6px}
 
-  /* Records: no horizontal scroll; each record is a single compact information block.
-     Long cards scroll internally instead of stretching the whole page. */
-  #records-section .table-wrap,#tochaku-section .table-wrap{overflow-x:visible;overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:64vh;border-radius:12px}
+  #records-section .table-wrap,#tochaku-section .table-wrap{
+    overflow-x:visible;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    max-height:64vh;
+    border-radius:12px;
+    background: white; /* 縦スクロールのみなので横スクロールインジケーターを消去 */
+  }
   #records-section .table,#tochaku-section .table{display:block;width:100%;font-size:11px}
   #records-section .table thead,#tochaku-section .table thead{display:none}
   #records-section .table tbody,#tochaku-section .table tbody{display:block}
@@ -345,13 +392,13 @@ td.empty{padding:28px 12px}
   #records-section .table td.date,#tochaku-section .table td.date{grid-column:1;grid-row:1;width:auto;color:var(--muted);font-size:10px;font-weight:700}
   #records-section .table tr.r-row-ok td.date,#records-section .table tr.r-row-ng td.date,#records-section .table tr.r-row-mixed td.date{padding-left:12px!important;position:relative;background-image:none!important}
   #records-section .table td.num{grid-column:2;grid-row:1;width:auto;text-align:right;align-self:center;font-size:10.5px;font-weight:800}
-  #records-section .table td.num::before{content:'塗料 ';color:var(--muted);font-size:9px;font-weight:700;margin-right:3px}
+  #records-section .table td.num::before{content:'塗料 ';color:var(--muted);font-size:10px;font-weight:700;margin-right:3px}
   #records-section .table td.name,#tochaku-section .table td.name{grid-column:1 / -1;width:auto;min-width:0;margin-top:6px;overflow:visible}
-  /* 塗装者: 1行目を「日付｜塗装者｜塗料」の3列に揃え、品名ブロックは2行目に全幅で配置 */
+  
   #records-section .table tr{grid-template-columns:78px minmax(0,1fr) auto;column-gap:6px}
   #records-section .table td{background:transparent!important}
   #records-section .table td.operator{grid-column:2;grid-row:1;align-self:start;font-size:10.5px;font-weight:800;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  #records-section .table td.operator::before{content:'塗装者 ';color:var(--muted);font-size:9px;font-weight:700;margin-right:3px}
+  #records-section .table td.operator::before{content:'塗装者 ';color:var(--muted);font-size:10px;font-weight:700;margin-right:3px}
   #records-section .table td.num{grid-column:3;align-self:start}
   #records-section .table td.name{grid-row:2}
   #records-section .batch-products{border-radius:10px}
@@ -360,25 +407,23 @@ td.empty{padding:28px 12px}
   #records-section .batch-item-qty{display:block;grid-area:qty;min-width:0;text-align:right;font-size:11px;font-weight:900;color:#1f2937;font-variant-numeric:tabular-nums;white-space:nowrap;align-self:center}
   #records-section .batch-item-status{grid-area:status;min-width:0;text-align:right}
   #records-section .batch-ng-part{padding:4px 6px;font-size:10px;gap:2px}
-  #records-section .batch-ng-part b{font-size:11px}.batch-ng-part small{font-size:8px}
+  #records-section .batch-ng-part b{font-size:11px}.batch-ng-part small{font-size:10px}
   #records-section .batch-status-combined{gap:4px;font-size:10px}
   #records-section .batch-ok-total{padding:4px 6px;font-size:10px;min-width:40px}
-  #records-section .batch-summary{padding:4px 8px;font-size:8.5px;text-align:left}
+  #records-section .batch-summary{padding:4px 8px;font-size:10px;text-align:left}
 
   #tochaku-section .table td.name{grid-row:2;margin-top:5px;margin-bottom:7px;font-size:12px;font-weight:800;line-height:1.3;overflow-wrap:anywhere}
   #tochaku-section .table td:nth-child(3){grid-column:1;grid-row:3;color:#334155;font-size:9.5px}
-  #tochaku-section .table td:nth-child(3)::before{content:'数量 ';color:var(--muted);font-size:8.5px;font-weight:700}
+  #tochaku-section .table td:nth-child(3)::before{content:'数量 ';color:var(--muted);font-size:10px;font-weight:700}
   #tochaku-section .table td:nth-child(4){grid-column:2;grid-row:3;align-self:center;color:#334155;font-size:9.5px}
-  #tochaku-section .table td:nth-child(4)::before{content:'使用塗料 ';color:var(--muted);font-size:8.5px;font-weight:700}
+  #tochaku-section .table td:nth-child(4)::before{content:'使用塗料 ';color:var(--muted);font-size:10px;font-weight:700}
   #tochaku-section .table td:nth-child(5){grid-column:1;grid-row:4;align-self:center;margin-top:3px}
   #tochaku-section .table td:nth-child(6){grid-column:2;grid-row:4;align-self:center;margin-top:3px}
-  #tochaku-section .table td:nth-child(5)::before{content:'塗着率';color:#047857;font-size:8px;font-weight:700;margin-right:3px}
-  #tochaku-section .table td:nth-child(6)::before{content:'ロス率';color:#64748b;font-size:8px;font-weight:700;margin-right:3px}
-  #tochaku-section .tochaku-rate-value,#tochaku-section .tochaku-loss-value{min-width:50px;padding:3px 6px;font-size:9.5px}
+  #tochaku-section .table td:nth-child(5)::before{content:'塗着率';color:#047857;font-size:10px;font-weight:700;margin-right:3px}
+  #tochaku-section .table td:nth-child(6)::before{content:'ロス率';color:#64748b;font-size:10px;font-weight:700;margin-right:3px}
+  #tochaku-section .tochaku-rate-value,#tochaku-section .tochaku-loss-value{min-width:50px;padding:3px 6px;font-size:10px}
 
-  /* NG detail: one vertical reading column. Long causes/names/operators never compete for width.
-     Scrolls internally on mobile so the card doesn't stretch the whole page. */
-  .ng-detail-wrap{overflow-x:visible;overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:58vh}
+  .ng-detail-wrap{overflow-x:visible;overflow-y:auto;-webkit-overflow-scrolling:touch;max-height:58vh;background: white;}
   .ng-detail-table{display:block;width:100%;font-size:11px}
   .ng-detail-table thead{display:none}
   .ng-detail-table tbody{display:block}
@@ -398,28 +443,29 @@ td.empty{padding:28px 12px}
   }
   .ng-detail-table td.date{grid-area:date;color:var(--muted);font-size:9.5px;font-weight:800;white-space:nowrap;position:relative;padding-left:12px!important}.ng-detail-table td.date::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px;background:#fb7185}
   .ng-detail-table td.cause-cell{grid-area:cause;font-size:10px;font-weight:850;color:#9f1239}
-  .ng-detail-table td.cause-cell::before{content:'原因  ';color:#94a3b8;font-size:8px;font-weight:700}
+  .ng-detail-table td.cause-cell::before{content:'原因  ';color:#94a3b8;font-size:10px;font-weight:700}
   .ng-detail-table td.name-cell{grid-area:name;min-width:0;font-size:12px;font-weight:900}
-  .ng-detail-table td.name-cell::before{content:'品名  ';color:#94a3b8;font-size:8px;font-weight:700}
+  .ng-detail-table td.name-cell::before{content:'品名  ';color:#94a3b8;font-size:10px;font-weight:700}
   .ng-detail-table td.operator-cell{grid-area:operator;font-size:9.5px;color:#475569}
-  .ng-detail-table td.operator-cell::before{content:'塗装者  ';color:#94a3b8;font-size:8px;font-weight:700}
+  .ng-detail-table td.operator-cell::before{content:'塗装者  ';color:#94a3b8;font-size:10px;font-weight:700}
   .ng-detail-table td.qty-cell{grid-area:qty;text-align:right;font-size:10px;font-weight:900;color:#be123c;white-space:nowrap;align-self:end}
-  .ng-detail-table td.qty-cell::before{content:'NG ';color:var(--muted);font-size:7.5px;font-weight:700;margin-right:1px}
+  .ng-detail-table td.qty-cell::before{content:'NG ';color:var(--muted);font-size:10px;font-weight:700;margin-right:1px}
   .ng-detail-table td:last-child{grid-area:judge;justify-self:end;align-self:start}
   .ng-detail-table .pill{min-width:30px;padding:2px 5px;font-size:8.5px}
   .ng-empty{padding:16px 8px;font-size:11px}
 }
 @media(max-width:380px){
-  .conversion-note{font-size:8.5px;line-height:1.3;padding:4px 6px;margin-top:4px}
+  .conversion-note{font-size:10px;line-height:1.3;padding:4px 6px;margin-top:4px}
   #records-section .table tr{grid-template-columns:70px minmax(0,1fr) auto;column-gap:4px}
-  #records-section .table td.operator{font-size:10px}
-  #records-section .table td.operator::before{font-size:8.5px;margin-right:2px}
+  #records-section .table td.operator{font-size:10.5px}
+  #records-section .table td.operator::before{font-size:10px;margin-right:2px}
   #records-section .batch-item{grid-template-columns:minmax(0,1fr) 44px minmax(70px,auto);column-gap:5px;padding-left:8px;padding-right:8px}
   #records-section .batch-item-name{font-size:11.5px}
   #records-section .batch-item-qty{font-size:10.5px}
-  #records-section .batch-status-combined{gap:3px;font-size:9.5px}
+  #records-section .batch-status-combined{gap:3px;font-size:10px}
   .seg button{min-height:38px;font-size:11px;padding:0 1px}
   .ng-summary{gap:4px}.ng-summary-card{padding:6px}.ng-summary-value{font-size:13px}
+  .paint-shared small{font-size:10px}
 }
 
 /* ===== Final UX / data-safety refinements ===== */
@@ -482,7 +528,6 @@ td.empty{padding:28px 12px}
   .section-head>.count-tag{font-size:5.2px;padding:1px 3px;border-radius:3px}
   .muted{font-size:5.5px;line-height:1.2}
 
-  /* The dashboard blocks stay side-by-side where width helps, saving vertical space. */
   .trend-graphs{grid-template-columns:1fr 1fr;gap:4px}
   .row-b{grid-template-columns:1.45fr .85fr;gap:4px}
   .graph-box{padding:3px 4px 3px;border-radius:3px;background:#fff}
@@ -495,8 +540,7 @@ td.empty{padding:28px 12px}
   .rank{width:11px;height:11px;font-size:6px;border-radius:2px}
   .cause-top small{font-size:5.2px;width:18px}
   .barbg{height:3px}
-  /* 週・月・年のいずれでもカードの縦横比・余白・センタリングが揃うように統一。
-     年間は6列だと横に間延びするため、月と同じ7列グリッドの折返し(4列相当の見た目)にする。 */
+  
   .rp{gap:2px}
   .rp.mode-year{grid-template-columns:repeat(4,minmax(0,1fr))}
   .rp.mode-week .repaint-day,.rp.mode-month .repaint-day,.rp.mode-year .repaint-day{min-height:17px}
@@ -508,12 +552,11 @@ td.empty{padding:28px 12px}
   .rp-h{font-size:5.4px}
   #repaint-note{font-size:5px;margin-top:1px}
 
-  /* NG detail: compact but readable, and allowed to continue naturally to the next page. */
-  .ng-detail-section{border:1px solid #94a3b8;padding:5px 6px;margin-bottom:0}
+  .ng-detail-section{border:1px solid var(--muted);padding:5px 6px;margin-bottom:0}
   .ng-summary{grid-template-columns:repeat(3,1fr);gap:3px;margin:0 0 3px}
   .ng-summary-card{padding:2px 4px;border-radius:2px}
   .ng-summary-label{font-size:5.2px}.ng-summary-value{font-size:8px;margin-top:0}
-  .ng-detail-wrap{max-height:none!important;overflow:visible!important}
+  .ng-detail-wrap{max-height:none!important;overflow:visible!important;background:white!important;}
   .ng-detail-table{font-size:6.2px;table-layout:fixed}
   .ng-detail-table th,.ng-detail-table td{padding:1px 2px}.ng-detail-table td.date{position:relative;padding-left:5px}
   .ng-detail-table th{font-size:5.5px}
@@ -522,9 +565,6 @@ td.empty{padding:28px 12px}
   .ng-detail-table .qty-cell{font-size:6.2px}
   .ng-empty{padding:6px;font-size:6px}
 
-  /* Print order: records first, Tochaku last. Natural flow (no forced page break) —
-     a hard break here caused a stray blank page whenever 実績データ spilled slightly
-     onto the next page (e.g. monthly view), pushing 塗着率ログ inconsistently further out. */
   .row-2{
     display:flex;flex-direction:column;gap:4px;
     align-items:stretch
@@ -541,7 +581,7 @@ td.empty{padding:28px 12px}
   .row-2 .pill{font-size:5.5px;padding:1px 3px}
   .row-2 .count-tag{font-size:5px}
 
-  .table-wrap{max-height:none!important;overflow:visible!important;border-radius:2px}
+  .table-wrap{max-height:none!important;overflow:visible!important;border-radius:2px;background:white!important;}
   .table{min-width:0!important;width:100%;table-layout:fixed;font-size:6.5px}
   .table th,.table td{padding:1px 3px}
   .table th{font-size:5.8px;position:static}
@@ -551,18 +591,11 @@ td.empty{padding:28px 12px}
   .pill{font-size:5.8px;padding:1px 3px}
   .empty{padding:6px;font-size:6.5px}
 
-  /* 塗着率ログは独立したページに全幅ではなく少し幅を絞って中央寄せし、
-     列が少ないテーブルが横長・間延びして見えないようにする */
   #tochaku-section .table-wrap{max-width:150mm;margin:0 auto}
 
-  /* Records: dense two-column card grid for A4 print. */
   #records-section .table{min-width:0!important;display:flex!important;gap:4px;align-items:flex-start}
   #records-section .table thead{display:none!important}
-  /* Two independent columns avoid the equal-height grid-track whitespace when one record has more products. */
-  /* CSSの多段組(column-count+column-fill:balance)によるブラウザ間の印刷時バランス差
-     （PC Chrome等では左列を詰めてから右列へあふれさせ、Safari/スマホより早く2ページ目へ送られる）
-     を避けるため、2つ目のtbody(#r-table-2)へJS側で行の高さを実測して均等に振り分ける方式に変更。
-     この2つのtbodyをflexで横並びにし、各列は独立したブロックとして自然に詰まる。 */
+  
   #records-section .table tbody{display:flex!important;flex-direction:column;gap:2px;flex:1 1 0;min-width:0;width:auto}
   #records-section .table tbody tr{display:grid!important;grid-template-columns:15% minmax(0,1fr) 14% 18%;align-items:center;min-width:0;width:100%;margin:0;padding:1px 2px;border:1px solid #dbe3ee;border-radius:2px;background:#fff;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
   #records-section .table td{display:block!important;width:auto!important;min-width:0;border:0!important;padding:.5px 2px!important;vertical-align:middle;min-height:0}
@@ -570,7 +603,7 @@ td.empty{padding:28px 12px}
   #records-section .table td.name{font-size:5.5px;line-height:1.1}
   #records-section .table td.operator{font-size:5.2px;line-height:1.1;text-align:center;color:#334155;font-weight:800;overflow-wrap:anywhere}
   #records-section .table td.operator::before{content:none}
-  #records-section .table td.operator .op-none{color:#94a3b8;font-weight:700}
+  #records-section .table td.operator .op-none{color:var(--muted);font-weight:700}
   #records-section .table td.num{font-size:5.2px;text-align:right;white-space:nowrap}
   #records-section .table tr.r-row-ok td.date,#records-section .table tr.r-row-ng td.date,#records-section .table tr.r-row-mixed td.date{padding-left:11px!important;background-clip:padding-box}
   #records-section .table tr.r-row-ok{background:#f1fcf7!important;border-color:#b7ead2}
@@ -580,7 +613,6 @@ td.empty{padding:28px 12px}
   #records-section .table tr.r-row-ok td.date::before{background:#34d399}
   #records-section .table tr.r-row-ng td.date::before,#records-section .table tr.r-row-mixed td.date::before{background:#fb7185}
   #records-section .batch-products{border:1px solid #d5dde7;border-radius:2px;background:#fff}
-  /* 品名横のカラー（左の色帯・背景の色味）は印刷では不要なため無効化 */
   #records-section .batch-item.batch-item-ng,#records-section .batch-item.batch-item-ok{background:#fff!important}
   #records-section .batch-item.batch-item-ng::before,#records-section .batch-item.batch-item-ok::before{display:none!important}
   #records-section .batch-item{
@@ -600,8 +632,6 @@ td.empty{padding:28px 12px}
   #records-section .batch-summary{padding:.5px 2px;font-size:4.6px}
   .paint-shared{gap:0}.paint-shared b{font-size:5.5px}.paint-shared small{font-size:4.4px}
 
-  /* Tochaku is deliberately the final report block. Slightly roomier than 実績データ
-     since it has fewer, wider columns, but still consistent with the rest of the page. */
   #tochaku-section .table th:nth-child(1),#tochaku-section .table td.date{width:10%}
   #tochaku-section .table th:nth-child(2),#tochaku-section .table td.name{width:auto}
   #tochaku-section .table th:nth-child(3),#tochaku-section .table td:nth-child(3){width:10%}
@@ -614,17 +644,13 @@ td.empty{padding:28px 12px}
   .tochaku-rate-value,.tochaku-loss-value{min-width:0;padding:1px 3px;font-size:6.2px;line-height:1.25;border-radius:3px}
 
   .print-footer{
-    margin-top:4px;font-size:6px;color:#64748b;text-align:right;
+    margin-top:4px;font-size:6px;color:var(--muted);text-align:right;
     break-inside:avoid;page-break-inside:avoid
   }
 
-  /* Never create an artificial page break. Sparse reports therefore stay on one A4 page. */
   .cards,.row-2,.row-b,.trend-graphs,.section,.ng-detail-section{break-inside:auto;page-break-inside:auto}
   .card,.graph-box,.cause,.repaint-day,.ng-detail-table tr,.table tbody tr{break-inside:avoid;page-break-inside:avoid}
 
-  /* データ量に応じた自動縮小: 上記の基準サイズは通常件数（〜80件程度）向け。
-     極端に件数が多い期間だけ、実績・NG明細・塗着率ログの区画を穏やかに縮小して崩れを防ぐ
-     （縮小率は最小86%までに留め可読性を優先。印刷対象のデータ自体は期間・件数を問わず常に全件）。 */
   body[data-print-density="l"] #records-section,body[data-print-density="l"] .ng-detail-section{zoom:.94}
   body[data-print-density="l"] #tochaku-section{zoom:.96}
   body[data-print-density="xl"] #records-section,body[data-print-density="xl"] .ng-detail-section{zoom:.86}
@@ -764,7 +790,7 @@ td.empty{padding:28px 12px}
       <div><label for="export-period">対象期間</label><select id="export-period"><option value="week">今週</option><option value="lastweek">先週</option><option value="pick">指定週</option><option value="month">今月</option><option value="year">今年</option></select></div>
       <div><label for="export-kind">出力対象</label><select id="export-kind"><option value="records">実績データ</option><option value="tochaku">塗着率ログ</option><option value="causes">原因別ランキング</option><option value="all">3種まとめ</option></select></div>
     </div>
-    <div id="export-pick-wrap" hidden style="margin-top:10px"><label for="export-pick-date">指定週（この日を含む週を出力）</label><input type="date" id="export-pick-date"></div>
+    <div id="export-pick-wrap" class="hidden" style="margin-top:10px"><label for="export-pick-date">指定週（この日を含む週を出力）</label><input type="date" id="export-pick-date"></div>
     <p class="muted" style="margin-top:12px" id="export-range"></p>
     <p class="export-safety-note" id="export-safety-note">同期状態を確認してから出力します。</p>
     <p class="muted" style="margin-top:4px">CSVはUTF-8 BOM付き、Excelは .xlsx 形式です。出力処理はブラウザ内だけで完結します。</p>
@@ -839,15 +865,31 @@ const PERIODS={
   month:{label:'今月',range(){return monthPeriodRange()}},
   year:{label:'今年',range(){return yearPeriodRange()}}
 };
+
+const toastQueue = [];
+let isToastShowing = false;
 function notify(message,type='info',ms=2600){
+  toastQueue.push({message,type,ms});
+  showNextToast();
+}
+function showNextToast(){
+  if(isToastShowing || toastQueue.length === 0) return;
+  isToastShowing = true;
+  const {message, type, ms} = toastQueue.shift();
   const t=$('toast');
   t.dataset.type=type;
   t.textContent=message;
   t.classList.add('show');
-  clearTimeout(notify._t);
-  notify._t=setTimeout(()=>t.classList.remove('show'),ms);
+  setTimeout(()=>{
+    t.classList.remove('show');
+    setTimeout(() => {
+      isToastShowing = false;
+      showNextToast();
+    }, 300);
+  }, ms);
 }
 const toast=(s,type='info')=>notify(s,type);
+
 let renderTimer=null;
 function scheduleRender(){
   if(renderTimer)return;
@@ -883,9 +925,21 @@ function setPeriod(p){
   period=p;expand={r:false,t:false};syncUI();syncHash();render();
 }
 function shiftPick(n){pickDate=ds(D(pd(pickDate)||new Date(),n));syncUI();syncHash();render()}
-function setPickDate(v){if(!pd(v)){syncUI();return}pickDate=v;syncUI();syncHash();render()}
+function setPickDate(v){
+  if(!pd(v)){v = today();$('pick-date').value=v;}
+  pickDate=v;syncUI();syncHash();render();
+}
 function pickThisWeek(){pickDate=today();syncUI();syncHash();render()}
-function toggleRows(k){expand[k]=!expand[k];renderTables(lastView.rec,lastView.tk);}
+function toggleRows(k){
+  const wasExpanded = expand[k];
+  expand[k]=!expand[k];
+  renderTables(lastView.rec,lastView.tk);
+  if(wasExpanded){
+    const sectionId = k === 'r' ? 'records-section' : 'tochaku-section';
+    const el = $(sectionId);
+    if(el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+}
 
 /* ===== Firebase（現在6か月だけ自動同期／過去は必要時に一括取得） ===== */
 const LOAD_DATE_FIELDS=DATE_KEYS_COMMON.slice();
@@ -949,10 +1003,6 @@ function missingRangesFor(r){
   return gaps;
 }
 function isPeriodRangeReady(r){
-  /* 年間は「1/1～今日の全期間を取得済み」である必要はない。
-     現在の自動同期＋取得済みの過去データを合算して、
-     その時点でSIRIUSが保持している今年の実績を年間集計・印刷する。
-     未取得の過去月があることだけを理由に、利用者の印刷操作を止めない。 */
   if(period==='year')return dataIsReady();
   return isRangeLoaded(r);
 }
@@ -1292,7 +1342,8 @@ function renderNgDetails(rec){
     const tags=unidentified.slice(0,12).map(x=>`<span class="unidentified-tag">${esc(mdw(x._d))} / NG ${ngQtyForRecord(x).toLocaleString()}件</span>`).join('');
     ub.hidden=false;ub.innerHTML=`<button type="button" class="warning-action" onclick="focusSection('records-section')"><div class="unidentified-head"><span>⚠ NG対象品未特定</span><b>${unidentified.length.toLocaleString()}件</b></div><div class="unidentified-list">${tags}${unidentified.length>12?`<span class="unidentified-tag">ほか ${unidentified.length-12}件</span>`:''}</div></button>`;
   }else{ub.hidden=true;ub.innerHTML='';}
-  $('ng-detail-table').innerHTML=rows.length?rows.map(x=>`<tr class="ng-row"><td class="date">${mdw(x.date)}</td><td class="cause-cell">${esc(x.cause)}</td><td class="name-cell ${x.name==='NG対象品未特定'?'ng-unidentified':''}">${esc(x.name)}</td><td class="operator-cell">${esc(x.operator)}</td><td class="num qty-cell">${Number(x.qty)||0}</td><td><span class="pill ng">NG</span></td></tr>`).join(''):`<tr><td colspan="6" class="ng-empty">対象期間のNG・再塗装データはありません</td></tr>`;
+  const td = (cls, content) => `<td class="${cls}">${content}</td>`;
+  $('ng-detail-table').innerHTML=rows.length?rows.map(x=>`<tr class="ng-row">${td('date',mdw(x.date))}${td('cause-cell',esc(x.cause))}${td(`name-cell ${x.name==='NG対象品未特定'?'ng-unidentified':''}`,esc(x.name))}${td('operator-cell',esc(x.operator))}${td('num qty-cell',Number(x.qty)||0)}<td><span class="pill ng">NG</span></td></tr>`).join(''):`<tr><td colspan="6" class="ng-empty">対象期間のNG・再塗装データはありません</td></tr>`;
 }
 
 function focusSection(id){
@@ -1319,7 +1370,16 @@ function render(){
   }$('repaint-period-mini').textContent=`（${PERIODS[period].label}: ${r[0]} ～ ${r[1]}）`;$('print-period').textContent=annualPartial?`${PERIODS[period].label}：${r[0]} ～ ${r[1]}（現在読み込み済みデータ）`:`${PERIODS[period].label}：${r[0]} ～ ${r[1]}`;$('print-date').textContent='作成 '+today();
   const dateWarning=undatedRec||undatedTk;
   const noteEl=$('status')?.querySelector('.note');
-  if(noteEl)noteEl.textContent=dateWarning?`日付不明データ ${undatedRec?`実績${undatedRec}件`:''}${undatedRec&&undatedTk?' / ':''}${undatedTk?`塗着率${undatedTk}件`:''} は期間集計から除外しています。日付を補正してから再集計してください。`:'この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログを確認できます。';
+  if(noteEl){
+    noteEl.textContent=dateWarning?`⚠ 日付不明データ ${undatedRec?`実績${undatedRec}件`:''}${undatedRec&&undatedTk?' / ':''}${undatedTk?`塗着率${undatedTk}件`:''} は期間集計から除外しています。日付を補正してから再集計してください。`:'この画面は Firestore の records / tochaku_records を読むだけで、登録・編集・削除は行いません。対象期間の実績・塗着率ログを確認できます。';
+    if(dateWarning) {
+      noteEl.style.color = '#c2410c';
+      noteEl.style.fontWeight = '700';
+    } else {
+      noteEl.style.color = 'var(--muted)';
+      noteEl.style.fontWeight = 'normal';
+    }
+  }
   // 再塗装率は対象期間の総台数（総件数）に対する再塗装件数の割合。NGレコード数ではなく、実際の再塗装個数を分子にする。
   const qty=rec.reduce((s,x)=>s+qtyOf(x),0),paint=rec.reduce((s,x)=>s+paintOf(x),0),totalCases=qty,repaintCases=rec.reduce((s,x)=>s+repaintQtyOf(x),0),ngRate=totalCases?(repaintCases/totalCases)*100:0;
   const qtyConv=rec.reduce((s,x)=>s+qtyConvOf(x),0),repaintConv=rec.reduce((s,x)=>s+repaintQtyConvOf(x),0),ngRateConv=qtyConv?(repaintConv/qtyConv)*100:0;
@@ -1476,42 +1536,63 @@ function chartSVG(kind,b,key,o){
   }
   return{svg:`<svg class="svg-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.label)}">${s}</svg>`,xs,ys};
 }
+
+let isTipDelegated = false;
+function initTipDelegation(){
+  if(isTipDelegated) return;
+  isTipDelegated = true;
+  const show = e => {
+    const box = e.target.closest('.chart-box');
+    if(!box){ document.querySelectorAll('.chart-box').forEach(hideTip); return; }
+    const h = e.target.closest('.hit'), m = box._m, tip = box.querySelector('.tip'), svg = box.querySelector('.ch-screen svg');
+    if(!h||!m||!tip||!svg) return hideTip(box);
+    
+    const i = +h.getAttribute('data-i'), it = m.items[i], k = svg.getBoundingClientRect().width/m.W;
+    tip.innerHTML=`<span>${esc(it.tip)}</span><b>${(Number(it[m.key])||0).toLocaleString()}${m.unit}</b>`;
+    tip.classList.add('on');
+    
+    const bwid = box.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = m.xs[i]*k;
+    
+    if(left < tw/2 + 2) left = tw/2 + 2;
+    if(left > bwid - tw/2 - 2) left = bwid - tw/2 - 2;
+    
+    const boxRect = box.getBoundingClientRect();
+    const absLeft = boxRect.left + left - tw/2;
+    if(absLeft < 2) left += Math.abs(absLeft) + 2;
+    if(absLeft + tw > window.innerWidth - 2) left -= (absLeft + tw - window.innerWidth + 2);
+    
+    tip.style.left = left + 'px';
+    tip.style.top = Math.max(2, m.ys[i]*k - th - 12) + 'px';
+    
+    const g = svg.querySelector('.guide');
+    if(g){ g.setAttribute('x1', m.xs[i]); g.setAttribute('x2', m.xs[i]); g.setAttribute('visibility', 'visible'); }
+  };
+  
+  ['pointerover','pointermove','pointerdown'].forEach(t => document.addEventListener(t, show));
+}
+
 function mountChart(box,kind,b,key,unit,o){
   const w=Math.round(box.clientWidth||520),W=Math.max(260,Math.min(720,w)),H=Math.round(Math.max(170,Math.min(240,W*.42)));
   const a=chartSVG(kind,b,key,{...o,W,H,print:false}),p=chartSVG(kind,b,key,{...o,W:372,H:150,print:true});
   box.innerHTML=`<div class="ch-screen">${a.svg}</div><div class="ch-print">${p.svg}</div><div class="tip"></div>`;
   box._m={W,xs:a.xs,ys:a.ys,items:b,key,unit};
-  bindTip(box);
+  initTipDelegation();
 }
-function bindTip(box){
-  if(box._tipBound)return;box._tipBound=true;
-  const show=e=>{
-    const h=e.target.closest&&e.target.closest('.hit'),m=box._m,tip=box.querySelector('.tip'),svg=box.querySelector('.ch-screen svg');
-    if(!h||!m||!tip||!svg)return hideTip(box);
-    const i=+h.getAttribute('data-i'),it=m.items[i],k=svg.getBoundingClientRect().width/m.W;
-    tip.innerHTML=`<span>${esc(it.tip)}</span><b>${(Number(it[m.key])||0).toLocaleString()}${m.unit}</b>`;
-    tip.classList.add('on');
-    const bwid=box.clientWidth,tw=tip.offsetWidth,th=tip.offsetHeight;
-    tip.style.left=Math.min(Math.max(m.xs[i]*k,tw/2+2),bwid-tw/2-2)+'px';
-    tip.style.top=Math.max(2,m.ys[i]*k-th-12)+'px';
-    const g=svg.querySelector('.guide');if(g){g.setAttribute('x1',m.xs[i]);g.setAttribute('x2',m.xs[i]);g.setAttribute('visibility','visible')}
-  };
-  ['pointerover','pointermove','pointerdown'].forEach(t=>box.addEventListener(t,show));
-  box.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')hideTip(box)});
-}
+
 function hideTip(box){const t=box.querySelector('.tip');if(t)t.classList.remove('on');const g=box.querySelector('.guide');if(g)g.setAttribute('visibility','hidden')}
 document.addEventListener('pointerdown',e=>{document.querySelectorAll('.chart-box').forEach(b=>{if(!b.contains(e.target))hideTip(b)})});
-/* 実績データの印刷2段組を、CSSのcolumn-fill:balance（PC Chrome等で左列を詰めてから
-   右列へあふれさせ、Safari/スマホより早く次ページへ送られてしまうブラウザ差がある）ではなく、
-   各行の実測高さで均等に振り分けるJS側の処理に置き換える。#r-table/#r-table-2 は
-   印刷用CSSでflexの2列として横並びになっているため、ここでは行のtr要素を実測高さの
-   累積が半分を超えた地点で#r-table-2側へ移すだけでよい。 */
+
+let isBalancedForPrint = false;
 function mergeRecordPrintColumns(){
+  isBalancedForPrint = false;
   const c1=document.getElementById('r-table'),c2=document.getElementById('r-table-2');
   if(!c1||!c2||!c2.firstChild)return;
   while(c2.firstChild)c1.appendChild(c2.firstChild);
 }
 function balanceRecordsForPrint(){
+  if(isBalancedForPrint) return;
+  isBalancedForPrint = true;
   const c1=document.getElementById('r-table'),c2=document.getElementById('r-table-2');
   if(!c1||!c2)return;
   mergeRecordPrintColumns();
@@ -1529,17 +1610,14 @@ function balanceRecordsForPrint(){
   if(splitAt>=rows.length)return;
   for(let i=splitAt;i<rows.length;i++)c2.appendChild(rows[i]);
 }
-/* 印刷直前（印刷ビューボタン経由でも、ブラウザのCtrl+P等の直接呼び出しでも）に
-   ツールチップを隠し、印刷用SVGを最新の状態で必ず再生成しておく */
+
 window.addEventListener('beforeprint',()=>{
   document.querySelectorAll('.chart-box').forEach(hideTip);
   if(lastView.r)renderTrend(lastView.rec,lastView.r);
   balanceRecordsForPrint();
 });
-/* 印刷終了後は必ず単一のtbodyへ戻し、画面表示（通常のテーブル/カード表示）に
-   分割の影響が残らないようにする */
 window.addEventListener('afterprint',mergeRecordPrintColumns);
-/* リサイズ中は古い位置のツールチップが残らないよう即座に隠す（再描画はResizeObserver側で追従） */
+
 let _rTip=0;
 window.addEventListener('resize',()=>{clearTimeout(_rTip);_rTip=setTimeout(()=>document.querySelectorAll('.chart-box').forEach(hideTip),0)});
 
@@ -1562,9 +1640,6 @@ if('ResizeObserver' in window){
 }else window.addEventListener('resize',()=>{if(lastView.r)renderTrend(lastView.rec,lastView.r)});
 
 /* ===== 原因ランキング ===== */
-/* NG明細の合計（renderNgDetails / ngDetailRows）と数値が一致するよう、ng_detailsが
-   無い（未入力の）NGレコードも「原因未設定」として集計に含める。原因別ランキングと
-   CSV/Excelの「原因別ランキング」出力の両方でこの関数を使い、集計方法を1箇所に統一する。 */
 function causeBuckets(rec){
   const m=new Map();
   rec.forEach(x=>{
@@ -1602,13 +1677,11 @@ function ngDisplayInfo(x,item,items){
   const targets=ngTargetRows(x);
   const isTarget=targets.some(t=>t.index===item.index);
   if(!isTarget)return null;
-  /* 1つだけのNG対象なら、その品目の台数を母数にして正確に表示できます。 */
   if(targets.length===1){
     const total=Math.max(0,Number(item.qty)||0);
     const actual=Math.min(ng,total);
     return {total,actual,unit:item.unit||'台',exact:true};
   }
-  /* 複数品がNG対象の場合、データ上はNG数の品目別内訳がないため、対象品合計として表示して誤配分しません。 */
   const total=targets.reduce((s,t)=>s+(Number(t.qty)||0),0);
   return {total,actual:Math.min(ng,total),unit:targets.length===1?(targets[0].unit||'台'):'件',exact:false};
 }
@@ -1631,7 +1704,6 @@ function groupedProductsHtml(x){
     const info=st==='NG'?ngDisplayInfo(x,it,items):null;
     let right='';
     let qtyHtml=`<b>${Number(it.qty)||0}</b>${esc(it.unit||'台')}`;
-    /* One product + exact NG count: show the OK remainder and NG count together. */
     if(st==='NG'&&info&&info.exact){
       const ok=Math.max(0,info.total-info.actual);
       right=`<span class="batch-status-combined">${ok>0?`<b class="status-ok-text">OK ${ok}${esc(info.unit||'台')}</b>`:''}<b class="status-ng-text">NG ${info.actual}${esc(info.unit||'台')}</b></span>`;
@@ -1658,9 +1730,10 @@ function sharedPaintHtml(x,multi){
 function renderTables(rec,tk){
   const byDate=(a,b)=>String(b._d).localeCompare(String(a._d));
   const rl=rec.slice().sort(byDate),tl=tk.slice().sort(byDate);
-  const waitR='<tr><td colspan="4" class="empty">読み込み中…</td></tr>',noneR='<tr><td colspan="4" class="empty">データがありません</td></tr>';
-  const waitT='<tr><td colspan="6" class="empty">読み込み中…</td></tr>',noneT='<tr><td colspan="6" class="empty">データがありません</td></tr>';
+  const waitR='<tr><td colspan="4" class="empty"><span class="skeleton-text">読み込み中…</span></td></tr>',noneR='<tr><td colspan="4" class="empty">データがありません</td></tr>';
+  const waitT='<tr><td colspan="6" class="empty"><span class="skeleton-text">読み込み中…</span></td></tr>',noneT='<tr><td colspan="6" class="empty">データがありません</td></tr>';
   let rowsHtml='';
+  const td = (cls, content) => `<td class="${cls}">${content}</td>`;
   rl.forEach((x,recordIndex)=>{
     const items=displayRowsOf(x);
     const multi=recordProductRows(x).length>1;
@@ -1669,15 +1742,14 @@ function renderTables(rec,tk){
     const row=hasNg&&hasOk?'r-row-mixed':hasNg?'r-row-ng':hasOk?'r-row-ok':'';
     const hidden=!expand.r&&recordIndex>=LIM?' extra':'';
     const paint=sharedPaintHtml(x,multi);
-    rowsHtml+=`<tr class="${row}${hidden}"><td class="date">${mdw(x._d)}</td><td class="name">${groupedProductsHtml(x)}</td><td class="operator">${operatorCellHtml(x)}</td><td class="num">${paint}</td></tr>`;
+    rowsHtml+=`<tr class="${row}${hidden}">${td('date',mdw(x._d))}${td('name',groupedProductsHtml(x))}${td('operator',operatorCellHtml(x))}${td('num',paint)}</tr>`;
   });
   $('r-table').innerHTML=!liveSource.records?.ready?waitR:(rowsHtml||noneR);
   $('t-table').innerHTML=!liveSource.tochaku_records?.ready?waitT:tl.map((x,i)=>{
     const nm=tkName(x),qty=tkQtyOf(x),abnormal=isAbnormalTochakuRate(x),tu=(Array.isArray(x.items)&&x.items[0]?.unit)||x.unit||'台';
     return `<tr class="${(!expand.t&&i>=LIM)?'extra':''}"><td class="date">${mdw(x._d)}</td><td class="name">${esc(nm)}</td><td class="num">${qty?formatQty(qty,tu):'-'}</td><td class="num">${fmt(x.used_paint_kg,3,'kg')}</td><td class="num"><span class="tochaku-rate-value ${abnormal?'warn':''}">${fmt(x.rate,1,'%')}</span>${abnormal?'<span class="rate-warning">異常値</span>':''}</td><td class="num"><span class="tochaku-loss-value">${fmt(x.loss_rate,1,'%')}</span></td></tr>`;
   }).join('')||noneT;
-  /* 実績データ（r）には件数バッジは無し（各実績内で「品名・台数・判定」を同じ行にまとめて表示するため）。
-     塗着率ログ（t）だけ対象期間件数／全件数のバッジを表示する。 */
+  
   const allTochaku=tochaku.length;
   $('cnt-t').textContent=tl.length?`対象期間 ${tl.length.toLocaleString()}件 / 全${allTochaku.toLocaleString()}件`:(allTochaku?`対象期間 0件 / 全${allTochaku.toLocaleString()}件`:'0件');
   [['r',rl],['t',tl]].forEach(([k,l])=>{
@@ -1692,9 +1764,6 @@ let lastFocusEl=null;
 function openExport(){
   lastFocusEl=document.activeElement;
   $('export-period').value=period;
-  /* 「指定週」の日付欄は、メイン画面が指定週表示中ならその週を初期値にし、
-     それ以外は今日を初期値にする。以後はこの欄の日付だけで出力範囲を決める
-     （メイン画面の週指定とは独立して、出力したい週をここで直接選べるようにする）。 */
   $('export-pick-date').value=(period==='pick')?pickDate:today();
   updateExportRange();
   $('export-modal').classList.add('show');
@@ -1711,7 +1780,7 @@ function exportRange(p){
 }
 function updateExportRange(){
   const p=$('export-period').value;
-  $('export-pick-wrap').hidden=p!=='pick';
+  $('export-pick-wrap').classList.toggle('hidden', p!=='pick');
   const r=exportRange(p);$('export-range').textContent=`対象: ${r[0]} ～ ${r[1]}`;
   const n=$('export-safety-note');
   if(n)n.textContent=!dataIsReady()?'⚠ データ同期中です。':p==='year'?'🟢 今年は現在読み込み済みのデータで集計・出力します。過去月のデータが必要な場合だけ追加してください。':!isRangeLoaded(r)?`⚠ ${r[0]} ～ ${r[1]} に未読み込み期間があります。追加期間を読み込んでください。`:'🟢 対象期間は読み込み済み・自動同期中です。';
@@ -1728,8 +1797,6 @@ function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&2
 function concatBytes(...parts){const len=parts.reduce((s,p)=>s+p.length,0),out=new Uint8Array(len);let o=0;parts.forEach(p=>{out.set(p,o);o+=p.length});return out}
 function crc32(data){let c=0xffffffff;for(let i=0;i<data.length;i++){c^=data[i];for(let k=0;k<8;k++)c=(c>>>1)^((c&1)?0xedb88320:0)}return(c^0xffffffff)>>>0}
 function makeStoreZip(files){
-  /* 互換性優先の無圧縮ZIP。内部ファイル名はASCIIに固定し、CSV本文はUTF-8 BOM付きのまま保持する。
-     Androidの標準ファイルアプリや古いPCでも開けることを優先し、UTF-8日本語ファイル名依存を避ける。 */
   const enc=new TextEncoder(),local=[],central=[];let offset=0;
   files.forEach((f,i)=>{
     const safeName=`${String(i+1).padStart(2,'0')}_${i===0?'records':i===1?'tochaku':'causes'}.csv`;
@@ -1762,7 +1829,6 @@ function downloadFile(name,data,mime){
       const url=URL.createObjectURL(blob),a=document.createElement('a');
       a.href=url;a.download=name;a.rel='noopener';a.style.display='none';
       document.body.appendChild(a);a.click();a.remove();
-      /* Android/Chromeではクリック直後のURL解放が保存完了前に起きる場合があるため、十分な猶予を置く。 */
       setTimeout(()=>URL.revokeObjectURL(url),60000);
       resolve(true);
     }catch(e){reject(e)}
@@ -1776,16 +1842,30 @@ function downloadStamp(){
   const d=new Date();
   return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
 }
+
+async function loadXlsx() {
+  if (window.XLSX) return;
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
 async function doExport(type){
   const p=$('export-period').value,k=$('export-kind').value,sets=k==='all'?['records','tochaku','causes']:[k],rg=exportRange(p),base=`sirius_${p}_${rg[0]}_${rg[1]}`,stamp=downloadStamp();
   if(!requireRangeLoaded(rg,'出力',p==='year'))return;
   try{
+    toast(type==='csv'?'CSV作成中...':'Excel出力準備中...','info');
+    await new Promise(r => setTimeout(r, 50));
     if(type==='csv'){
       const files=sets.map(s=>({name:`${base}_${s}.csv`,text:csvText(exportRows(s,p))}));
       if(k==='all'){await downloadFile(`sirius_csv_${rg[0]}_${rg[1]}_${stamp}.zip`,makeStoreZip(files),'application/zip');closeExport();toast('3種のCSVをZIPにまとめてダウンロードを開始しました','success');}
       else{await downloadFile(files[0].name.replace(/\.csv$/i,`_${stamp}.csv`),files[0].text,'text/csv;charset=utf-8');closeExport();toast('CSVのダウンロードを開始しました','success');}
     }else{
-      if(typeof XLSX==='undefined')throw new Error('Excel出力ライブラリを読み込めませんでした');
+      await loadXlsx();
       const wb=XLSX.utils.book_new();
       sets.forEach(s=>{const rows=exportRows(s,p),ws=XLSX.utils.json_to_sheet(rows.length?rows:[{メッセージ:'対象データなし'}]);ws['!cols']=Object.keys(rows[0]||{メッセージ:1}).map(h=>({wch:Math.min(32,Math.max(8,h.length*2+2))}));XLSX.utils.book_append_sheet(wb,ws,s==='records'?'実績':s==='tochaku'?'塗着率':'原因ランキング')});
       XLSX.writeFile(wb,`${base}_${stamp}.xlsx`);closeExport();toast('Excelのダウンロードを開始しました','success');
@@ -1795,13 +1875,12 @@ async function doExport(type){
 
 function printSummary(){
   const r=PERIODS[period].range();
-  /* 年間は未取得の過去月が存在していても、現在保持している今年のデータで印刷する。
-     「過去月が空だから印刷不可」という利用者目線に反する停止をしない。 */
   if(!requireRangeLoaded(r,'印刷',period==='year'))return;
   document.querySelectorAll('.chart-box').forEach(hideTip);
-  /* async/await を挟まず、ボタン操作のユーザー操作コンテキスト内で直接 window.print() を呼ぶ。
-     Android/Chrome 等では非同期化すると印刷ダイアログが抑止される場合がある。 */
-  window.print();
+  balanceRecordsForPrint();
+  setTimeout(() => {
+    window.print();
+  }, 100);
 }
 
 /* ===== UX ===== */
@@ -1822,15 +1901,12 @@ function printSummary(){
     }
   });
   $('export-period').addEventListener('change',updateExportRange);
-  $('export-pick-date').addEventListener('change',updateExportRange);
-  $('load-half-btn').addEventListener('click',()=>{const y=Number($('load-year').value),h=Number($('load-half').value);let r=h===1?[`${y}-01-01`,`${y}-06-30`]:[`${y}-07-01`,`${y}-12-31`];if(r[1]>today())r[1]=today();if(r[0]<=r[1])loadCustomRange(r)});
-  $('load-year').addEventListener('change',updateLoadQuickState);
-  $('load-half').addEventListener('change',updateLoadQuickState);
+  $('export-pick-date').addEventListener('change',updateExportRange);$('load-half-btn').addEventListener('click',()=>{const y=Number($('load-year').value),h=Number($('load-half').value);let r=h===1?[`${y}-01-01`,`${y}-06-30`]:[`${y}-07-01`,`${y}-12-31`];if(r[1]>today())r[1]=today();if(r[0]<=r[1])loadCustomRange(r)});
+  $('load-year').addEventListener('change',updateLoadQuickState);$('load-half').addEventListener('change',updateLoadQuickState);
   window.addEventListener('error',e=>{
     if(e&&/firebase|firestore|xlsx/i.test((e.message||'')+' '+(e.filename||''))){const s=$('status');if(s)setConn('err','データ接続または出力ライブラリでエラーが発生しました。')}
   });
 })();
-
 
 readHash();syncUI();render();init();
 </script>
