@@ -169,6 +169,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .repaint-day.we{background:#f3f6fa}
 .repaint-day.active{background:#fff8fa;border-color:#fda4af;box-shadow:inset 3px 0 0 var(--rose)}
 .repaint-day.today{outline:2px solid var(--sky);outline-offset:-2px}
+.repaint-day.future{opacity:.5}
 .mode-week .repaint-day{min-height:84px}.mode-month .repaint-day{min-height:62px}.mode-year .repaint-day{min-height:84px}
 .rd-date{position:relative;z-index:1;font-weight:800;font-size:12px;white-space:nowrap;color:#475569;line-height:1.2;padding:1px 2px}
 .rd-date .wd{margin-left:4px;font-size:10.5px;color:var(--muted)}
@@ -342,7 +343,7 @@ td.empty{padding:28px 12px}
   .cards{grid-template-columns:repeat(2,1fr)}
   .row-b,.trend-graphs{grid-template-columns:1fr}
 }
-@media(max-width:700px){
+@media screen and (max-width:700px){
   .mode-week.rp{grid-template-columns:1fr;gap:6px}
   .mode-week .repaint-day{min-height:0;display:flex;align-items:center;gap:12px;padding:9px 12px}
   .mode-week .rd-date{flex:none;width:72px}.mode-week .rd-count{flex:none;width:52px;margin:0}
@@ -353,7 +354,7 @@ td.empty{padding:28px 12px}
   .ng-summary{grid-template-columns:repeat(3,1fr);gap:6px}
   .ng-summary-card{padding:7px 8px}.ng-summary-value{font-size:14px}
 }
-@media(max-width:640px){
+@media screen and (max-width:640px){
   :root{--pad:12px}
   .header{flex-direction:column;align-items:stretch;gap:12px;padding-top:6px}
   .brand h1{font-size:19px}.brand p{font-size:11.5px}
@@ -454,7 +455,7 @@ td.empty{padding:28px 12px}
   .ng-detail-table .pill{min-width:30px;padding:2px 5px;font-size:8.5px}
   .ng-empty{padding:16px 8px;font-size:11px}
 }
-@media(max-width:380px){
+@media screen and (max-width:380px){
   .conversion-note{font-size:10px;line-height:1.3;padding:4px 6px;margin-top:4px}
   #records-section .table tr{grid-template-columns:70px minmax(0,1fr) auto;column-gap:4px}
   #records-section .table td.operator{font-size:10.5px}
@@ -1193,7 +1194,7 @@ function qtyOf(x){
   return Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0),0):0;
 }
 function qtyConvOf(x){
-  return Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0)*uf(i.unit||x.unit||'台'),0):qtyOf(x)*uf(x.unit||'台');
+  return Array.isArray(x.items)&&x.items.length?x.items.reduce((s,i)=>s+(Number(i.qty)||0)*uf(i.unit||x.unit||'台'),0):qtyOf(x)*uf(x.unit||'台');
 }
 function unitOfItem(i,x){
   const u=String(i?.unit??x?.unit??'台').trim();
@@ -1213,6 +1214,7 @@ function unitBreakdown(rec){
 }
 function paintOf(x){const q=Number(x.paint_weight);return Number.isFinite(q)?q:0}
 function repaintQtyOf(x){
+  if(String(x.status||'').toUpperCase()!=='NG')return 0;
   const q=Number(x.ng_qty);
   if(Number.isFinite(q)&&q>0)return q;
   const detail=Array.isArray(x.ng_details)?x.ng_details.reduce((s,n)=>s+(Number(n.qty)||0),0):0;
@@ -1220,6 +1222,7 @@ function repaintQtyOf(x){
   return x.status==='NG'?1:0;
 }
 function repaintQtyConvOf(x){
+  if(String(x.status||'').toUpperCase()!=='NG')return 0;
   if(Array.isArray(x.ng_products)&&x.ng_products.length){
     const items=Array.isArray(x.items)?x.items:[];
     return x.ng_products.reduce((s,p)=>{const it=items.find(i=>i.name===p.name);return s+(Number(p.qty)||0)*uf((it&&it.unit)||'台')},0);
@@ -1433,7 +1436,8 @@ function renderRepaint(rec,r){
   }else{
     const isMonth=period==='month';
     el.className='repaint-timeline rp '+(isMonth?'mode-month':'mode-week');
-    const s=pd(r[0]),e=pd(r[1]);
+    let s=pd(r[0]),e=pd(r[1]);
+    if(period==='week'||period==='pick'||period==='lastweek'){const w=weekOf(s);s=pd(w[0]);e=pd(w[1])}
     if(isMonth){
       html=['月','火','水','木','金','土','日'].map((w,i)=>`<div class="rp-h ${i>4?'we':''}">${w}</div>`).join('');
       html+='<div class="rp-blank"></div>'.repeat((s.getDay()+6)%7);
@@ -1441,7 +1445,7 @@ function renderRepaint(rec,r){
     for(let d=new Date(s);d<=e;d=D(d,1)){
       const k=ds(d),v=map[k],dow=d.getDay(),names=v?[...v.names]:[];
       const nameHtml=names.length?esc(names.join('・')):'';
-      html+=`<div class="repaint-day ${v?'active':''} ${k===tdy?'today':''} ${dow===0||dow===6?'we':''}"><div class="rd-date">${isMonth?d.getDate():(d.getMonth()+1)+'/'+d.getDate()}${isMonth?'':`<span class="wd">${WD[dow]}</span>`}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names" title="${esc(names.join('・'))}">${nameHtml}</div></div>`;
+      html+=`<div class="repaint-day ${v?'active':''} ${k===tdy?'today':''} ${dow===0||dow===6?'we':''} ${k>tdy&&!v?'future':''}"><div class="rd-date">${isMonth?d.getDate():(d.getMonth()+1)+'/'+d.getDate()}${isMonth?'':`<span class="wd">${WD[dow]}</span>`}</div><div class="rd-count">${v?v.qty+'件':'—'}</div><div class="rd-names" title="${esc(names.join('・'))}">${nameHtml}</div></div>`;
     }
   }
   el.innerHTML=html;
@@ -1456,7 +1460,8 @@ function trendBuckets(rec,r){
     const y=r[0].slice(0,4);
     return Array.from({length:12},(_,i)=>{const pre=y+'-'+pad(i+1);let q=0,ng=0;by.forEach((o,k)=>{if(k.startsWith(pre)){q+=o.q;ng+=o.ng}});return{label:(i+1)+'月',sub:'',tip:(i+1)+'月',q,ng,wk:false,dow:-1}});
   }
-  const out=[],s=pd(r[0]),e=pd(r[1]),many=period==='month';
+  let s=pd(r[0]),e=pd(r[1]);const out=[],many=period==='month';
+  if(period==='week'||period==='pick'||period==='lastweek'){const w=weekOf(s);s=pd(w[0]);e=pd(w[1])}
   for(let d=new Date(s);d<=e;d=D(d,1)){
     const o=by.get(ds(d))||{q:0,ng:0},dow=d.getDay();
     out.push({label:many?String(d.getDate()):(d.getMonth()+1)+'/'+d.getDate(),sub:WD[dow],tip:`${d.getMonth()+1}/${d.getDate()}(${WD[dow]})`,q:o.q,ng:o.ng,wk:dow===0||dow===6,dow});
