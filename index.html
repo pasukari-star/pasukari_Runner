@@ -1457,11 +1457,20 @@ function trendBuckets(rec,r){
     const y=r[0].slice(0,4);
     return Array.from({length:12},(_,i)=>{const pre=y+'-'+pad(i+1);let q=0,ng=0;by.forEach((o,k)=>{if(k.startsWith(pre)){q+=o.q;ng+=o.ng}});return{label:(i+1)+'月',sub:'',tip:(i+1)+'月',q,ng,wk:false,dow:-1}});
   }
-  let s=pd(r[0]),e=pd(r[1]);const out=[],many=period==='month';
+  if(period==='month'){
+    const s=pd(r[0]),e=pd(r[1]),out=[],md=d=>(d.getMonth()+1)+'/'+d.getDate();
+    for(let d=D(s,-((s.getDay()+6)%7));d<=e;d=D(d,7)){
+      const k0=ds(d),k1=ds(D(d,6));let q=0,ng=0;
+      by.forEach((o,k)=>{if(k>=k0&&k<=k1&&k>=r[0]&&k<=r[1]){q+=o.q;ng+=o.ng}});
+      out.push({label:md(d),sub:'～'+md(D(d,6)),tip:md(d)+'～'+md(D(d,6)),q,ng,wk:false,dow:-1});
+    }
+    return out;
+  }
+  let s=pd(r[0]),e=pd(r[1]);const out=[];
   if(period==='week'||period==='pick'||period==='lastweek'){const w=weekOf(s);s=pd(w[0]);e=pd(w[1])}
   for(let d=new Date(s);d<=e;d=D(d,1)){
     const o=by.get(ds(d))||{q:0,ng:0},dow=d.getDay();
-    out.push({label:many?String(d.getDate()):(d.getMonth()+1)+'/'+d.getDate(),sub:WD[dow],tip:`${d.getMonth()+1}/${d.getDate()}(${WD[dow]})`,q:o.q,ng:o.ng,wk:dow===0||dow===6,dow});
+    out.push({label:(d.getMonth()+1)+'/'+d.getDate(),sub:WD[dow],tip:`${d.getMonth()+1}/${d.getDate()}(${WD[dow]})`,q:o.q,ng:o.ng,wk:dow===0||dow===6,dow});
   }
   return out;
 }
@@ -1640,9 +1649,9 @@ function renderTrend(rec,r){
   $('production-total').textContent='実質合計 '+rec.reduce((s,x)=>s+qtyConvOf(x),0).toLocaleString(undefined,{maximumFractionDigits:1})+'件';
   $('repaint-total').textContent='合計 '+tn+'件';
   const act=b.filter(x=>x.q>0),pk=act.slice().sort((x,y)=>y.q-x.q)[0];
-  $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString()}数量（${pk.tip}）／ 稼働${period==='year'?'月':'日'}平均 ${Math.round(tq/act.length).toLocaleString()}数量`:'実績なし';
+  $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString()}数量（${pk.tip}）／ 稼働${period==='year'?'月':period==='month'?'週':'日'}平均 ${Math.round(tq/act.length).toLocaleString()}数量`:'実績なし';
   const ng=b.filter(x=>x.ng>0),pn=ng.slice().sort((x,y)=>y.ng-x.ng)[0];
-  $('repaint-foot').textContent=pn?`発生 ${ng.length}${period==='year'?'か月':'日'} ／ 最多 ${pn.ng}件（${pn.tip}） ／ 平均 ${Math.round(tn/Math.max(1,ng.length))}件`:'再塗装の発生なし';
+  $('repaint-foot').textContent=pn?`発生 ${ng.length}${period==='year'?'か月':period==='month'?'週':'日'} ／ 最多 ${pn.ng}件（${pn.tip}） ／ 平均 ${Math.round(tn/Math.max(1,ng.length))}件`:'再塗装の発生なし';
 }
 if('ResizeObserver' in window){
   let lw=0;
