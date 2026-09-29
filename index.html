@@ -591,10 +591,12 @@ td.empty{padding:28px 12px}
 
   #tochaku-section .table-wrap{max-width:150mm;margin:0 auto}
 
-  #records-section .table{min-width:0!important;display:flex!important;gap:4px;align-items:flex-start}
+  #records-section .table{min-width:0!important;display:block!important;width:100%;font-size:6.5px}
   #records-section .table thead{display:none!important}
-  
-  #records-section .table tbody{display:flex!important;flex-direction:column;gap:2px;flex:1 1 0;min-width:0;width:auto}
+
+  #records-section .table tbody{display:block!important;min-width:0;width:auto}
+  #records-section .table tbody#r-table{column-count:2;column-gap:4px}
+  #records-section .table tbody#r-table-2{display:none!important}
   #records-section .table tbody tr{display:grid!important;grid-template-columns:15% minmax(0,1fr) 14% 18%;align-items:center;min-width:0;width:100%;margin:0;padding:1px 2px;border:1px solid #dbe3ee;border-radius:2px;background:#fff;break-inside:avoid;-webkit-column-break-inside:avoid;page-break-inside:avoid}
   #records-section .table td{display:block!important;width:auto!important;min-width:0;border:0!important;padding:.5px 2px!important;vertical-align:middle;min-height:0}
   #records-section .table td.date{font-size:5.2px;white-space:nowrap;padding-left:6px!important}
@@ -1611,23 +1613,10 @@ function mergeRecordPrintColumns(){
 }
 function balanceRecordsForPrint(){
   if(isBalancedForPrint) return;
-  isBalancedForPrint = true;
   const c1=document.getElementById('r-table'),c2=document.getElementById('r-table-2');
   if(!c1||!c2)return;
   mergeRecordPrintColumns();
-  const rows=Array.prototype.filter.call(c1.children,el=>el.tagName==='TR');
-  if(rows.length<2)return;
-  let total=0;
-  const heights=rows.map(r=>{const h=r.offsetHeight||0;total+=h;return h});
-  if(!total)return;
-  const target=total/2;
-  let acc=0,splitAt=rows.length;
-  for(let i=0;i<rows.length;i++){
-    acc+=heights[i];
-    if(acc>=target){splitAt=i+1;break}
-  }
-  if(splitAt>=rows.length)return;
-  for(let i=splitAt;i<rows.length;i++)c2.appendChild(rows[i]);
+  isBalancedForPrint = true;
 }
 
 window.addEventListener('beforeprint',()=>{
