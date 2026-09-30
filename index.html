@@ -726,7 +726,7 @@ td.empty{padding:28px 12px}
     <div class="section-head"><h2>生産・再塗装の推移</h2></div>
     <div class="trend-graphs" id="trend-graphs">
       <div class="graph-box">
-        <div class="graph-head"><div class="graph-title">塗装数量の推移</div><div class="graph-total" id="production-total"></div></div>
+        <div class="graph-head"><div class="graph-title">実質合計の推移</div><div class="graph-total" id="production-total"></div></div>
         <div class="chart-box" id="production-chart"></div>
         <div class="graph-foot" id="production-foot"></div>
       </div>
@@ -1454,7 +1454,7 @@ function renderRepaint(rec,r){
 /* ===== 推移グラフ ===== */
 function trendBuckets(rec,r){
   const by=new Map();
-  rec.forEach(x=>{const k=x._d;if(!k)return;let o=by.get(k);if(!o){o={q:0,ng:0};by.set(k,o)}o.q+=qtyOf(x);if(x.status==='NG')o.ng+=repaintQtyOf(x);});
+  rec.forEach(x=>{const k=x._d;if(!k)return;let o=by.get(k);if(!o){o={q:0,ng:0};by.set(k,o)}o.q+=qtyConvOf(x);if(x.status==='NG')o.ng+=repaintQtyOf(x);});
   if(period==='year'){
     const y=r[0].slice(0,4);
     return Array.from({length:12},(_,i)=>{const pre=y+'-'+pad(i+1);let q=0,ng=0;by.forEach((o,k)=>{if(k.startsWith(pre)){q+=o.q;ng+=o.ng}});return{label:(i+1)+'月',sub:'',tip:(i+1)+'月',q,ng,wk:false,dow:-1}});
@@ -1511,11 +1511,11 @@ function chartSVG(kind,b,key,o){
     `<linearGradient id="${uid}b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>`;
   b.forEach((x,i)=>{if(x.wk)s+=`<rect x="${(PL+bw*i).toFixed(1)}" y="${PT}" width="${bw.toFixed(1)}" height="${ih}" fill="#eef2f7"/>`});
   for(let v=0;v<=max+1e-9;v+=sc.step){const y=Y(v);s+=`<line x1="${PL}" x2="${W-PR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${v===0?'#94a3b8':'#d9e2ec'}" stroke-width="${v===0?1.2:1}" ${v===0?'':'stroke-dasharray="3 4"'}/><text x="${PL-6}" y="${(y+3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="#64748b">${v}</text>`}
-  const label=(i,v)=>`<text x="${xs[i].toFixed(1)}" y="${(ys[i]-(kind==='area'?11:6)).toFixed(1)}" text-anchor="middle" font-size="${pr?10:11}" font-weight="800" fill="#0f1f33" style="${HALO}">${v}</text>`;
+  const label=(i,v)=>{const fv=Number(v).toLocaleString(undefined,{maximumFractionDigits:o.fraction??0});return `<text x="${xs[i].toFixed(1)}" y="${(ys[i]-(kind==='area'?11:6)).toFixed(1)}" text-anchor="middle" font-size="${pr?10:11}" font-weight="800" fill="#0f1f33" style="${HALO}">${fv}</text>`;};
   if(kind==='area'){
     const act=vals.filter(v=>v>0);
     if(o.avg&&act.length>=2){
-      const av=act.reduce((a,c)=>a+c,0)/act.length,y=Y(av),txt=`平均 ${Math.round(av)}`,tw=[...txt].reduce((a,c)=>a+(c.charCodeAt(0)>255?10:5.6),4);
+      const av=act.reduce((a,c)=>a+c,0)/act.length,y=Y(av),txt=`平均 ${Number(av).toLocaleString(undefined,{maximumFractionDigits:o.fraction??0})}`,tw=[...txt].reduce((a,c)=>a+(c.charCodeAt(0)>255?10:5.6),4);
       /* 平均ラベルは折れ線・数値ラベルに重ならない位置（右上→左上→右下→左下）を選ぶ */
       const lb=vals.map((v,i)=>v>0&&(two||i===peak)?[xs[i]-String(v.toLocaleString()).length*3.6-3,ys[i]-21,xs[i]+String(v.toLocaleString()).length*3.6+3,ys[i]-8]:null).filter(Boolean);
       const hit=k=>lb.some(r=>k.x1<r[2]&&k.x2>r[0]&&k.y1<r[3]&&k.y2>r[1])||xs.slice(0,-1).some((x,i)=>{for(let t=0;t<=1;t+=.05){const px=x+(xs[i+1]-x)*t,py=ys[i]+(ys[i+1]-ys[i])*t;if(px>k.x1-3&&px<k.x2+3&&py>k.y1-3&&py<k.y2+3)return true}return false});
@@ -1569,7 +1569,7 @@ function initTipDelegation(){
     if(!h||!m||!tip||!svg) return hideTip(box);
     
     const i = +h.getAttribute('data-i'), it = m.items[i], k = svg.getBoundingClientRect().width/m.W;
-    tip.innerHTML=`<span>${esc(it.tip)}</span><b>${(Number(it[m.key])||0).toLocaleString()}${m.unit}</b>`;
+    tip.innerHTML=`<span>${esc(it.tip)}</span><b>${(Number(it[m.key])||0).toLocaleString(undefined,{maximumFractionDigits:m.fraction??0})}${m.unit}</b>`;
     tip.classList.add('on');
     
     const bwid = box.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
@@ -1597,7 +1597,7 @@ function mountChart(box,kind,b,key,unit,o){
   const w=Math.round(box.clientWidth||520),W=Math.max(260,Math.min(720,w)),H=Math.round(Math.max(170,Math.min(240,W*.42)));
   const a=chartSVG(kind,b,key,{...o,W,H,print:false}),p=chartSVG(kind,b,key,{...o,W:372,H:150,print:true});
   box.innerHTML=`<div class="ch-screen">${a.svg}</div><div class="ch-print">${p.svg}</div><div class="tip"></div>`;
-  box._m={W,xs:a.xs,ys:a.ys,items:b,key,unit};
+  box._m={W,xs:a.xs,ys:a.ys,items:b,key,unit,fraction:o.fraction??0};
   initTipDelegation();
 }
 
@@ -1632,13 +1632,13 @@ window.addEventListener('resize',()=>{clearTimeout(_rTip);_rTip=setTimeout(()=>d
 function renderTrend(rec,r){
   rec=rec||lastView.rec;r=r||lastView.r;if(!r)return;
   const b=trendBuckets(rec,r);
-  mountChart($('production-chart'),'area',b,'q','台',{c1:'#0ea5e9',c2:'#4f46e5',avg:true,empty:'この期間の実績はありません',label:'塗装数量の推移'});
+  mountChart($('production-chart'),'area',b,'q','件',{c1:'#0ea5e9',c2:'#4f46e5',avg:true,fraction:1,empty:'この期間の実績はありません',label:'実質合計の推移'});
   mountChart($('repaint-chart'),'area',b,'ng','件',{c1:'#fb7185',c2:'#e11d48',avg:true,empty:'この期間の再塗装はありません',label:'再塗装発生の推移（再塗装個数）'});
   const tq=b.reduce((s,x)=>s+x.q,0),tn=b.reduce((s,x)=>s+x.ng,0);
   $('production-total').textContent='実質合計 '+rec.reduce((s,x)=>s+qtyConvOf(x),0).toLocaleString(undefined,{maximumFractionDigits:1})+'件';
   $('repaint-total').textContent='合計 '+tn+'件';
   const act=b.filter(x=>x.q>0),pk=act.slice().sort((x,y)=>y.q-x.q)[0];
-  $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString()}数量（${pk.tip}）／ 稼働${period==='year'?'月':period==='month'?'週':'日'}平均 ${Math.round(tq/act.length).toLocaleString()}数量`:'実績なし';
+  $('production-foot').textContent=pk?`最大 ${pk.q.toLocaleString(undefined,{maximumFractionDigits:1})}件（${pk.tip}）／ 稼働${period==='year'?'月':period==='month'?'週':'日'}平均 ${(tq/act.length).toLocaleString(undefined,{maximumFractionDigits:1})}件`:'実績なし';
   const ng=b.filter(x=>x.ng>0),pn=ng.slice().sort((x,y)=>y.ng-x.ng)[0];
   $('repaint-foot').textContent=pn?`発生 ${ng.length}${period==='year'?'か月':period==='month'?'週':'日'} ／ 最多 ${pn.ng}件（${pn.tip}） ／ 平均 ${Math.round(tn/Math.max(1,ng.length))}件`:'再塗装の発生なし';
 }
