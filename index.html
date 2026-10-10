@@ -711,7 +711,7 @@ td.empty{padding:28px 12px}
   <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2 metric-compare rose" id="m-ng-sub2"></div></div>
   <div class="card c-rate"><div class="metric-label">平均塗着率</div><div class="metric green" id="m-rate">0<small> %</small></div><div class="metric-sub" id="m-rate-sub"></div></div>
 </section>
-<div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、製品ごとのサイズ係数（基準：OW2の1台＝1.0。過去実績から自動算出、算出できない品は手動係数または単位係数）で換算した集計値です。大きい品は重く、小さい品は軽く数えます。実質再塗装率も、この実質総件数を母数に算出しています。同時登録の使用塗料は、各品の「数量×サイズ係数」の比で按分した目安値（≒）を併記しています。係数は登録アプリの「📐換算係数設定」を保存した時点の値です。</div>
+<div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、製品ごとのサイズ係数（基準：OW2の1台＝1.0。過去実績から自動算出、算出できない品は手動係数または単位係数）で換算した集計値です。大きい品は重く、小さい品は軽く数えます。実質再塗装率も、この実質総件数を母数に算出しています。同時登録の使用塗料は、各品の想定量（数量×サイズ係数）と合計との差を、使用量のばらつきが大きい品ほど多めに調整して合わせた目安値（≒）を併記しています。係数は登録アプリの「📐換算係数設定」を保存した時点の値です。</div>
 
 <div class="stack">
   <section class="section ng-detail-section">
@@ -812,20 +812,36 @@ let unitFactors={台:1,枚:0.3,個:0.1,本:0.4};
 const uf=u=>{const v=unitFactors[u];return typeof v==='number'&&v>0?v:1};
 /* 製品別サイズ係数（登録アプリと同じ）：基準 OW2の1台＝1.0。優先順＝手動 ＞ 自動(登録アプリで保存された全期間ベースの値) ＞ 単位係数。
    自動係数は登録アプリの「📐換算係数設定」で保存した時点の値(settings/config.pfSnap)を読み取り専用で使う */
-let pfManual=new Map(),pfSnap=new Map(),pfAutoOn=true;
+let pfManual=new Map(),pfSnap=new Map(),pfSnapCv=new Map(),pfBaseKg=0,pfAutoOn=true;
 const normName=n=>String(n||'').normalize('NFKC').toLowerCase().replace(/[\s\u3000_\-‐‑–—\/／・.．,，:：;；'"`´~〜()（）\[\]［］【】{}｛｝]/g,'').trim();
 function pfInfo(name,unit){
   const u=unit||'台',k=normName(name)+'|'+u;
   if(pfManual.has(k))return{f:pfManual.get(k),src:'manual'};
-  if(pfAutoOn&&pfSnap.has(k))return{f:pfSnap.get(k),src:'auto'};
+  if(pfAutoOn&&pfSnap.has(k))return{f:pfSnap.get(k),src:'auto',cv:pfSnapCv.get(k)};
   return{f:uf(u),src:'none'};
 }
 const pfv=(name,unit)=>pfInfo(name,unit).f;
 /* 同時登録の塗料の品目別按分（数量×サイズ係数の比。保存値ではなく表示のたびに算出するため過去分にも自動適用） */
 function itemPaintShares(items,w){
-  const wt=items.map(i=>Math.max(0,(Number(i.qty)||0)*pfv(i.name,i.unit))),t=wt.reduce((a,b)=>a+b,0);
-  return t>0?wt.map(x=>w*x/t):items.map(()=>0);
+  const prop=()=>{const wt=items.map(i=>Math.max(0,(Number(i.qty)||0)*pfv(i.name,i.unit))),t=wt.reduce((a,b)=>a+b,0);return t>0?wt.map(x=>w*x/t):items.map(()=>0)};
+  const bpd=pfBaseKg;if(!(bpd>0)||!(w>0))return prop();
+  /* 登録アプリと同じ：想定量との差を、使用量のばらつきが大きい品ほど多く調整して合計に合わせる */
+  const mu=[],vr=[];
+  items.forEach(i=>{const inf=pfInfo(i.name,i.unit),q=Number(i.qty)||0,m=Math.max(0,q*inf.f*bpd),cv=inf.src==='manual'?0.15:inf.src==='none'?0.7:(inf.cv||0.35);mu.push(m);vr.push((cv*m)*(cv*m))});
+  if(!mu.some(m=>m>0))return items.map(()=>0);
+  const a=mu.slice(),act=new Set(mu.map((m,i)=>m>0?i:-1).filter(i=>i>=0));
+  for(let g=0;g<=items.length;g++){
+    let S=0,V=0;act.forEach(i=>{S+=mu[i];V+=vr[i]});
+    let fixed=0;a.forEach((x,i)=>{if(!act.has(i))fixed+=x});
+    const d=w-fixed-S,neg=[];
+    act.forEach(i=>{a[i]=mu[i]+(V>0?vr[i]/V*d:d*mu[i]/S);if(a[i]<0)neg.push(i)});
+    if(!neg.length)break;
+    neg.forEach(i=>{a[i]=0;act.delete(i)});
+    if(!act.size)return prop();
+  }
+  return a;
 }
+
 const LIM=80; /* 初期表示件数（各テーブル）。件数が多い期間でも描画を軽く保つための上限で、「全件表示」ボタンで展開できます */
 
 /* 日付の正規化（文字列 / Timestamp / Date に対応） */
@@ -1130,7 +1146,8 @@ async function init(){
       if(x.unitFactors&&typeof x.unitFactors==='object')UNITS.forEach(u=>{if(typeof x.unitFactors[u]==='number'&&x.unitFactors[u]>0)unitFactors[u]=x.unitFactors[u]});
       if(Array.isArray(x.productFactors))pfManual=new Map(x.productFactors.filter(p=>p&&typeof p.k==='string'&&p.k.includes('|')&&p.f>0).map(p=>[p.k,p.f]));
       if(typeof x.pfAutoOn==='boolean')pfAutoOn=x.pfAutoOn;
-      if(Array.isArray(x.pfSnap))pfSnap=new Map(x.pfSnap.filter(p=>p&&typeof p.k==='string'&&p.f>0).map(p=>[p.k,p.f]));
+      if(Array.isArray(x.pfSnap)){const ok=x.pfSnap.filter(p=>p&&typeof p.k==='string'&&p.f>0);pfSnap=new Map(ok.map(p=>[p.k,p.f]));pfSnapCv=new Map(ok.filter(p=>p.cv>0).map(p=>[p.k,p.cv]))}
+      if(typeof x.pfBaseKg==='number'&&x.pfBaseKg>0)pfBaseKg=x.pfBaseKg;
       scheduleRender();
     },e=>console.error('settings/config 読み取りエラー:',e));
     const r=sixMonthRange();
