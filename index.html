@@ -242,6 +242,7 @@ td.empty{padding:28px 12px}
 .paint-shared{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
 .paint-shared b{font-variant-numeric:tabular-nums}
 .paint-shared small{font-size:10px;color:#64748b;font-weight:700;line-height:1.2;text-align:right} /* 9->10 */
+.paint-shared .paint-item{font-weight:500;color:#475569}
 .item-status{display:inline-flex;align-items:center;justify-content:center;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:900;vertical-align:middle} /* 9->10 */
 .item-status.ok{background:#ecfdf5;color:#047857}.item-status.ng{background:#fff1f2;color:#be123c}
 
@@ -710,7 +711,7 @@ td.empty{padding:28px 12px}
   <div class="card c-ng"><div class="metric-label">実質再塗装率</div><div class="metric rose" id="m-ng">0<small> %</small></div><div class="metric-sub" id="m-ng-sub"></div><div class="metric-sub2 metric-compare rose" id="m-ng-sub2"></div></div>
   <div class="card c-rate"><div class="metric-label">平均塗着率</div><div class="metric green" id="m-rate">0<small> %</small></div><div class="metric-sub" id="m-rate-sub"></div></div>
 </section>
-<div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、登録済みの換算係数に基づいて「台=1.0」として換算した集計値です。実質再塗装率も、この実質総件数を母数に算出しています。</div>
+<div class="conversion-note"><b>実質換算について：</b>台・枚・個などの数量を、製品ごとのサイズ係数（基準：OW2の1台＝1.0。過去実績から自動算出、算出できない品は手動係数または単位係数）で換算した集計値です。大きい品は重く、小さい品は軽く数えます。実質再塗装率も、この実質総件数を母数に算出しています。同時登録の使用塗料は、各品の「数量×サイズ係数」の比で按分した目安値（≒）を併記しています。係数は登録アプリの「📐換算係数設定」を保存した時点の値です。</div>
 
 <div class="stack">
   <section class="section ng-detail-section">
@@ -807,8 +808,24 @@ const firebaseConfig={apiKey:"AIzaSyC4K1DTi4GLHmCRGHP1d4UglfzMSgNzSVM",authDomai
 let db=null,records=[],tochaku=[],period='week',pickDate=today(),lastView={rec:[],tk:[],r:null},expand={r:false,t:false},GID=0;
 /* 実質換算（台=1.0基準の重み付け）。登録アプリ側の「換算係数設定」と同じ設定(settings/config .unitFactors)を読み取り専用で反映する */
 const UNITS=['台','枚','個','本'];
-let unitFactors={台:1,枚:0.3,個:0.15,本:0.4};
+let unitFactors={台:1,枚:0.3,個:0.1,本:0.4};
 const uf=u=>{const v=unitFactors[u];return typeof v==='number'&&v>0?v:1};
+/* 製品別サイズ係数（登録アプリと同じ）：基準 OW2の1台＝1.0。優先順＝手動 ＞ 自動(登録アプリで保存された全期間ベースの値) ＞ 単位係数。
+   自動係数は登録アプリの「📐換算係数設定」で保存した時点の値(settings/config.pfSnap)を読み取り専用で使う */
+let pfManual=new Map(),pfSnap=new Map(),pfAutoOn=true;
+const normName=n=>String(n||'').normalize('NFKC').toLowerCase().replace(/[\s\u3000_\-‐‑–—\/／・.．,，:：;；'"`´~〜()（）\[\]［］【】{}｛｝]/g,'').trim();
+function pfInfo(name,unit){
+  const u=unit||'台',k=normName(name)+'|'+u;
+  if(pfManual.has(k))return{f:pfManual.get(k),src:'manual'};
+  if(pfAutoOn&&pfSnap.has(k))return{f:pfSnap.get(k),src:'auto'};
+  return{f:uf(u),src:'none'};
+}
+const pfv=(name,unit)=>pfInfo(name,unit).f;
+/* 同時登録の塗料の品目別按分（数量×サイズ係数の比。保存値ではなく表示のたびに算出するため過去分にも自動適用） */
+function itemPaintShares(items,w){
+  const wt=items.map(i=>Math.max(0,(Number(i.qty)||0)*pfv(i.name,i.unit))),t=wt.reduce((a,b)=>a+b,0);
+  return t>0?wt.map(x=>w*x/t):items.map(()=>0);
+}
 const LIM=80; /* 初期表示件数（各テーブル）。件数が多い期間でも描画を軽く保つための上限で、「全件表示」ボタンで展開できます */
 
 /* 日付の正規化（文字列 / Timestamp / Date に対応） */
@@ -1111,6 +1128,9 @@ async function init(){
     db.collection('settings').doc('config').onSnapshot(d=>{
       const x=d.exists?d.data():{};
       if(x.unitFactors&&typeof x.unitFactors==='object')UNITS.forEach(u=>{if(typeof x.unitFactors[u]==='number'&&x.unitFactors[u]>0)unitFactors[u]=x.unitFactors[u]});
+      if(Array.isArray(x.productFactors))pfManual=new Map(x.productFactors.filter(p=>p&&typeof p.k==='string'&&p.k.includes('|')&&p.f>0).map(p=>[p.k,p.f]));
+      if(typeof x.pfAutoOn==='boolean')pfAutoOn=x.pfAutoOn;
+      if(Array.isArray(x.pfSnap))pfSnap=new Map(x.pfSnap.filter(p=>p&&typeof p.k==='string'&&p.f>0).map(p=>[p.k,p.f]));
       scheduleRender();
     },e=>console.error('settings/config 読み取りエラー:',e));
     const r=sixMonthRange();
@@ -1193,7 +1213,7 @@ function qtyOf(x){
   return Array.isArray(x.items)?x.items.reduce((s,i)=>s+(Number(i.qty)||0),0):0;
 }
 function qtyConvOf(x){
-  return Array.isArray(x.items)&&x.items.length?x.items.reduce((s,i)=>s+(Number(i.qty)||0)*uf(i.unit||x.unit||'台'),0):qtyOf(x)*uf(x.unit||'台');
+  return Array.isArray(x.items)&&x.items.length?x.items.reduce((s,i)=>s+(Number(i.qty)||0)*pfv(i.name,i.unit||x.unit||'台'),0):qtyOf(x)*pfv(x.work_name,x.unit||'台');
 }
 function unitOfItem(i,x){
   const u=String(i?.unit??x?.unit??'台').trim();
@@ -1224,7 +1244,7 @@ function repaintQtyConvOf(x){
   if(String(x.status||'').toUpperCase()!=='NG')return 0;
   if(Array.isArray(x.ng_products)&&x.ng_products.length){
     const items=Array.isArray(x.items)?x.items:[];
-    return x.ng_products.reduce((s,p)=>{const it=items.find(i=>i.name===p.name);return s+(Number(p.qty)||0)*uf((it&&it.unit)||'台')},0);
+    return x.ng_products.reduce((s,p)=>{const it=items.find(i=>i.name===p.name);return s+(Number(p.qty)||0)*pfv((it&&it.name)||p.name,(it&&it.unit)||'台')},0);
   }
   return repaintQtyOf(x);
 }
@@ -1732,7 +1752,10 @@ function operatorCellHtml(x){
 }
 function sharedPaintHtml(x,multi){
   const p=paintOf(x).toFixed(2);
-  return multi?`<span class="paint-shared"><b>${p}kg</b><small>同時登録した品目全体</small></span>`:`${p}kg`;
+  if(!multi)return `${p}kg`;
+  const items=recordProductRows(x),w=paintOf(x),sh=w>0?itemPaintShares(items,w):[];
+  const lines=sh.length?items.map((it,i)=>`<small class="paint-item" title="${esc(it.name)}：${it.qty}${esc(it.unit||'台')} × サイズ係数${+pfv(it.name,it.unit).toFixed(2)}">${esc(it.name.length>9?it.name.slice(0,9)+'…':it.name)} ≒${sh[i].toFixed(2)}kg</small>`).join(''):'';
+  return `<span class="paint-shared"><b>${p}kg</b><small>同時登録 全体</small>${lines}</span>`;
 }
 
 function renderTables(rec,tk){
@@ -1795,7 +1818,7 @@ function updateExportRange(){
 }
 function exportRows(kind,p){
   const r=exportRange(p),rec=records.filter(x=>inRange(x._d,r)),tk=tochaku.filter(x=>inRange(x._d,r));
-  if(kind==='records')return rec.flatMap(x=>displayRowsOf(x).map((it,i)=>({日付:x._d||x.date||'',品名:it.name,数量:Number(it.qty)||0,単位:it.unit||x.unit||'台',同時登録品:recordProductRows(x).map(v=>`${v.name} (${Number(v.qty)||0}${v.unit||x.unit||'台'})`).join(' / '),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:i===0?paintOf(x):'',塗料備考:i===0&&recordProductRows(x).length>1?`${recordProductRows(x).length}品同時登録の実績全体`: '',平均膜厚_um:i===0?(x.thickness??''):'',判定:it.status||x.status||'',再塗装個数:it.status==='NG'?Number(it.qty)||0:0,不具合原因:it.status==='NG'?(x.ng_details||[]).map(d=>`${causeOf(d)||'原因未設定'}(${Number(d.qty)>0?Number(d.qty):1})`).join(' / '):'',メモ:x.memo||''})));
+  if(kind==='records')return rec.flatMap(x=>displayRowsOf(x).map((it,i)=>({日付:x._d||x.date||'',品名:it.name,数量:Number(it.qty)||0,単位:it.unit||x.unit||'台',同時登録品:recordProductRows(x).map(v=>`${v.name} (${Number(v.qty)||0}${v.unit||x.unit||'台'})`).join(' / '),塗装者:x.operator||'',塗装機:x.machine||'',天候:x.weather||'',気温:x.temp??'',湿度:x.humidity??'',使用塗料_kg:i===0?paintOf(x):'',品目別塗料目安_kg:(()=>{const rows=recordProductRows(x);if(rows.length<2||!(paintOf(x)>0))return '';const k=rows.findIndex(r=>r.index===it.index);return k<0?'':+itemPaintShares(rows,paintOf(x))[k].toFixed(3)})(),サイズ係数:+pfv(it.name,it.unit||x.unit||'台').toFixed(3),塗料備考:i===0&&recordProductRows(x).length>1?`${recordProductRows(x).length}品同時登録の実績全体`: '',平均膜厚_um:i===0?(x.thickness??''):'',判定:it.status||x.status||'',再塗装個数:it.status==='NG'?Number(it.qty)||0:0,不具合原因:it.status==='NG'?(x.ng_details||[]).map(d=>`${causeOf(d)||'原因未設定'}(${Number(d.qty)>0?Number(d.qty):1})`).join(' / '):'',メモ:x.memo||''})));
   if(kind==='tochaku')return tk.map(x=>({日付:x._d||x.date||'',品名:tkName(x),数量:tkQtyOf(x),単位:(Array.isArray(x.items)&&x.items[0]?.unit)||x.unit||'台',使用塗料_kg:x.used_paint_kg||0,塗膜増量_kg:x.attached_weight_kg||0,塗着率_pct:x.rate??'',ロス率_pct:x.loss_rate??'',吸込ロス_kg:x.suikomi_loss_kg||0,落下ロス_kg:x.rakka_loss_kg||0,計算方式:x.calc_type||''}));
   const m=causeBuckets(rec);
   return[...m].sort((a,b)=>b[1]-a[1]).map((x,i)=>({順位:i+1,原因:x[0],件数:x[1]}));
